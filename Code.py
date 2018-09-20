@@ -6,7 +6,7 @@ import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
 cf.go_offline()
-df = pd.read_csv("/home/DP_out_Sum/Dataset/combined.csv")
+df = pd.read_csv("/home/DP_out_Sum/dataset/combined.csv")
 import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
