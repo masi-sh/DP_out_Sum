@@ -53,7 +53,7 @@ for i in range ( 0, len(FirAtt_Sprset)):
                # FirAtt referes to 'Job Title', which is array cell #5, 
                # SecAtt referes to 'Employer', which is array cell #4,
                # ThrAtt referes to 'Calendar Year', which is array cell #7,
-                if ((df2.iloc[row][5] in FirAtt_Sprset[i]) & (df2.iloc[row][4] in SecAtt_Sprset[j])&& (df2.iloc[row][7] in ThrAtt_Sprset[z])):
+                if ((df2.iloc[row][5] in FirAtt_Sprset[i]) & (df2.iloc[row][4] in SecAtt_Sprset[j]) & (df2.iloc[row][7] in ThrAtt_Sprset[z])):
                     pop_size += 1
                     Sal_list.append(df2.iloc[row]['Salary Paid'])
                     ID_list.append(df2.iloc[row]['Unnamed: 0'])
