@@ -37,23 +37,27 @@ Epsilon       =  0.1  ### Privacy Parameter
 t0 = time.time()
 
 for i in range ( 0, len(FirAtt_Sprset)):
-        for j in range(0, len(SecAtt_Sprset)):
+ for j in range(0, len(SecAtt_Sprset)):
+   for z in range(0, len(ThrAtt_Sprset ))
             Sal_list   = []
             ID_list    = []
             pop_size   = 0
             Score      = 1
             #csvfile.seek(0)
+            print '\n\n The ', i, 'th element in the first attribute\'s superset'
+            print '\n\n The ', j, 'th element in the Second attribute\'s superset'
+            print '\n\n The ', z, 'th element in the third attribute\'s superset'
             for row in range(df2.shape[0]):
                # FirAtt referes to 'Job Title', which is array cell #5, 
                # SecAtt referes to 'Employer', which is array cell #4,
                # ThrAtt referes to 'Calendar Year', which is array cell #7,
-                if ((df2.iloc[row][5] in FirAtt_Sprset[i]) & (df2.iloc[row][4] in SecAtt_Sprset[j])):
-                    pop_size += 1  
+                if ((df2.iloc[row][5] in FirAtt_Sprset[i]) & (df2.iloc[row][4] in SecAtt_Sprset[j])&& (df2.iloc[row][7] in ThrAtt_Sprset[z])):
+                    pop_size += 1
                     Sal_list.append(df2.iloc[row]['Salary Paid'])
                     ID_list.append(df2.iloc[row]['Unnamed: 0'])
+            print '\n\n Population size for first attribute set=', i, 'Second attribute set=', j, 'Third attribute set=', z , 'is' , pop_size    
 
-#####################         Outlier detection in subpopulations      #############################
-
+#####################         Outlier detection in subpopulations      ########################
             if (pop_size >= 4):
                 Score = np.exp(Epsilon *(pop_size** (1. / 3)))
                 Sal_arr= np.array(Sal_list)
@@ -63,6 +67,7 @@ for i in range ( 0, len(FirAtt_Sprset)):
                     if ((ID_list[outlier_finder]==Queried_ID) & (Sal_outliers[outlier_finder]==-1)): 
                         Sub_pop.append([i,j,pop_size, Score, Sub_pop_count])
                         Sub_pop_count += 1
-                        
+print '\n\nSubpopulations are[Att1_index, Att2_index, Population_size, Score, ID]\n\n', Sub_pop	
+ 
 t1 = time.time()
-print '\n\nThe required time for running this part of the program is:',  t1-t0
+print '\n\nThe required time for running the program is:',  t1-t0
