@@ -40,7 +40,7 @@ t0 = time.time()
 
 for i in range ( 0, len(FirAtt_Sprset)):
  for j in range(0, len(SecAtt_Sprset)):
-   for z in range(0, len(ThrAtt_Sprset ))
+   for z in range(0, len(ThrAtt_Sprset)):
             Sal_list   = []
             ID_list    = []
             pop_size   = 0
