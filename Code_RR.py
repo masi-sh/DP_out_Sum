@@ -27,9 +27,9 @@ SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
 
 ###################################     Forming a context   #######################################
-Orgn_Ctx = df2.loc[df2['Job Title'].isin([FirAtt_lst[0],FirAtt_lst[1],FirAtt_lst[2],FirAtt_lst[3]]) & \
-                   df2['Employer'].isin([SecAtt_lst[0],SecAtt_lst[1], SecAtt_lst[2],SecAtt_lst[3]]) & \
-                   df2['Calendar Year'].isin([ThrAtt_lst[0],ThrAtt_lst[1],ThrAtt_lst[2],ThrAtt_lst[3]])]
+Orgn_Ctx = df2.loc[df2['Job Title'].isin([FirAtt_lst[0],FirAtt_lst[1],FirAtt_lst[2],FirAtt_lst[3], FirAtt_lst[4]]) & \
+                   df2['Employer'].isin([SecAtt_lst[0],SecAtt_lst[1], SecAtt_lst[2],SecAtt_lst[3], SecAtt_lst[4]]) & \
+                   df2['Calendar Year'].isin([ThrAtt_lst[0],ThrAtt_lst[1],ThrAtt_lst[2],ThrAtt_lst[3],ThrAtt_lst[4]])]
 
 
 #######################     Finding an outlier in the selected context      #######################
@@ -40,9 +40,9 @@ Queried_ID = Sal_outliers.argmin()
 print '\n\n Outliers in the selected context are: ', Sal_outliers
 
 ################# Exploring Contexts larger than the original to find the maximal #################
-FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[4:], r)), range(1, len(FirAtt_lst[4:])+1)), [])
-SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[4:], r)), range(1, len(SecAtt_lst[4:])+1)), [])
-ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[4:], r)), range(1, len(ThrAtt_lst[4:])+1)), [])
+FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[5:], r)), range(1, len(FirAtt_lst[5:])+1)), [])
+SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[5:], r)), range(1, len(SecAtt_lst[5:])+1)), [])
+ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[5:], r)), range(1, len(ThrAtt_lst[5:])+1)), [])
 
 Sub_pop        =  []
 Sub_pop_count  =  0
@@ -65,13 +65,16 @@ for i in range ( 0, len(FirAtt_Sprset)):
                # FirAtt referes to 'Job Title', which is array cell #5, 
                # SecAtt referes to 'Employer', which is array cell #4,
                # ThrAtt referes to 'Calendar Year', which is array cell #7,
-                if ((df2.iloc[row][5] in (np.union1d(FirAtt_Sprset[i], FirAtt_lst[:4]))) & \
-                    (df2.iloc[row][4] in (np.union1d(SecAtt_Sprset[j], SecAtt_lst[:4])) & \
-                     (df2.iloc[row][7] in (np.union1d(ThrAtt_Sprset[z], ThrAtt_lst[:4]))):
+               # isnt union1d(FirAtt_Sprset[i], FirAtt_lst[:5])= FirAtt_Sprset[i]+ FirAtt_lst[:5]
+                if ((df2.iloc[row][5] in (np.union1d(FirAtt_Sprset[i], FirAtt_lst[:5]))) & \
+                    (df2.iloc[row][4] in  (np.union1d(SecAtt_Sprset[j], SecAtt_lst[:5]))) & \
+                     (df2.iloc[row][7] in (np.union1d(ThrAtt_Sprset[z], ThrAtt_lst[:5]))):
                     pop_size += 1
                     Sal_list.append(df2.iloc[row]['Salary Paid'])
                     ID_list.append(df2.iloc[row]['Unnamed: 0'])
-            print '\n\n Population size for first attribute set=', i, 'Second attribute set=', j, 'Third attribute set=', z , 'is' , pop_size    
+            print '\n\n Population size for orignial context plus first attribute set=', i, \
+                    'Second attribute set=', j, 'Third attribute set=', z , 'is' , pop_size
+            print 
 
 #####################         Outlier detection in subpopulations      ########################
             if (pop_size >= 4):
@@ -81,9 +84,9 @@ for i in range ( 0, len(FirAtt_Sprset)):
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
                 for outlier_finder in range(0, len(ID_list)):
                     if ((ID_list[outlier_finder]==Queried_ID) & (Sal_outliers[outlier_finder]==-1)): 
-                        Sub_pop.append([i,j,pop_size, Score, Sub_pop_count])
+                        Sub_pop.append([i,j,z,pop_size, Score, Sub_pop_count])
                         Sub_pop_count += 1
-print '\n\nSubpopulations are[Att1_index, Att2_index, Population_size, Score, ID]\n\n', Sub_pop	
+                    print '\n\nSubpopulations are[Att1_index, Att2_index, Att3_index, Population_size, Score, ID]\n\n', Sub_pop	
  
 t1 = time.time()
 print '\n\nThe required time for running the program is:',  t1-t0
