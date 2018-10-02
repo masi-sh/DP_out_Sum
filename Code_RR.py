@@ -39,19 +39,17 @@ Queried_ID = Sal_outliers.argmin()
 
 print '\n\n Outliers in the selected context are: ', Sal_outliers
 
-########################               ##############################
-
-
-FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[4:], r)), range(1, len(FirAtt_lst)+1)), [])
-SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[4:], r)), range(1, len(SecAtt_lst)+1)), [])
-ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[4:], r)), range(1, len(ThrAtt_lst)+1)), [])
+################# Exploring Contexts larger than the original to find the maximal #################
+FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[4:], r)), range(1, len(FirAtt_lst[4:])+1)), [])
+SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[4:], r)), range(1, len(SecAtt_lst[4:])+1)), [])
+ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[4:], r)), range(1, len(ThrAtt_lst[4:])+1)), [])
 
 Sub_pop        =  []
 Sub_pop_count  =  0
 Epsilon        =  0.1  ### Privacy Parameter
 
 t0 = time.time()
-
+############################## FIX IT TO FIND MAXIMAL ##########################################
 for i in range ( 0, len(FirAtt_Sprset)):
  for j in range(0, len(SecAtt_Sprset)):
    for z in range(0, len(ThrAtt_Sprset)):
