@@ -35,9 +35,9 @@ Orgn_Ctx = df2.loc[df2['Job Title'].isin([FirAtt_lst[0],FirAtt_lst[1],FirAtt_lst
 #######################     Finding an outlier in the selected context      #######################
 clf = LocalOutlierFactor(n_neighbors=20)
 Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
-Queried_ID = Sal_outliers.argmin()
+Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 
-print '\n\n Outlier\'s index in the selected context is: ', Queried_ID
+print '\n\n Outlier\'s ID in the selected context is: ', Queried_ID
 
 ################# Exploring Contexts larger than the original to find the maximal #################
 FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[5:], r)), range(1, len(FirAtt_lst[5:])+1)), [])
