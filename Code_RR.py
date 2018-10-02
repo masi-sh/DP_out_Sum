@@ -37,7 +37,7 @@ clf = LocalOutlierFactor(n_neighbors=20)
 Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
 Queried_ID = Sal_outliers.argmin()
 
-print '\n\n Outliers in the selected context are: ', Sal_outliers
+print '\n\n Outlier\'s index in the selected context is: ', Queried_ID
 
 ################# Exploring Contexts larger than the original to find the maximal #################
 FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[5:], r)), range(1, len(FirAtt_lst[5:])+1)), [])
