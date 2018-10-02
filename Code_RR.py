@@ -68,7 +68,7 @@ for i in range ( 0, len(FirAtt_Sprset)):
                # isnt union1d(FirAtt_Sprset[i], FirAtt_lst[:5])= FirAtt_Sprset[i]+ FirAtt_lst[:5]
                 if ((df2.iloc[row][5] in (np.union1d(FirAtt_Sprset[i], FirAtt_lst[:5]))) & \
                     (df2.iloc[row][4] in  (np.union1d(SecAtt_Sprset[j], SecAtt_lst[:5]))) & \
-                     (df2.iloc[row][7] in (np.union1d(ThrAtt_Sprset[z], ThrAtt_lst[:5]))):
+                     (df2.iloc[row][7] in (np.union1d(ThrAtt_Sprset[z], ThrAtt_lst[:5])))):
                     pop_size += 1
                     Sal_list.append(df2.iloc[row]['Salary Paid'])
                     ID_list.append(df2.iloc[row]['Unnamed: 0'])
