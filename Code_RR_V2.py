@@ -73,8 +73,7 @@ for i in range (0, len(FirAtt_Sprset)):
                     Sal_list.append(df2.iloc[row]['Salary Paid'])
                     ID_list.append(df2.iloc[row]['Unnamed: 0'])
             print '\n\n Population size for orignial context plus first attribute set=', i, \
-                    'Second attribute set=', j, 'Third attribute set=', z , 'is' , pop_size
-            print 
+                    'Second attribute set=', j, 'Third attribute set=', z , 'is' , pop_siz 
 
 #####################         Outlier detection in subpopulations      ########################
             if (pop_size >= 4):
