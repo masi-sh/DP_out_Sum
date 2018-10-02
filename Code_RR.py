@@ -26,15 +26,29 @@ FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
 
-FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst, r)), range(1, len(FirAtt_lst)+1)), [])
-SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst, r)), range(1, len(SecAtt_lst)+1)), [])
-ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst, r)), range(1, len(ThrAtt_lst)+1)), [])
+###################################     Forming a context   #######################################
+Orgn_Ctx = df2.loc[df2['Job Title'].isin([FirAtt_lst[0],FirAtt_lst[1],FirAtt_lst[2],FirAtt_lst[3]]) & \
+                   df2['Employer'].isin([SecAtt_lst[0],SecAtt_lst[1], SecAtt_lst[2],SecAtt_lst[3]]) & \
+                   df2['Calendar Year'].isin([ThrAtt_lst[0],ThrAtt_lst[1],ThrAtt_lst[2],ThrAtt_lst[3]])]
 
-Queried_ID    = '2'
- 
-Sub_pop        = []
-Sub_pop_count  = 0
-Epsilon       =  0.1  ### Privacy Parameter
+
+#######################     Finding an outlier in the selected context      #######################
+clf = LocalOutlierFactor(n_neighbors=20)
+Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
+Queried_ID = Sal_outliers.argmin()
+
+print '\n\n Outliers in the selected context are: ', Sal_outliers
+
+########################               ##############################
+
+
+FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[4:], r)), range(1, len(FirAtt_lst)+1)), [])
+SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[4:], r)), range(1, len(SecAtt_lst)+1)), [])
+ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[4:], r)), range(1, len(ThrAtt_lst)+1)), [])
+
+Sub_pop        =  []
+Sub_pop_count  =  0
+Epsilon        =  0.1  ### Privacy Parameter
 
 t0 = time.time()
 
