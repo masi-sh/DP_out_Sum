@@ -74,8 +74,6 @@ for i in range ( 0, len(FirAtt_Sprset)):
                     ID_list.append(df2.iloc[row]['Unnamed: 0'])
             print '\n\n Population size for orignial context plus first attribute set=', i, \
                     'Second attribute set=', j, 'Third attribute set=', z , 'is' , pop_size
-            print 
-
 #####################         Outlier detection in subpopulations      ########################
             if (pop_size >= 4):
                 Score = np.exp(Epsilon *(pop_size** (1. / 3)))
