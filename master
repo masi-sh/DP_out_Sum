@@ -1,0 +1,5 @@
+#!/bin/bash
+for ((i=1; i<=127; i++))
+do
+    python ~/Downloads/SalaryData/parallel.py i i+1 &
+done
