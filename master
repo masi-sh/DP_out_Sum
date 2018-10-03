@@ -1,5 +1,5 @@
 #!/bin/bash
-for ((i=1; i<=127; i++))
+for ((i=0; i<=127; i++))
 do
     python ~/DP_out_Sum/parallel.py i i+1 &
 done
