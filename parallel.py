@@ -52,7 +52,7 @@ Epsilon        =  0.1  ### Privacy Parameter
 t0 = time.time()
 ############################## Finds Maximal ##########################################
 for i in range (0, len(FirAtt_Sprset)):
- for j in range(float(sys.argv[1]), float(sys.argv[2])):
+ for j in range(int(sys.argv[1]), int(sys.argv[2])):
    for z in range(0, len(ThrAtt_Sprset)):
             Sal_list   = []
             ID_list    = []
