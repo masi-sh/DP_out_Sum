@@ -58,7 +58,7 @@ for i in range (0, len(FirAtt_Sprset)):
             ID_list    = []
             pop_size   = 0
             Score      = 1
-            #csvfile.seek(0)
+            csvfile.seek(0)
             print '\n\n The ', i, 'th element in the first attribute\'s superset'
             print '\n\n The ', j, 'th element in the Second attribute\'s superset'
             print '\n\n The ', z, 'th element in the third attribute\'s superset'
