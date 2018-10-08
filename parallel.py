@@ -98,8 +98,8 @@ for i in range (0, len(FirAtt_Sprset)):
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
 		context.append([i,j,z,pop_size])
 		outputfile.write('Context:\n'+str(context)+'\n')
-		print '\n\nlen(ID_list) is', len(ID_list)
-		print '\n\nSal_outliers for the context++ is', Sal_outliers, '\n\n An example of outlier here is', df2.iloc[Sal_outliers.argmin()][1]
+		#print '\n\nlen(ID_list) is', len(ID_list)
+		#print '\n\nSal_outliers for the context++ is', Sal_outliers, '\n\n An example of outlier here is', df2.iloc[Sal_outliers.argmin()][1]
                 for outlier_finder in range(0, len(ID_list)):
                     if (Sal_outliers[outlier_finder]==-1): 
 			output.append(ID_list[outlier_finder]) 
@@ -108,17 +108,17 @@ for i in range (0, len(FirAtt_Sprset)):
                         	Sub_pop_count += 1
 		Sub_pop_sorted = sorted(Sub_pop,key=lambda Sub_pop: Sub_pop[3])
 		
-		print '\n\nSubpopulations are[Att1_index, Att2_index, Population_size, Score, ID]\n\n', Sub_pop	
+		#print '\n\nSubpopulations are[Att1_index, Att2_index, Population_size, Score, ID]\n\n', Sub_pop	
 		print '\n\nSubpopulations sorted based on the population size are[Att1_index, Att2_index, Att2_index, Population_size, Score, ID]\n\n', \
                 Sub_pop_sorted
-		print '\n\n str(output)', str(output)
+		#print '\n\n str(output)', str(output)
 		outputfile.write('ID_list:\n'+str(output)+'\n')
 
 outputfile.close()
 if Sub_pop_sorted:
 	fcntl.flock(Maxfile, fcntl.LOCK_EX)
 	Maxfile.write(str(Sub_pop_sorted[Sub_pop_count-1])+'\n')
-  fcntl.flock(Maxfile, fcntl.LOCK_UN)	
+        fcntl.flock(Maxfile, fcntl.LOCK_UN)	
 	print 'Max_population is', Sub_pop_sorted[Sub_pop_count-1]   
 
 Maxfile.close()
