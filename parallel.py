@@ -7,7 +7,7 @@ import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
 cf.go_offline()
-df = pd.read_csv("~/Downloads/SalaryData/combined.csv")
+df = pd.read_csv("~/DP_out_Sum/combined.csv")
 import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
@@ -15,8 +15,8 @@ from collections import Counter
 import time
 import fcntl
 
-outputname  = '~/Downloads/SalaryData/Outputs/output'+sys.argv[1]+'.txt'
-Maxfilename = '~/Downloads/SalaryData/Max.txt'
+outputname  = '~/DP_out_Sum/Outputs/output'+sys.argv[1]+'.txt'
+Maxfilename = '~/DP_out_Sum/Max.txt'
 
 
 emp_counts = df['Employer'].value_counts()
