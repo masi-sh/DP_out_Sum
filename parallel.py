@@ -15,8 +15,8 @@ from collections import Counter
 import time
 import fcntl
 
-outputname  = '~/DP_out_Sum/Outputs/output'+sys.argv[1]+'.txt'
-Maxfilename = '~/DP_out_Sum/Max.txt'
+outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
+Maxfilename = 'Max.txt'
 
 
 emp_counts = df['Employer'].value_counts()
