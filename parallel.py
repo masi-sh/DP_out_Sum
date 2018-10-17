@@ -15,7 +15,7 @@ from collections import Counter
 import time
 import fcntl
 
-outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
+#outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 Maxfilename = 'Max.txt'
 
 
@@ -56,7 +56,7 @@ output         =  []
 context        =  []
 
 t0 = time.time()
-outputfile = open(outputname,'w')
+#outputfile = open(outputname,'w')
 Maxfile    = open(Maxfilename, 'a')
 
 ############################## Finds Maximal ##########################################
@@ -112,9 +112,9 @@ for i in range (0, len(FirAtt_Sprset)):
 		print '\n\nSubpopulations sorted based on the population size are[Att1_index, Att2_index, Att2_index, Population_size, Score, ID]\n\n', \
                 Sub_pop_sorted
 		#print '\n\n str(output)', str(output)
-		outputfile.write('ID_list:\n'+str(output)+'\n')
+#		outputfile.write('ID_list:\n'+str(output)+'\n')
 
-outputfile.close()
+#outputfile.close()
 if Sub_pop_sorted:
 	fcntl.flock(Maxfile, fcntl.LOCK_EX)
 	Maxfile.write(str(Sub_pop_sorted[Sub_pop_count-1])+'\n')
