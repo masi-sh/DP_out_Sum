@@ -33,7 +33,7 @@ ThrAtt_lst = df2['Calendar Year'].unique()
 
 ###################################     Forming a context   #######################################
 Orgn_Ctx = df2.loc[df2['Job Title'].isin([FirAtt_lst[0],FirAtt_lst[1],FirAtt_lst[2],FirAtt_lst[3], FirAtt_lst[4]]) & \
-                   df2['Employer'].isin([SecAtt_lst[0],SecAtt_lst[1], SecAtt_lst[2],SecAtt_lst[3], SecAtt_lst[4]]) & \
+                   df2['Employer'].isin([SecAtt_lst[0],SecAtt_lst[1], SecAtt_lst[2],SecAtt_lst[3], SecAtt_lst[4], SecAtt_lst[5]]) & \
                    df2['Calendar Year'].isin([ThrAtt_lst[0],ThrAtt_lst[1],ThrAtt_lst[2],ThrAtt_lst[3],ThrAtt_lst[4]])]
 
 
@@ -46,7 +46,7 @@ print '\n\n Outlier\'s ID in the selected context is: ', Queried_ID
 
 ################# Exploring Contexts larger than the original to find the maximal #################
 FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[5:], r)), range(1, len(FirAtt_lst[5:])+1)), [])
-SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[5:], r)), range(1, len(SecAtt_lst[5:])+1)), [])
+SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[6:], r)), range(1, len(SecAtt_lst[6:])+1)), [])
 ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[5:], r)), range(1, len(ThrAtt_lst[5:])+1)), [])
 
 Sub_pop        =  []
@@ -78,7 +78,7 @@ for i in range (0, len(FirAtt_Sprset)):
                 # ThrAtt referes to 'Calendar Year', which is array cell #7,
                 # isnt union1d(FirAtt_Sprset[i], FirAtt_lst[:5])= FirAtt_Sprset[i]+ FirAtt_lst[:5]
                 if ((df2.iloc[row][5] in (np.union1d(FirAtt_Sprset[i], FirAtt_lst[:5]))) & \
-                    (df2.iloc[row][4] in  (np.union1d(SecAtt_Sprset[j], SecAtt_lst[:5]))) & \
+                    (df2.iloc[row][4] in  (np.union1d(SecAtt_Sprset[j], SecAtt_lst[:6]))) & \
                      (df2.iloc[row][7] in (np.union1d(ThrAtt_Sprset[z], ThrAtt_lst[:5])))):
                     pop_size += 1
                     Sal_list.append(df2.iloc[row]['Salary Paid'])
