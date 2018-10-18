@@ -97,7 +97,7 @@ for i in range (0, len(FirAtt_Sprset)):
                 clf = LocalOutlierFactor(n_neighbors=20)
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
 		context.append([i,j,z,pop_size])
-		outputfile.write('Context:\n'+str(context)+'\n')
+		#outputfile.write('Context:\n'+str(context)+'\n')
 		#print '\n\nlen(ID_list) is', len(ID_list)
 		#print '\n\nSal_outliers for the context++ is', Sal_outliers, '\n\n An example of outlier here is', df2.iloc[Sal_outliers.argmin()][1]
                 for outlier_finder in range(0, len(ID_list)):
