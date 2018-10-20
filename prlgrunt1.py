@@ -61,8 +61,8 @@ Maxfile    = open(Maxfilename, 'a')
 
 ############################## Finds Maximal ##########################################
 for i in range (int(sys.argv[1]), (int(sys.argv[1])+1)):
-for j in range(128,160):
-   for z in range(0, len(ThrAtt_Sprset)):
+   for j in range(128,160):
+      for z in range(0, len(ThrAtt_Sprset)):
             Sal_list   = []
             ID_list    = []
             pop_size   = 0
