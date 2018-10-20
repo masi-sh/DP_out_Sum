@@ -15,7 +15,7 @@ from collections import Counter
 import time
 import fcntl
 
-#outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
+outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 Maxfilename = 'Max.txt'
 
 
@@ -56,7 +56,7 @@ output         =  []
 context        =  []
 
 t0 = time.time()
-#outputfile = open(outputname,'w')
+outputfile = open(outputname,'w')
 Maxfile    = open(Maxfilename, 'a')
 
 ############################## Finds Maximal ##########################################
@@ -97,7 +97,7 @@ for i in range (int(sys.argv[1]), (int(sys.argv[1])+1)):
                 clf = LocalOutlierFactor(n_neighbors=20)
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
 		context.append([i,j,z,pop_size])
-		#outputfile.write('Context:\n'+str(context)+'\n')
+		outputfile.write('Context:\n'+str(context)+'\n')
 		#print '\n\nlen(ID_list) is', len(ID_list)
 		#print '\n\nSal_outliers for the context++ is', Sal_outliers, '\n\n An example of outlier here is', df2.iloc[Sal_outliers.argmin()][1]
                 for outlier_finder in range(0, len(ID_list)):
@@ -112,9 +112,9 @@ for i in range (int(sys.argv[1]), (int(sys.argv[1])+1)):
 		print '\n\nSubpopulations sorted based on the population size are[Att1_index, Att2_index, Att2_index, Population_size, Score, ID]\n\n', \
                 Sub_pop_sorted
 		#print '\n\n str(output)', str(output)
-#		outputfile.write('ID_list:\n'+str(output)+'\n')
+		outputfile.write('ID_list:\n'+str(output)+'\n')
 
-#outputfile.close()
+outputfile.close()
 if Sub_pop_sorted:
 	fcntl.flock(Maxfile, fcntl.LOCK_EX)
 	Maxfile.write(str(Sub_pop_sorted[Sub_pop_count-1])+'\n')
