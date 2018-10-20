@@ -1,5 +1,5 @@
 #!/bin/bash
 for ((i=0; i<=127; i++))
 do
-    python ~/DP_out_Sum/prltick1.py  "$i"  "$i+1" &
+    python ~/DP_out_Sum/prlgrunt2.py  "$i"  "$i+1" &
 done
