@@ -1,5 +1,0 @@
-#!/bin/bash
-for ((i=224; i<=255; i++))
-do
-    python ~/DP_out_Sum/parallelwrite.py  "$i"  "$i+1" &
-done
