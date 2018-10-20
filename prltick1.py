@@ -60,8 +60,8 @@ t0 = time.time()
 Maxfile    = open(Maxfilename, 'a')
 
 ############################## Finds Maximal ##########################################
-for i in range (0, len(FirAtt_Sprset)):
- for j in range(int(sys.argv[1]), (int(sys.argv[1])+1)):
+for i in range (int(sys.argv[1]), (int(sys.argv[1])+1)):
+ for j in range(0,32):
    for z in range(0, len(ThrAtt_Sprset)):
             Sal_list   = []
             ID_list    = []
