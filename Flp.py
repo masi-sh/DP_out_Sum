@@ -49,8 +49,12 @@ Orgn_Ctx_bar = df2.loc[(df2['Job Title'].isin([FirAtt_lst[0],FirAtt_lst[1],FirAt
 		       (df2['Calendar Year'].isin([ThrAtt_lst[0],ThrAtt_lst[1], ThrAtt_lst[2], ThrAtt_lst[3], ThrAtt_lst[4]])==False)]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FIXED UP TO HERE%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-frac = 0.15
-sample = np.random.binomial(1, frac, size=10)
+Flp_p = 0.7
+p_que = np.random.binomial(1, Flp_p, size=100)
+Flp_q = 0.4
+q_que = np.random.binomial(1, Flp_q, size=100)
+
+for 
 Flp_Ctx = 
 
 
