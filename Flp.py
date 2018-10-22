@@ -16,7 +16,7 @@ import time
 import fcntl
 
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
-Maxfilename = 'Max.txt'
+#Maxfilename = 'Max.txt'
 
 
 emp_counts = df['Employer'].value_counts()
@@ -42,7 +42,22 @@ clf = LocalOutlierFactor(n_neighbors=20)
 Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 
-print '\n\n Outlier\'s ID in the selected context is: ', Queried_ID
+print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
+
+Orgn_Ctx_bar = df2.loc[(df2['Job Title'].isin([FirAtt_lst[0],FirAtt_lst[1],FirAtt_lst[2],FirAtt_lst[3],FirAtt_lst[4]])==False) & \
+		       (df2['Employer'].isin([SecAtt_lst[0],SecAtt_lst[1], SecAtt_lst[2], SecAtt_lst[3], SecAtt_lst[4], SecAtt_lst[5]])==False) & \
+		       (df2['Calendar Year'].isin([ThrAtt_lst[0],ThrAtt_lst[1], ThrAtt_lst[2], ThrAtt_lst[3], ThrAtt_lst[4]])==False)]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FIXED UP TO HERE%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+frac = 0.15
+sample = np.random.binomial(1, frac, size=10)
+Flp_Ctx = 
+
+
+
+
+
+
 
 ################# Exploring Contexts larger than the original to find the maximal #################
 FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[5:], r)), range(1, len(FirAtt_lst[5:])+1)), [])
