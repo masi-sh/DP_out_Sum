@@ -44,18 +44,44 @@ Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 
-Orgn_Ctx_bar = df2.loc[(df2['Job Title'].isin([FirAtt_lst[0],FirAtt_lst[1],FirAtt_lst[2],FirAtt_lst[3],FirAtt_lst[4]])==False) & \
-		       (df2['Employer'].isin([SecAtt_lst[0],SecAtt_lst[1], SecAtt_lst[2], SecAtt_lst[3], SecAtt_lst[4], SecAtt_lst[5]])==False) & \
-		       (df2['Calendar Year'].isin([ThrAtt_lst[0],ThrAtt_lst[1], ThrAtt_lst[2], ThrAtt_lst[3], ThrAtt_lst[4]])==False)]
+#Orgn_Ctx_bar = df2.loc[(df2['Job Title'].isin([FirAtt_lst[0],FirAtt_lst[1],FirAtt_lst[2],FirAtt_lst[3],FirAtt_lst[4]])==False) & \
+#		       (df2['Employer'].isin([SecAtt_lst[0],SecAtt_lst[1], SecAtt_lst[2], SecAtt_lst[3], SecAtt_lst[4], SecAtt_lst[5]])==False) & \
+#		       (df2['Calendar Year'].isin([ThrAtt_lst[0],ThrAtt_lst[1], ThrAtt_lst[2], ThrAtt_lst[3], ThrAtt_lst[4]])==False)]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FIXED UP TO HERE%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Flp_p = 0.7
-p_que = np.random.binomial(1, Flp_p, size=100)
-Flp_q = 0.4
-q_que = np.random.binomial(1, Flp_q, size=100)
 
-for 
-Flp_Ctx = 
+Flp_Ctx = pd.DataFrame()
+############### Keeping attribute values in the original context, p =pr(1-->1)  ###############
+Flp_p = 0.7
+############### Adding attribute values not in the original context, q =pr(0-->1) ###############
+Flp_q = 0.4
+FirAtt_Flp = []
+SecAtt_Flp = []
+ThrAtt_Flp = []
+
+###################################        Flip the context ctx_Flpr(=100) times            ###############################
+for Ctx_Flpr  in range (0, 100):
+	for Ctx_sprt in range (0, len(FirAtt_lst)):
+		if (Ctx_sprt<5 and np.random.binomial(size=1, n=1, p= Flp_p)==1):
+			FirAtt_Flp = Flp_Ctx.append(df2[df2['Job Title']==FirAtt_lst[Ctx_sprt]])
+		elif (Ctx_sprt>=5 and np.random.binomial(size=1, n=1, p= Flp_q)==1):
+			FirAtt_Flp = Flp_Ctx.append(df2[df2['Job Title']==FirAtt_lst[Ctx_sprt]])
+
+	for Ctx_sprt in range (0, len(SecAtt_lst)):
+		if (Ctx_sprt<5 and np.random.binomial(size=1, n=1, p= Flp_p)==1):
+			SecAtt_Flp = Flp_Ctx.append(df2[df2['Employer']==SecAtt_lst[Ctx_sprt]])
+		elif (Ctx_sprt>=5 and np.random.binomial(size=1, n=1, p= Flp_q)==1):
+			SecAtt_Flp = Flp_Ctx.append(df2[df2['Employer']==SecAtt_lst[Ctx_sprt]])
+		
+	for Ctx_sprt in range (0, len(ThrAtt_lst)):
+		if (Ctx_sprt<5 and np.random.binomial(size=1, n=1, p= Flp_p)==1):
+			ThrAtt_Flp = Flp_Ctx.append(df2[df2['Calendar Year']==ThrAtt_lst[Ctx_sprt]])
+		elif (Ctx_sprt>=5 and np.random.binomial(size=1, n=1, p= Flp_q)==1):
+			ThrAtt_Flp = Flp_Ctx.append(df2[df2['Calendar Year']==ThrAtt_lst[Ctx_sprt]])
+			
+	Flp_Ctx.append(df2[(df2['Job Title'].isin(FirAtt_Flp)) & (df2['Employer'].isin(SecAtt_Flp)) & \
+			   (df2['Calendar Year'].isin(ThrAtt_Flp))])
+
 
 
 
