@@ -60,7 +60,9 @@ SecAtt_Flp = []
 ThrAtt_Flp = []
 
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
+
 for Ctx_Flpr  in range (0, 100):
+	
 	for Ctx_sprt in range (0, len(FirAtt_lst)):
 		if (Ctx_sprt<5 and np.random.binomial(size=1, n=1, p= Flp_p)==1):
 			FirAtt_Flp = Flp_Ctx.append(df2[df2['Job Title']==FirAtt_lst[Ctx_sprt]])
