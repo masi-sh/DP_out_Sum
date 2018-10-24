@@ -50,13 +50,13 @@ print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 
 Flp_Ctx = pd.DataFrame()
 ############### Keeping attribute values in the original context, p =pr(1-->1)  ###############
-Flp_p = 0.7
+Flp_p        = 0.7
 ############### Adding attribute values not in the original context, q =pr(0-->1) ###############
-Flp_q = 0.4
-FirAtt_Flp = []
-SecAtt_Flp = []
-ThrAtt_Flp = []
-
+Flp_q        = 0.4
+FirAtt_Flp   = []
+SecAtt_Flp   = []
+ThrAtt_Flp   = []
+Flp_Sal_list = []
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FIXED UP TO HERE%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -79,10 +79,32 @@ for Ctx_Flpr  in range (0, 100):
 
 	Flp_Ctx.append(df2[(df2['Job Title'].isin(FirAtt_Flp)) & (df2['Employer'].isin(SecAtt_Flp)) & \
 			   (df2['Calendar Year'].isin(ThrAtt_Flp))])
+	
+	for row in range(Flp_Ctx.shape[0]):
+                    Sal_list.append(Flp_Ctx.iloc[row]['Salary Paid'])
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FIXED UP TO HERE%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
+	if (Flp_Ctx.shape[0] >= 20):
+                #Score = np.exp(Epsilon *(pop_size** (1. / 3)))
+                Sal_arr= np.array(Sal_list)
+                clf = LocalOutlierFactor(n_neighbors=20)
+                Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
+		context.append([i,j,z,pop_size])
+		#outputfile.write('Context:\n'+str(context)+'\n')
+		#print '\n\nlen(ID_list) is', len(ID_list)
+		#print '\n\nSal_outliers for the context++ is', Sal_outliers, '\n\n An example of outlier here is', df2.iloc[Sal_outliers.argmin()][1]
+                for outlier_finder in range(0, len(ID_list)):
+                    if (Sal_outliers[outlier_finder]==-1): 
+			output.append(ID_list[outlier_finder]) 
+			if (ID_list[outlier_finder]==Queried_ID):                       
+				Sub_pop.append([i,j,z,pop_size, Score, Sub_pop_count])
+                        	Sub_pop_count += 1
+		Sub_pop_sorted = sorted(Sub_pop,key=lambda Sub_pop: Sub_pop[3])
+		
+		#print '\n\nSubpopulations are[Att1_index, Att2_index, Population_size, Score, ID]\n\n', Sub_pop	
+		print '\n\nSubpopulations sorted based on the population size are[Att1_index, Att2_index, Att2_index, Population_size, Score, ID]\n\n', \
+                Sub_pop_sorted
+		#print '\n\n str(output)', str(output)
 
 
 
