@@ -83,20 +83,21 @@ for Ctx_Flpr  in range (0, 100):
 	for row in range(Flp_Ctx.shape[0]):
                     Sal_list.append(Flp_Ctx.iloc[row]['Salary Paid'])
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FIXED UP TO HERE%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 	if (Flp_Ctx.shape[0] >= 20):
                 #Score = np.exp(Epsilon *(pop_size** (1. / 3)))
                 Sal_arr= np.array(Sal_list)
                 clf = LocalOutlierFactor(n_neighbors=20)
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
+				
+		
 		context.append([i,j,z,pop_size])
 		#outputfile.write('Context:\n'+str(context)+'\n')
 		#print '\n\nlen(ID_list) is', len(ID_list)
 		#print '\n\nSal_outliers for the context++ is', Sal_outliers, '\n\n An example of outlier here is', df2.iloc[Sal_outliers.argmin()][1]
                 for outlier_finder in range(0, len(ID_list)):
-                    if (Sal_outliers[outlier_finder]==-1): 
-			output.append(ID_list[outlier_finder]) 
-			if (ID_list[outlier_finder]==Queried_ID):                       
+                    if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)):                      
+				
+				
 				Sub_pop.append([i,j,z,pop_size, Score, Sub_pop_count])
                         	Sub_pop_count += 1
 		Sub_pop_sorted = sorted(Sub_pop,key=lambda Sub_pop: Sub_pop[3])
