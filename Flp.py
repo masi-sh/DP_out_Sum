@@ -87,9 +87,42 @@ while Ctx_Flpr<100:
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)):  
-			Flp_lst.append([Score, FirAtt_Flp, SecAtt_Flp, ThrAtt_Flp])
+			Flp_lst.append([Ctx_Flpr, Score, Flp_Ctx.shape[0], FirAtt_Flp, SecAtt_Flp, ThrAtt_Flp])
 			print '\n Ctx_Flpr is = ', CTx_Flpr, '\n The private context candidates are: \n',Flp_lst 
 			Ctx_Flpr+=1
+			
+       ###################################      Sampling form Exp Mech Result      #################################
+elements = [elem[0] for elem in Flp_lst]	
+probabilities = [prob[1] for prob in Flp_lst]/(sum ([prob[1] for prob in Flp_lst]))
+ExpRes = np.random.choice(elements, num_smp, p = probabilities)
+print '\n\nThe number of candidates in Exponential mechanism range is:'           , len(Flp_lst)
+print '\n\nIDs sampled from Exponential mechanism output are\n\n',  ExpRes
+
+	#################################    Population size in the samples     #####################################
+Flp_Ctx_sizes =[]  			
+for ids in ExpRes:
+	Flp_Ctx_sizes.append(Flp_lst[ids][2])
+print '\n\nThe population size in the perturbed candidates are: \n\n', Flp_Ctx_sizes
+
+
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          FIXED UP TO HERE           %%%%%%%%5%%%%%%%%%%%%%%
+
+	########################    Sample distance from outlier(in the number of attribute values)    ##############
+print '\n\noutlier_index is: ', Queried_ID
+#Smpl_out_dist =  [(len(Flp_lst[ids][3] - FirAtt_lst) + (len(Flp_lst[ids][4] - SecAtt_lst)\
+		+ (len(Flp_lst[ids][5] - ThrAtt_lst) for ids in ExpRes] 
+
+#print '\n\nThe distance(in the number of attribute values) between perturbed candidates and the outlier is: \n\n', \
+#       Smpl_out_dist
+
+#t1 = time.time()
+#print '\n\nThe required time for running the program is:',  t1-t0
+
+plt.figure(1)
+pd.Series(Flp_Ctx_sizes).value_counts().plot('bar')
+#plt.figure(2)
+#pd.Series(Smpl_out_dist).value_counts().plot('bar')
+plt.show()
 
 			
 		
