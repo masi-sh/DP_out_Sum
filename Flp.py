@@ -81,18 +81,15 @@ while Ctx_Flpr<100:
 	if (Flp_Ctx.shape[0] >= 20):
 		for row in range(Flp_Ctx.shape[0]):
                     Sal_list.append(Flp_Ctx.iloc[row]['Salary Paid'])
-                #Score = np.exp(Epsilon *((Flp_Ctx.shape[0])** (1. / 3)))
+                Score = np.exp(Epsilon *(np.log(Flp_Ctx.shape[0])))
                 Sal_arr= np.array(Sal_list)
                 clf = LocalOutlierFactor(n_neighbors=20)
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)):  
-			Flp_lst.append([FirAtt_Flp, SecAtt_Flp, ThrAtt_Flp])
-			Ctx_Flpr+=1
+			Flp_lst.append([Score, FirAtt_Flp, SecAtt_Flp, ThrAtt_Flp])
 			print '\n Ctx_Flpr is = ', CTx_Flpr, '\n The private context candidates are: \n',Flp_lst 
-                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FIXED UP TO HERE%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		#outputfile.write('Context:\n'+str(context)+'\n')
-		#print '\n\nlen(ID_list) is', len(ID_list)
-		#print '\n\nSal_outliers for the context++ is', Sal_outliers, '\n\n An example of outlier here is', df2.iloc[Sal_outliers.argmin()][1]
-               
+			Ctx_Flpr+=1
+
+			
 		
