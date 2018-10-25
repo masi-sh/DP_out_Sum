@@ -89,7 +89,7 @@ while Ctx_Flpr<100:
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)):  
 			Flp_lst.append([FirAtt_Flp, SecAtt_Flp, ThrAtt_Flp])
 			Ctx_Flpr+=1
-			
+			print '\n Ctx_Flpr is = ', CTx_Flpr, '\n The private context candidates are: \n',Flp_lst 
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FIXED UP TO HERE%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		#outputfile.write('Context:\n'+str(context)+'\n')
 		#print '\n\nlen(ID_list) is', len(ID_list)
