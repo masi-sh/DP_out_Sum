@@ -105,7 +105,7 @@ for ids in ExpRes:
 print '\n\nThe population size in the perturbed candidates are: \n\n', Flp_Ctx_sizes
 
 
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          FIXED UP TO HERE           %%%%%%%%5%%%%%%%%%%%%%%
+	#	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          FIXED UP TO HERE           %%%%%%%%5%%%%%%%%%%%%%%
 
 	########################    Sample distance from outlier(in the number of attribute values)    ##############
 print '\n\noutlier_index is: ', Queried_ID
