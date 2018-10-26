@@ -56,7 +56,7 @@ Flp_lst      = []
 Sal_list     = []
 
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
-
+Epsilon = 0.1
 Ctx_Flpr = 0
 while Ctx_Flpr<100:
 	##### context separator scans all elements in the attribute lists to find where to apply p or q #######
