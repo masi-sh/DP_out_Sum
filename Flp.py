@@ -52,7 +52,8 @@ Flp_q        = 0.4
 FirAtt_Flp   = np.zeros(len(FirAtt_lst), dtype=np.int)
 SecAtt_Flp   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Flp   = np.zeros(len(ThrAtt_lst), dtype=np.int)
-Flp_lst = []
+Flp_lst      = []
+Sal_list     = []
 
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 
