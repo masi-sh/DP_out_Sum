@@ -54,6 +54,7 @@ SecAtt_Flp   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Flp   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 Flp_lst      = []
 Sal_list     = []
+ID_list      = []
 
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 Epsilon = 0.1
@@ -82,6 +83,7 @@ while Ctx_Flpr<100:
 	if (Flp_Ctx.shape[0] >= 20):
 		for row in range(Flp_Ctx.shape[0]):
                     Sal_list.append(Flp_Ctx.iloc[row]['Salary Paid'])
+		    ID_list.append(Flp_Ctx.iloc[row]['Unnamed: 0'])
                 Score = np.exp(Epsilon *(np.log(Flp_Ctx.shape[0])))
                 Sal_arr= np.array(Sal_list)
                 clf = LocalOutlierFactor(n_neighbors=20)
