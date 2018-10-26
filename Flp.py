@@ -110,7 +110,7 @@ print '\n\nThe population size in the perturbed candidates are: \n\n', Flp_Ctx_s
 	########################    Sample distance from outlier(in the number of attribute values)    ##############
 print '\n\noutlier_index is: ', Queried_ID
 #Smpl_out_dist =  [(len(Flp_lst[ids][3] - FirAtt_lst) + (len(Flp_lst[ids][4] - SecAtt_lst)\
-		+ (len(Flp_lst[ids][5] - ThrAtt_lst) for ids in ExpRes] 
+#		+ (len(Flp_lst[ids][5] - ThrAtt_lst) for ids in ExpRes] 
 
 #print '\n\nThe distance(in the number of attribute values) between perturbed candidates and the outlier is: \n\n', \
 #       Smpl_out_dist
