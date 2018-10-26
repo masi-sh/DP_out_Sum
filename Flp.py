@@ -91,7 +91,7 @@ while Ctx_Flpr<100:
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)):  
 			Flp_lst.append([Ctx_Flpr, Score, Flp_Ctx.shape[0], FirAtt_Flp, SecAtt_Flp, ThrAtt_Flp])
-			print '\n Ctx_Flpr is = ', CTx_Flpr, '\n The private context candidates are: \n',Flp_lst 
+			print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n',Flp_lst 
 			Ctx_Flpr+=1
 			
        ###################################      Sampling form Exp Mech Result      #################################
