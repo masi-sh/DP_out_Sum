@@ -95,6 +95,7 @@ while Ctx_Flpr<100:
 			Ctx_Flpr+=1
 			
        ###################################      Sampling form Exp Mech Result      #################################
+num_smp  = 100
 elements = [elem[0] for elem in Flp_lst]	
 probabilities = [prob[1] for prob in Flp_lst]/(sum ([prob[1] for prob in Flp_lst]))
 ExpRes = np.random.choice(elements, num_smp, p = probabilities)
