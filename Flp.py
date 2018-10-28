@@ -1,7 +1,8 @@
+import matplotlib
+matplotlib.use('Agg')
 import sys
 import pandas as pd
 import numpy as np
-import matplotlib
 import cufflinks as cf
 import plotly
 import plotly.offline as py
