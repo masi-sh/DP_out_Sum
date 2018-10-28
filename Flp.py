@@ -50,9 +50,6 @@ Flp_Ctx = pd.DataFrame()
 Flp_p        = 0.7
          ############### Adding attribute values not in the original context, q =pr(0-->1) ###############
 Flp_q        = 0.4
-FirAtt_Flp   = np.zeros(len(FirAtt_lst), dtype=np.int)
-SecAtt_Flp   = np.zeros(len(SecAtt_lst), dtype=np.int)
-ThrAtt_Flp   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 Flp_lst      = []
 Sal_list     = []
 ID_list      = []
@@ -62,16 +59,19 @@ Epsilon = 0.1
 Ctx_Flpr = 0
 while Ctx_Flpr<100:
 	##### context separator scans all elements in the attribute lists to find where to apply p or q #######
+	FirAtt_Flp   = np.zeros(len(FirAtt_lst), dtype=np.int)
 	for Ctx_sprt in range (0, len(FirAtt_lst)):
 		if ((Ctx_sprt<5 and np.random.binomial(size=1, n=1, p= Flp_p)==1) or \
 		    (Ctx_sprt>=5 and np.random.binomial(size=1, n=1, p= Flp_q)==1)):
 			FirAtt_Flp[Ctx_sprt]=1
 
+	SecAtt_Flp   = np.zeros(len(SecAtt_lst), dtype=np.int)
 	for Ctx_sprt in range (0, len(SecAtt_lst)):
 		if ((Ctx_sprt<5 and np.random.binomial(size=1, n=1, p= Flp_p)==1) or \
 		    (Ctx_sprt>=5 and np.random.binomial(size=1, n=1, p= Flp_q)==1)):
 			SecAtt_Flp[Ctx_sprt]=1
 	
+	ThrAtt_Flp   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 	for Ctx_sprt in range (0, len(ThrAtt_lst)):
 		if ((Ctx_sprt<5 and np.random.binomial(size=1, n=1, p= Flp_p)==1) or \
 		    (Ctx_sprt>=5 and np.random.binomial(size=1, n=1, p= Flp_q)==1)):
