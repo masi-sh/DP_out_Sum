@@ -50,9 +50,6 @@ Flp_p        = 0.7
          ############### Adding attribute values not in the original context, q =pr(0-->1) ###############
 Flp_q        = 0.4
 Flp_lst      = []
-Sal_list     = []
-ID_list      = []
-
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 Epsilon = 0.1
 Ctx_Flpr = 0
@@ -80,7 +77,8 @@ while Ctx_Flpr<100:
 	Flp_Ctx= Flp_Ctx.append(df2[(df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Flp == 1)])) & \
 				    (df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Flp == 1)])) & \
 				    (df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Flp == 1)]))])
-	
+	Sal_list     = []
+	ID_list      = []
 	if (Flp_Ctx.shape[0] >= 20):
 		for row in range(Flp_Ctx.shape[0]):
                     Sal_list.append(Flp_Ctx.iloc[row]['Salary Paid'])
