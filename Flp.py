@@ -45,7 +45,6 @@ Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 
-Flp_Ctx = pd.DataFrame()
         ############### Keeping attribute values in the original context, p =pr(1-->1)  ###############
 Flp_p        = 0.7
          ############### Adding attribute values not in the original context, q =pr(0-->1) ###############
@@ -77,6 +76,7 @@ while Ctx_Flpr<100:
 		    (Ctx_sprt>=5 and np.random.binomial(size=1, n=1, p= Flp_q)==1)):
 			ThrAtt_Flp[Ctx_sprt]=1
 	
+	Flp_Ctx = pd.DataFrame()
 	Flp_Ctx= Flp_Ctx.append(df2[(df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Flp == 1)])) & \
 				    (df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Flp == 1)])) & \
 				    (df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Flp == 1)]))])
