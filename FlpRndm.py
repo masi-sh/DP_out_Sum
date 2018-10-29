@@ -31,12 +31,17 @@ df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
+FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
+SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
+ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 
 ###################################     Forming a context   #######################################
-Orgn_Ctx = df2.loc[df2['Job Title'].isin([FirAtt_lst[0],FirAtt_lst[1],FirAtt_lst[2],FirAtt_lst[3], FirAtt_lst[4]]) & \
-                   df2['Employer'].isin([SecAtt_lst[0],SecAtt_lst[1], SecAtt_lst[2],SecAtt_lst[3], SecAtt_lst[4], SecAtt_lst[5]]) & \
-                   df2['Calendar Year'].isin([ThrAtt_lst[0],ThrAtt_lst[1],ThrAtt_lst[2],ThrAtt_lst[3],ThrAtt_lst[4]])]
-
+FirAtt_Vec[0:5]=1
+SecAtt_Vec[0:6]=1
+ThrAtt_Vec[0:5]=1
+Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
+		   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
+		   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
 
 #######################     Finding an outlier in the selected context      #######################
 clf = LocalOutlierFactor(n_neighbors=20)
@@ -46,32 +51,32 @@ Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 
         ############### Keeping attribute values in the original context, p =pr(1-->1)  ###############
-Flp_p        = 0.7
+Flp_p        = 0.5
          ############### Adding attribute values not in the original context, q =pr(0-->1) ###############
-Flp_q        = 0.4
+Flp_q        = 0.5
 Flp_lst      = []
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 Epsilon = 0.1
 Ctx_Flpr = 0
 while Ctx_Flpr<100:
 	##### context separator scans all elements in the attribute lists to find where to apply p or q #######
-	FirAtt_Flp   = np.zeros(len(FirAtt_lst), dtype=np.int)
-	for Ctx_sprt in range (0, len(FirAtt_lst)):
-		if ((Ctx_sprt<5 and np.random.binomial(size=1, n=1, p= Flp_p)==1) or \
-		    (Ctx_sprt>=5 and np.random.binomial(size=1, n=1, p= Flp_q)==1)):
-			FirAtt_Flp[Ctx_sprt]=1
-
+    	FirAtt_Flp   = np.zeros(len(FirAtt_lst), dtype=np.int)
+    	for Ctx_sprt in range (0, len(FirAtt_lst)):
+        	if (np.random.binomial(size=1, n=1, p= Flp_p)==1):
+                	FirAtt_Flp[Ctx_sprt]=1
+   	print '\n FirAtt_Flp for', Ctx_Flpr,'is', FirAtt_Flp  
+    	
 	SecAtt_Flp   = np.zeros(len(SecAtt_lst), dtype=np.int)
-	for Ctx_sprt in range (0, len(SecAtt_lst)):
-		if ((Ctx_sprt<5 and np.random.binomial(size=1, n=1, p= Flp_p)==1) or \
-		    (Ctx_sprt>=5 and np.random.binomial(size=1, n=1, p= Flp_q)==1)):
-			SecAtt_Flp[Ctx_sprt]=1
-	
-	ThrAtt_Flp   = np.zeros(len(ThrAtt_lst), dtype=np.int)
-	for Ctx_sprt in range (0, len(ThrAtt_lst)):
-		if ((Ctx_sprt<5 and np.random.binomial(size=1, n=1, p= Flp_p)==1) or \
-		    (Ctx_sprt>=5 and np.random.binomial(size=1, n=1, p= Flp_q)==1)):
-			ThrAtt_Flp[Ctx_sprt]=1
+    	for Ctx_sprt in range (0, len(SecAtt_lst)):
+        	if (np.random.binomial(size=1, n=1, p= Flp_p)==1):
+                	SecAtt_Flp[Ctx_sprt]=1
+    	print '\n SecAtt_Flp for', Ctx_Flpr,'is', SecAtt_Flp
+    
+    	ThrAtt_Flp   = np.zeros(len(ThrAtt_lst), dtype=np.int)
+    	for Ctx_sprt in range (0, len(ThrAtt_lst)):
+        	if (np.random.binomial(size=1, n=1, p= Flp_p)==1):
+                	ThrAtt_Flp[Ctx_sprt]=1
+    	print '\n ThrAtt_Flp for', Ctx_Flpr,'is', ThrAtt_Flp
 	
 	Flp_Ctx = pd.DataFrame()
 	Flp_Ctx= Flp_Ctx.append(df2[(df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Flp == 1)])) & \
@@ -90,7 +95,7 @@ while Ctx_Flpr<100:
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)):  
 			Flp_lst.append([Ctx_Flpr, Score, Flp_Ctx.shape[0], FirAtt_Flp, SecAtt_Flp, ThrAtt_Flp])
-			print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n',Flp_lst 
+			print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n',Flp_lst
 			Ctx_Flpr+=1
 			
        ###################################      Sampling form Exp Mech Result      #################################
