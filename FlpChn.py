@@ -58,6 +58,7 @@ Flp_lst      = []
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 Epsilon = 0.1
 Ctx_Flpr = 0
+t0 = time.time()
 while Ctx_Flpr<100:
 	##### context separator scans all elements in the attribute lists to find where to apply p or q #######
     	FirAtt_Flp   = np.zeros(len(FirAtt_lst), dtype=np.int)
@@ -117,6 +118,8 @@ for ids in ExpRes:
 	Flp_Ctx_sizes.append(Flp_lst[ids][2])
 print '\n\nThe population size in the perturbed candidates are: \n\n', Flp_Ctx_sizes
 
+t1 = time.time()
+print '\n\nThe required time for running the program is:', t1-t0
 
 	#	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          FIXED UP TO HERE           %%%%%%%%5%%%%%%%%%%%%%%
 
