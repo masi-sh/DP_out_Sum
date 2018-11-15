@@ -46,3 +46,8 @@ Okay... I think it is time to add some notes on the codes, if I remember which o
   Does a similar job to Flp, but "chains" from the original context, instead of starting from Org_Ctx over and over
   
   
+  Parallel & Parallelwrite:
+  There is something wrong with parellelwrite, and I used Parallel to customize the files in the Mstr_Prl directory,
+  or the other way around (To Be Editted)
+  
+  
