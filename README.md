@@ -1,6 +1,8 @@
 # DP_out_Sum
 DP outlier on Real Dataset
 
+Re-implemented version in go: https://github.com/Nik-U/DpOutSum
+
 Okay... I think it is time to add some notes on the codes, if I remember which one is doing what!
 
  	 Mstr_Prl:
