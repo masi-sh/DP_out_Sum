@@ -23,8 +23,8 @@ import fcntl
 emp_counts = df['Employer'].value_counts()
 df2 = df[df['Employer'].isin(emp_counts[emp_counts > 3000].index)]
 
-emp_counts = df2["Job Title"].value_counts()
-df2 = df2[df2["Job Title"].isin(emp_counts[emp_counts > 3000].index)]
+job_counts = df2["Job Title"].value_counts()
+df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
 df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
 
 
