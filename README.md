@@ -35,7 +35,9 @@ Okay... I think it is time to add some notes on the codes, if I remember which o
     Generates randomized responses from an original context. Does this multiple times, but each time starts from Org_Ctx
     
     FlpChn:
-    Does a similar job to Flp, but "chains" from the original context, instead of starting from Org_Ctx over and over
+    Does a similar job to Flp, but "chains" from the original context, instead of starting from Org_Ctx over and overd
+        
+BFS.py samples from the set of valid contexts through Breadth-first traversing. It starts from the original context and flips a bit(a 1 or a 0) randomly in each step. Keeps the old samples in a queue, and in each step picks where to branch from by applying exponential mechanism on the smaples in the queue; in the exp mechanism utility is the population size of the context.  
   
  
   
