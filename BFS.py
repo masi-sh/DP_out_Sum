@@ -108,5 +108,5 @@ while Ctx_Flpr<99:
 				      ' and has ', Queue[ExpRes[0]][2], 'population'
 t1 = time.time()
 print '\n The final Queue is \n', Queue     
-print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', (t1-t0) / 3600, 'hours and',\
-((t1-t0) % 3600)/60, ' minutes and',  ((t1-t0) % 3600)%60, 'seconds\n'
+print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', int((t1-t0) / 3600), 'hours and',\
+int(((t1-t0) % 3600)/60), ' minutes and',  ((t1-t0) % 3600)%60, 'seconds\n'
