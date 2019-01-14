@@ -15,7 +15,7 @@ from sklearn.neighbors import LocalOutlierFactor
 from collections import Counter
 import time
 import fcntl
-import random
+import randoms 
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
@@ -55,9 +55,6 @@ ThrAtt_Vec[0:5] = 1
 Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
 		   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
 		   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
-
-
-Queue = Queue.append(Orgn_Ctx)
 
 #######################     Finding an outlier in the selected context      #######################
 clf = LocalOutlierFactor(n_neighbors=20)
