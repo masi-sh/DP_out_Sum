@@ -106,5 +106,7 @@ while Ctx_Flpr<99:
 			Ctx_Flpr+=1
 			print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],\
 				      ' and has ', Queue[ExpRes[0]][2], 'population'
-			
-print '\n The final Queue is \n', Queue      
+t1 = time.time()
+print '\n The final Queue is \n', Queue     
+print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', (t1-t0) / 3600, 'hours and',\
+((t1-t0) % 3600)/60, ' minutes and',  ((t1-t0) % 3600)%60, 'seconds\n'
