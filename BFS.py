@@ -15,7 +15,7 @@ from sklearn.neighbors import LocalOutlierFactor
 from collections import Counter
 import time
 import fcntl
-import randoms 
+import random
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
