@@ -123,9 +123,9 @@ while Ctx_Flpr<99:
 	Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
 	SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 	### delete next line, we can store the sub-exp result directly in the queue, we dont need an intermediate bfs_flp 
-	#BFS_Flp[:]  = Sub_q[SubRes[0]][3][:]
+	#BFS_Flp[:]  = sub_q[SubRes[0]][3][:]
 	
-	Queue.append([Ctx_Flpr+1, Sub_q[SubRes[0]][1], Sub_q[SubRes[0]][2], Sub_q[SubRes[0]][3][:]])
+	Queue.append([Ctx_Flpr+1, sub_q[SubRes[0]][1], sub_q[SubRes[0]][2], sub_q[SubRes[0]][3][:]])
 	print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
 	###################################       Sampling form the Queue ###############################
 	elements = [elem[0] for elem in Queue]	
