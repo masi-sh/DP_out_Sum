@@ -97,7 +97,7 @@ while Ctx_Flpr<99:
 	BFS_Flp[:] = mnml_Vec[:]
 	
 	Flp_bit  = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1))
-	while BFS_Flp[Flp_bit] = 1: 
+	while BFS_Flp[Flp_bit] == 1: 
 		Flp_bit  = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1)) 
 	BFS_Flp[Flp_bit] = 1	
 	BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
