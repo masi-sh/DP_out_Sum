@@ -118,16 +118,16 @@ while Ctx_Flpr<99:
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
 	                Score = np.exp(Epsilon *(0.001*BFS_Ctx.shape[0]))
-			Queue.append([Ctx_Flpr+1, Score, BFS_Ctx.shape[0], BFS_Flp])
-			print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
+	Queue.append([Ctx_Flpr+1, Score, BFS_Ctx.shape[0], BFS_Flp])
+	print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
 	###################################       Sampling form the Queue ###############################
-			elements = [elem[0] for elem in Queue]	
-			probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
-			ExpRes = np.random.choice(elements, 1, p = probabilities)
-			BFS_Vec[:]  = Queue[ExpRes[0]][3][:]
-			Ctx_Flpr+=1
-			print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],\
-				      ' and has ', Queue[ExpRes[0]][2], 'population'
+	elements = [elem[0] for elem in Queue]	
+	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
+	ExpRes = np.random.choice(elements, 1, p = probabilities)
+	mnml_Vec[:]  = Queue[ExpRes[0]][3][:]
+	Ctx_Flpr+=1
+	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],\
+	' and has ', Queue[ExpRes[0]][2], 'population'
 t1 = time.time()
 print '\n The final Queue is \n', Queue     
 print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', int((t1-t0) / 3600), 'hours and',\
