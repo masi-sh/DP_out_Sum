@@ -116,7 +116,7 @@ while Ctx_Flpr<99:
 			for outlier_finder in range(0, len(Sub_ID_list)):
 				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
 					Sub_Score = np.exp(Epsilon *(0.001*BFS_Ctx.shape[0]))
-			sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], BFS_Ctx])
+			sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], BFS_Flp])
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
 	Sub_elements = [elem[0] for elem in sub_q]	
