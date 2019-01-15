@@ -88,14 +88,13 @@ for outlier_finder in range(0, len(Min_ID_list)):
 		
 Queue	= [[0, Min_Score, mnml_Ctx.shape[0], mnml_Vec]]
 ###################################      Add to the minimal context ctx_Flpr(=100) times    ###############################
-sub_q    = []
+
 Ctx_Flpr = 0
 BFS_Flp  = np.zeros(len(mnml_Vec)) 
 t0       = time.time()
 
 while Ctx_Flpr<99:  
-	
-	
+	sub_q        = []
 	Sub_Sal_list = []
 	Sub_ID_list  = []
 	Sub_Score = np.exp(Epsilon *(0))
