@@ -75,17 +75,18 @@ Epsilon = 0.1
 Min_Sal_list = []
 Min_ID_list  = []
 for row in range(mnml_Ctx.shape[0]):
-                    Min_Sal_list.append(mnml_Ctx.iloc[row]['Salary Paid'])
-		    Min_ID_list.append(mnml_Ctx.iloc[row]['Unnamed: 0'])
+	Min_Sal_list.append(mnml_Ctx.iloc[row]['Salary Paid'])
+	Min_ID_list.append(mnml_Ctx.iloc[row]['Unnamed: 0'])
 			
-                Min_Score = np.exp(Epsilon *(0))
-                Min_Sal_arr= np.array(Min_Sal_list)
-                clf = LocalOutlierFactor(n_neighbors=20)
-                Min_Sal_outliers = clf.fit_predict(Min_Sal_arr.reshape(-1,1))
-		for outlier_finder in range(0, len(Min_ID_list)):
-                    if ((Min_Sal_outliers[outlier_finder]==-1) and (Min_ID_list[outlier_finder]==Queried_ID)): 
-	                Min_Score = np.exp(Epsilon *(0.001*mnml_Ctx.shape[0]))
-Queue	     = [[0, Min_Score, mnml_Ctx.shape[0], mnml_Vec]]
+Min_Score = np.exp(Epsilon *(0))
+Min_Sal_arr= np.array(Min_Sal_list)
+clf = LocalOutlierFactor(n_neighbors=20)
+Min_Sal_outliers = clf.fit_predict(Min_Sal_arr.reshape(-1,1))
+for outlier_finder in range(0, len(Min_ID_list)):
+	if ((Min_Sal_outliers[outlier_finder]==-1) and (Min_ID_list[outlier_finder]==Queried_ID)): 
+		Min_Score = np.exp(Epsilon *(0.001*mnml_Ctx.shape[0]))
+		
+Queue	= [[0, Min_Score, mnml_Ctx.shape[0], mnml_Vec]]
 ###################################      Add to the minimal context ctx_Flpr(=100) times    ###############################
 Ctx_Flpr = 0
 t0 = time.time()
