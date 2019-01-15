@@ -68,7 +68,7 @@ BFS_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
 np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
         ################################# Initiating queue with Org_ctx informaiton  ########################
 Epsilon = 0.1
-Queue	     = [[0, np.exp(Epsilon *(np.log(Orgn_Ctx.shape[0]))), Orgn_Ctx.shape[0], BFS_Vec]]
+Queue	     = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], BFS_Vec]]
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 Ctx_Flpr = 0
 t0 = time.time()
@@ -90,7 +90,7 @@ while Ctx_Flpr<99:
                     Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
 		    ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])
 			
-                Score = np.exp(Epsilon *(np.log(BFS_Ctx.shape[0])))
+                Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
                 Sal_arr= np.array(Sal_list)
                 clf = LocalOutlierFactor(n_neighbors=20)
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
