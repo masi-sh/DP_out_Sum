@@ -95,27 +95,30 @@ t0       = time.time()
 
 while Ctx_Flpr<99:  
 	sub_q        = []
+	flpd	 = []
 	Sub_Sal_list = []
 	Sub_ID_list  = []
-	Sub_Score = np.exp(Epsilon *(0))
 	
-	for Flp_bit in range(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1)):
+	for Flp_bit in range(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))):
+		Sub_Score = np.exp(Epsilon *(0))
 		BFS_Flp[:] = mnml_Vec[:]
 		if BFS_Flp[Flp_bit] == 0:
 			BFS_Flp[Flp_bit] = 1
 			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
 					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
-			for row in range(BFS_Ctx.shape[0]):
-				Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
-				Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
-			Sub_Sal_arr= np.array(Sub_Sal_list)
-			clf = LocalOutlierFactor(n_neighbors=20)
-			Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
-			for outlier_finder in range(0, len(Sub_ID_list)):
-				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
-					Sub_Score = np.exp(Epsilon *(0.001*BFS_Ctx.shape[0]))
-			sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], BFS_Flp])
+			if (BFS_Ctx.shape[0] > 20):
+				for row in range(BFS_Ctx.shape[0]):
+					Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
+					Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
+				Sub_Sal_arr= np.array(Sub_Sal_list)
+				clf = LocalOutlierFactor(n_neighbors=20)
+				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
+				for outlier_finder in range(0, len(Sub_ID_list)):
+					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
+						Sub_Score = np.exp(Epsilon *(0.001*BFS_Ctx.shape[0]))
+				flpd[:] = BFS_Flp[:]
+            			sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
 	Sub_elements = [elem[0] for elem in sub_q]	
