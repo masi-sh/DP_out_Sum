@@ -82,7 +82,6 @@ while Ctx_Flpr<99:
 	Sub_ID_list  = []
 	
 	for Flp_bit in range(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))):
-		Sub_Score = np.exp(Epsilon *(0))
 		BFS_Flp[:] = BFS_Vec[:]
 		#if BFS_Flp[Flp_bit] == 0:
 		BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
@@ -99,8 +98,8 @@ while Ctx_Flpr<99:
 			for outlier_finder in range(0, len(Sub_ID_list)):
 				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
 					Sub_Score = np.exp(Epsilon *(0.001*BFS_Ctx.shape[0]))
-			flpd[:] = BFS_Flp[:]
-            		sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
+					flpd[:] = BFS_Flp[:]
+            				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
 	Sub_elements = [elem[0] for elem in sub_q]	
