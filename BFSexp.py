@@ -62,36 +62,18 @@ Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 
-############################################      Minimal Context        #############################################
-mnml_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
-mnml_Vec[np.where(FirAtt_lst == df2.values[Queried_ID][5])] = 1 
-mnml_Vec[np.where(SecAtt_lst == df2.values[Queried_ID][4])[0]+len(FirAtt_lst)] = 1 
-mnml_Vec[np.where(ThrAtt_lst == df2.values[Queried_ID][7])[0]+(len(FirAtt_lst)+len(SecAtt_lst))] = 1 
-mnml_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(mnml_Vec[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
-                   df2['Employer'].isin(SecAtt_lst[np.where(mnml_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
-                   df2['Calendar Year'].isin(ThrAtt_lst[np.where(mnml_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
-        ################################# Initiating queue with Minimal Context informaiton  ########################
+  ##############################        Making Queue of samples and initiating it       ############################
+BFS_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
+           ################################# Initiating queue with Org_ctx informaiton  ########################
 Epsilon = 0.1
-Min_Sal_list = []
-Min_ID_list  = []
-for row in range(mnml_Ctx.shape[0]):
-	Min_Sal_list.append(mnml_Ctx.iloc[row]['Salary Paid'])
-	Min_ID_list.append(mnml_Ctx.iloc[row]['Unnamed: 0'])
-			
-Min_Score = np.exp(Epsilon *(0))
-Min_Sal_arr= np.array(Min_Sal_list)
-clf = LocalOutlierFactor(n_neighbors=20)
-Min_Sal_outliers = clf.fit_predict(Min_Sal_arr.reshape(-1,1))
-for outlier_finder in range(0, len(Min_ID_list)):
-	if ((Min_Sal_outliers[outlier_finder]==-1) and (Min_ID_list[outlier_finder]==Queried_ID)): 
-		Min_Score = np.exp(Epsilon *(0.001*mnml_Ctx.shape[0]))
-		
-Queue	= [[0, Min_Score, mnml_Ctx.shape[0], mnml_Vec]]
-###################################      Add to the minimal context ctx_Flpr(=100) times    ###############################
+Queue = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], BFS_Vec]]
+
+###############      Make the queue by BFS traverse from ctx_org by exp through children, ctx_Flpr(=100) times    ###################
 
 Ctx_Flpr = 0
-BFS_Flp  = np.zeros(len(mnml_Vec)) 
 t0       = time.time()
+BFS_Flp  = np.zeros(len(mnml_Vec)) 
 
 while Ctx_Flpr<99:  
 	sub_q        = []
@@ -101,24 +83,24 @@ while Ctx_Flpr<99:
 	
 	for Flp_bit in range(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))):
 		Sub_Score = np.exp(Epsilon *(0))
-		BFS_Flp[:] = mnml_Vec[:]
-		if BFS_Flp[Flp_bit] == 0:
-			BFS_Flp[Flp_bit] = 1
-			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
-					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
-					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
-			if (BFS_Ctx.shape[0] > 20):
-				for row in range(BFS_Ctx.shape[0]):
-					Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
-					Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
-				Sub_Sal_arr= np.array(Sub_Sal_list)
-				clf = LocalOutlierFactor(n_neighbors=20)
-				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
-				for outlier_finder in range(0, len(Sub_ID_list)):
-					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
-						Sub_Score = np.exp(Epsilon *(0.001*BFS_Ctx.shape[0]))
-				flpd[:] = BFS_Flp[:]
-            			sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
+		BFS_Flp[:] = BFS_Vec[:]
+		#if BFS_Flp[Flp_bit] == 0:
+		BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
+		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
+				   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
+				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
+		if (BFS_Ctx.shape[0] > 20):
+			for row in range(BFS_Ctx.shape[0]):
+				Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
+				Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
+			Sub_Sal_arr= np.array(Sub_Sal_list)
+			clf = LocalOutlierFactor(n_neighbors=20)
+			Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
+			for outlier_finder in range(0, len(Sub_ID_list)):
+				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
+					Sub_Score = np.exp(Epsilon *(0.001*BFS_Ctx.shape[0]))
+			flpd[:] = BFS_Flp[:]
+            		sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
 	Sub_elements = [elem[0] for elem in sub_q]	
@@ -135,7 +117,7 @@ while Ctx_Flpr<99:
 	elements = [elem[0] for elem in Queue]	
 	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
 	ExpRes = np.random.choice(elements, 1, p = probabilities)
-	mnml_Vec[:]  = Queue[ExpRes[0]][3][:]
+	BFS_Vec[:]  = Queue[ExpRes[0]][3][:]
 	Ctx_Flpr+=1
 	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],\
 	' and has ', Queue[ExpRes[0]][2], 'population'
