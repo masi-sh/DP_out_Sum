@@ -73,7 +73,7 @@ Queue = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], BFS_Vec]]
 
 Ctx_Flpr = 0
 t0       = time.time()
-BFS_Flp  = np.zeros(len(mnml_Vec)) 
+BFS_Flp  = np.zeros(len(BFS_Vec)) 
 
 while Ctx_Flpr<99:  
 	sub_q        = []
