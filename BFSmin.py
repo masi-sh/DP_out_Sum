@@ -89,11 +89,12 @@ for outlier_finder in range(0, len(Min_ID_list)):
 Queue	= [[0, Min_Score, mnml_Ctx.shape[0], mnml_Vec]]
 ###################################      Add to the minimal context ctx_Flpr(=100) times    ###############################
 Ctx_Flpr = 0
-t0 = time.time()
 BFS_Flp = np.zeros(len(mnml_Vec)) 
+flp_scr = 0
+t0      = time.time()
 
 while Ctx_Flpr<99:  
-	
+	flpd = []
 	BFS_Flp[:] = mnml_Vec[:]
 	
 	Flp_bit  = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1))
@@ -118,7 +119,9 @@ while Ctx_Flpr<99:
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
 	                Score = np.exp(Epsilon *(0.001*BFS_Ctx.shape[0]))
-	Queue.append([Ctx_Flpr+1, Score, BFS_Ctx.shape[0], BFS_Flp])
+		flp_scr = Score
+		flpd[:] = BFS_Flp[:]
+	Queue.append([Ctx_Flpr+1, flp_scr, BFS_Ctx.shape[0], flpd[:]])
 	print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
 	###################################       Sampling form the Queue ###############################
 	elements = [elem[0] for elem in Queue]	
