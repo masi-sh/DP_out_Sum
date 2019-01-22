@@ -127,8 +127,8 @@ while Ctx_Flpr<99:
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
 	                Score = np.exp(Epsilon *(0.001*BFS_Ctx.shape[0]))
-		flp_scr = Score
-		flpd[:] = BFS_Flp[:]
+	flp_scr = Score
+	flpd[:] = BFS_Flp[:]
 	Queue.append([Ctx_Flpr+1, flp_scr, BFS_Ctx.shape[0], flpd[:]])
 	print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
 	###################################       Sampling form the Queue ###############################
