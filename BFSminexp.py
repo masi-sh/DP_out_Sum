@@ -62,7 +62,7 @@ Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 
-############################################      Minimal Context        #############################################
+############################      Minimal Context, and transfer vector as intermediate value in queueing     #############################################
 mnml_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
 mnml_Vec[np.where(FirAtt_lst == df2.values[Queried_ID][5])] = 1 
 mnml_Vec[np.where(SecAtt_lst == df2.values[Queried_ID][4])[0]+len(FirAtt_lst)] = 1 
@@ -70,7 +70,12 @@ mnml_Vec[np.where(ThrAtt_lst == df2.values[Queried_ID][7])[0]+(len(FirAtt_lst)+l
 mnml_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(mnml_Vec[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
                    df2['Employer'].isin(SecAtt_lst[np.where(mnml_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
                    df2['Calendar Year'].isin(ThrAtt_lst[np.where(mnml_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
-        ################################# Initiating queue with Minimal Context informaiton  ########################
+
+trsf_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+trsf_Vec[np.where(FirAtt_lst == df2.values[Queried_ID][5])] = 1 
+trsf_Vec[np.where(SecAtt_lst == df2.values[Queried_ID][4])[0]+len(FirAtt_lst)] = 1 
+trsf_Vec[np.where(ThrAtt_lst == df2.values[Queried_ID][7])[0]+(len(FirAtt_lst)+len(SecAtt_lst))] = 1
+################################# Initiating queue with Minimal Context informaiton  ########################
 Epsilon = 0.1
 Min_Sal_list = []
 Min_ID_list  = []
@@ -90,18 +95,19 @@ Queue	= [[0, Min_Score, mnml_Ctx.shape[0], mnml_Vec]]
 ###################################      Add to the minimal context ctx_Flpr(=100) times    ###############################
 
 Ctx_Flpr = 0
-BFS_Flp  = np.zeros(len(mnml_Vec)) 
+BFS_Flp  = np.zeros(len(mnml_Vec))
 t0       = time.time()
 
 while Ctx_Flpr<99:  
 	sub_q        = []
-	flpd	 = []
+	flpd	     = []
 	Sub_Sal_list = []
 	Sub_ID_list  = []
+	Q_Cpr    = np.zeros(len(mnml_Vec))
 	
 	for Flp_bit in range(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))):
 		Sub_Score = np.exp(Epsilon *(0))
-		BFS_Flp[:] = mnml_Vec[:]
+		BFS_Flp[:]   = trsf_Vec[:]
 		if BFS_Flp[Flp_bit] == 0:
 			BFS_Flp[Flp_bit] = 1
 			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
@@ -117,25 +123,32 @@ while Ctx_Flpr<99:
 				for outlier_finder in range(0, len(Sub_ID_list)):
 					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
 						Sub_Score = np.exp(Epsilon *(0.001*BFS_Ctx.shape[0]))
-				flpd[:] = BFS_Flp[:]
-            			sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
+			flpd[:] = BFS_Flp[:]
+            		sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
 	Sub_elements = [elem[0] for elem in sub_q]	
 	Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
 	SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 	### delete next line, we can store the sub-exp result directly in the queue, we dont need an intermediate bfs_flp 
-	#BFS_Flp[:]  = sub_q[SubRes[0]][3][:]
-	
+	#BFS_Flp[:]  = sub_q[SubRes[0]][3][:]	
 	for child in range(0, len(sub_q)):
 		if sub_q[child][0] == SubRes[0]:
-			Queue.append([Ctx_Flpr+1, sub_q[child][1], sub_q[child][2], sub_q[child][3][:]])
+			Q_indx = child
+			
+	while any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
+		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
+		for child in range(0, len(sub_q)):
+			if sub_q[child][0] == SubRes[0]:
+				Q_indx = child
+	Queue.append([Ctx_Flpr+1, sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
+	
 	print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
 	###################################       Sampling form the Queue ###############################
 	elements = [elem[0] for elem in Queue]	
 	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
 	ExpRes = np.random.choice(elements, 1, p = probabilities)
-	mnml_Vec[:]  = Queue[ExpRes[0]][3][:]
+	trsf_Vec[:]  = Queue[ExpRes[0]][3][:]
 	Ctx_Flpr+=1
 	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],\
 	' and has ', Queue[ExpRes[0]][2], 'population'
