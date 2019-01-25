@@ -107,10 +107,12 @@ while Ctx_Flpr<99:
 	SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 	### delete next line, we can store the sub-exp result directly in the queue, we dont need an intermediate bfs_flp 
 	#BFS_Flp[:]  = sub_q[SubRes[0]][3][:]
-	
 	for child in range(0, len(sub_q)):
 		if sub_q[child][0] == SubRes[0]:
-			Queue.append([Ctx_Flpr+1, sub_q[child][1], sub_q[child][2], sub_q[child][3][:]])
+			Q_indx = child
+	while not any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
+		Queue.append([Ctx_Flpr+1, sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
+	
 	print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
 	###################################       Sampling form the Queue ###############################
 	elements = [elem[0] for elem in Queue]	
