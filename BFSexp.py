@@ -112,14 +112,14 @@ while Ctx_Flpr<99:
 			Q_indx = child
 	while not any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
 		Queue.append([Ctx_Flpr+1, sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
-	
+		Ctx_Flpr+=1
+
 	print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
 	###################################       Sampling form the Queue ###############################
 	elements = [elem[0] for elem in Queue]	
 	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
 	ExpRes = np.random.choice(elements, 1, p = probabilities)
 	BFS_Vec[:]  = Queue[ExpRes[0]][3][:]
-	Ctx_Flpr+=1
 	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],\
 	' and has ', Queue[ExpRes[0]][2], 'population'
 t1 = time.time()
