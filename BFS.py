@@ -77,11 +77,13 @@ BFS_Flp = np.zeros(len(BFS_Vec))
 while Ctx_Flpr<99:  
 	
 	BFS_Flp[:]        = BFS_Vec[:]
-	Flp_bit           = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1))
-	BFS_Flp[Flp_bit]  = 1 - BFS_Flp[Flp_bit]	
-	BFS_Ctx           = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:17]== 1)].tolist()) &\
-				    df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[18:33]== 1)].tolist()) &\
-				    df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[34:43]== 1)].tolist())]	
+	while any(np.array_equal(BFS_Flp,x[3]) for x in Queue):
+		Flp_bit           = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1))
+		BFS_Flp[Flp_bit]  = 1 - BFS_Flp[Flp_bit]	
+	
+	BFS_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:17]== 1)].tolist()) &\
+			  df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[18:33]== 1)].tolist()) &\
+			  df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[34:43]== 1)].tolist())]	
 	
 	Sal_list     = []
 	ID_list      = []
