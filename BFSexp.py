@@ -80,10 +80,10 @@ BFS_Flp  = np.zeros(len(BFS_Vec))
 while Ctx_Flpr<99:  
 	sub_q        = []
 	flpd	 = []
-	Sub_Sal_list = []
-	Sub_ID_list  = []
 	
 	for Flp_bit in range(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))):
+		Sub_Sal_list = []
+		Sub_ID_list  = []
 		BFS_Flp[:] = BFS_Vec[:]
 		#if BFS_Flp[Flp_bit] == 0:
 		BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
