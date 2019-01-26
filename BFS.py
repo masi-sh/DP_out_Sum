@@ -63,12 +63,14 @@ Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 
 
-  ##############################        Making Queue of samples and initiating it       #################################
+  ###########       Making Queue of samples and initiating it, with Org_Vec, BFS_Vec is the transferring vector    ############################
+Org_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
 BFS_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
 np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
         ################################# Initiating queue with Org_ctx informaiton  ########################
 Epsilon = 0.1
-Queue	     = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], BFS_Vec]]
+Queue	     = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 Ctx_Flpr = 0
 t0 = time.time()
