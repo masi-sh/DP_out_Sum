@@ -70,7 +70,7 @@ BFS_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
 np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
         ################################# Initiating queue with Org_ctx informaiton  ########################
 Epsilon = 0.1
-Queue	     = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Queue	     = [[0, np.exp(Epsilon *(0.01*Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 Ctx_Flpr = 0
 t0 = time.time()
@@ -94,12 +94,12 @@ while Ctx_Flpr<99:
                     Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
 		    ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])
 			
-                Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
                 Sal_arr= np.array(Sal_list)
                 clf = LocalOutlierFactor(n_neighbors=20)
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
+			Score = np.exp(Epsilon *(0.01*BFS_Ctx.shape[0]))
 			Queue.append([Ctx_Flpr+1, Score, BFS_Ctx.shape[0], BFS_Flp])
 			print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
 	###################################       Sampling form the Queue ###############################
