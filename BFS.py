@@ -19,26 +19,18 @@ import random
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
-##### Replace this with manual employer and job values to match with the go file output, this is a temporary fix, 
-##### a long-term solution is fixing the go file
-#emp_counts = df['Employer'].value_counts()
-#df2 = df[df['Employer'].isin(emp_counts[emp_counts > 3000].index)]
+# To get the same original contexts in all files
+random.seed(2019)
 
-#job_counts = df2["Job Title"].value_counts()
-#df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
+#### TO FIX: how to get the same number of output as the go file after filtering?
+emp_counts = df['Employer'].value_counts()
+df2 = df[df['Employer'].isin(emp_counts[emp_counts > 3000].index)]
 
-#FirAtt_lst = df2['Job Title'].unique()
-#SecAtt_lst = df2['Employer'].unique()
-FirAtt_lst = np.asarray(['Elementary Principal', 'Principal', 'Sergeant', 'Police Constable', 'Secondary Teacher', \
-              'Assistant Professor', 'Firefighter', 'Teacher', 'Faculty Member', 'Professor', 'Constable', \
-              'Detective', 'Associate Professor', 'Staff Sergeant', 'Plainclothes Police Constable', \
-              'Senior Technical Engineer/Officer', 'Nuclear Operator', 'Registered Nurs'])
-SecAtt_lst = np.asarray(['Peel District School Board', 'City of Ottawa - Police Services', 'Ryerson University', \
-              'Dufferin-Peel Catholic District School Board', 'University of Western Ontario', 'University of Guelph', \
-              'Community Safety & Correctional Services', 'Attorney General', 'McMaster University', \
-              'City of Toronto - Police Service', 'University of Waterloo', 'Carleton University', 'York University', \
-              'Ontario Power Generation', 'Regional Municipality of Peel - Police Services', \
-              'York Region District School Board'])
+job_counts = df2["Job Title"].value_counts()
+df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
+
+FirAtt_lst = df2['Job Title'].unique()
+SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df['Calendar Year'].unique()
 
 df2 = df.loc[df['Job Title'].isin(FirAtt_lst) & df['Employer'].isin(SecAtt_lst) & df['Calendar Year'].isin(ThrAtt_lst)]
@@ -49,6 +41,7 @@ SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 
 ###################################     Forming a context   #######################################
+Orgn_Ctx_Create = random.random()
 FirAtt_Vec[0:5] = 1
 SecAtt_Vec[0:6] = 1
 ThrAtt_Vec[0:5] = 1
