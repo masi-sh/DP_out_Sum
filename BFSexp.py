@@ -15,7 +15,11 @@ from sklearn.neighbors import LocalOutlierFactor
 from collections import Counter
 import time
 import fcntl
+import gzip
 import random
+
+################ Reference file to find the maximal context ###############
+Ref_file = 'AllCTXOUT.txt.gz'
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
@@ -53,6 +57,31 @@ clf = LocalOutlierFactor(n_neighbors=20)
 Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
+
+#######################     Finding the maximal context for the Queried_ID      #######################
+def maxctx(Ref_file, Queried_ID):
+	max = 0
+	out_size = 0
+	#line_num = 0
+	size = 0
+	#Ctx_line = 0
+	with gzip.open(Ref_file,'rt') as f:
+        	for num, line in enumerate(f, 1):
+                	if line.split(' ')[0].strip()=="Matching":
+				#Ctx_line = num
+                        	size = int((line.split(' '))[5].strip(':\n'))
+			elif line.strip().startswith("ID"):
+				if line.split(' ')[3].strip('#')==str(Queried_ID):
+					out_size = size
+					#Valid_line = Ctx_line
+                	if (max < out_size):
+				max = out_size
+				#line_num = Valid_line 
+	#print "max so far is :", max, "in line number ", line_num
+	f.close()
+	return max;
+
+Maximal = maxctx(Ref_file, Queried_ID)
 
   ###########       Making Queue of samples and initiating it, with Org_Vec, BFS_Vec is the transferring vector    ############################
 Org_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
