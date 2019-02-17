@@ -31,9 +31,9 @@ df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
-ThrAtt_lst = df['Calendar Year'].unique()
+ThrAtt_lst = df2['Calendar Year'].unique()
 
-df2 = df.loc[df['Job Title'].isin(FirAtt_lst) & df['Employer'].isin(SecAtt_lst) & df['Calendar Year'].isin(ThrAtt_lst)]
+df2 = df2.loc[df2['Job Title'].isin(FirAtt_lst) & df2['Employer'].isin(SecAtt_lst) & df2['Calendar Year'].isin(ThrAtt_lst)]
 df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
 
 FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
