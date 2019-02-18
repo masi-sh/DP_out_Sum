@@ -20,6 +20,7 @@ import random
 
 ################ Reference file to find the maximal context ###############
 Ref_file = 'AllCTXOUT.txt.gz'
+Store_file = 'Output.dat'
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
@@ -91,6 +92,7 @@ np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
            ################################# Initiating queue with Org_ctx informaiton  ########################
 Epsilon = 0.1
 Queue = [[0, np.exp(Epsilon *(0.001*Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Data_to_write = []
 
 ###############      Make the queue by BFS traverse from ctx_org by exp through children, ctx_Flpr(=100) times    ###################
 
@@ -145,6 +147,19 @@ while Ctx_Flpr<99:
 	BFS_Vec[:]  = Queue[ExpRes[0]][3][:]
 	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],\
 	' and has ', Queue[ExpRes[0]][2], 'population'
+	
+	Data_to_write.append(Queue[ExpRes[0]][2]) 
+	
+	###################################       Writing final data ###############################
+def writefinal(Data_to_write):
+	ff = open(Store_file,'a+')
+	DataOut = column_stack(Data_to_write)
+	savetxt(ff, DataOut)
+	ff.close(), fmt=('%i5')
+	return;
+
+writefinal(Data_to_write)	
+
 t1 = time.time()
 print '\n The final Queue is \n', Queue     
 print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', int((t1-t0) / 3600), 'hours and',\
