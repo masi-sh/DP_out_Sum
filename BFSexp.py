@@ -52,10 +52,9 @@ def maxctx(Ref_file, Queried_ID):
 	return max;
 
 # Writing final data 
-def writefinal(Data_to_write):
+def writefinal(Data_to_write, dpt):
 	ff = open(Store_file,'a+')
-	DataOut = column_stack(Data_to_write)
-	savetxt(ff, DataOut)
+	savetxt(ff, column_stack(Data_to_write), header = str(dpt)+ 'th data point in BFSexp algorithm')
 	ff.close(), fmt=('%i5')
 	return;
 
@@ -74,7 +73,7 @@ df2 = df2.loc[df2['Job Title'].isin(FirAtt_lst) & df2['Employer'].isin(SecAtt_ls
 df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
 
 #################              Repeat for the number of Datapoints        ########################
-for i in range (Datapoints):
+for dpt in range (Datapoints):
 	FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
 	SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
 	ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
@@ -169,9 +168,9 @@ for i in range (Datapoints):
 	
 	###################################       Writing final data ###############################
 
-	writefinal(Data_to_write)	
-
 	t1 = time.time()
+	writefinal(Data_to_write, dpt)	
+
 	print '\n The final Queue is \n', Queue     	
 	print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', int((t1-t0) / 3600), 'hours and',\
 	int(((t1-t0) % 3600)/60), ' minutes and',  ((t1-t0) % 3600)%60, 'seconds\n'
