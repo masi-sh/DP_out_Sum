@@ -169,7 +169,7 @@ for dpt in range (Datapoints):
 	###################################       Writing final data ###############################
 
 	t1 = time.time()
-	runtime = str(int((t1-t0) / 3600)) + ' hours and ' str(int(((t1-t0) % 3600)/60)) + \
+	runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	writefinal(Data_to_write, dpt, runtime)	
 
