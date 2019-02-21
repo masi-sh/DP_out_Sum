@@ -90,8 +90,8 @@ np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
 BFS_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
 np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
            ################################# Initiating queue with Org_ctx informaiton  ########################
-Epsilon = 0.1
-Queue = [[0, np.exp(Epsilon *(0.001*Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Epsilon = 0.0001
+Queue = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 Data_to_write = []
 
 ###############      Make the queue by BFS traverse from ctx_org by exp through children, ctx_Flpr(=100) times    ###################
@@ -122,7 +122,7 @@ while Ctx_Flpr<99:
 			Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
 			for outlier_finder in range(0, len(Sub_ID_list)):
 				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
-					Sub_Score = np.exp(Epsilon *(0.001*BFS_Ctx.shape[0]))
+					Sub_Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
 					flpd[:] = BFS_Flp[:]
             				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
 			
