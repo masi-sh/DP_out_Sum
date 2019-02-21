@@ -73,7 +73,7 @@ ThrAtt_lst = df2['Calendar Year'].unique()
 df2 = df2.loc[df2['Job Title'].isin(FirAtt_lst) & df2['Employer'].isin(SecAtt_lst) & df2['Calendar Year'].isin(ThrAtt_lst)]
 df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
 
-# Repeat for the number of Datapoints
+#################              Repeat for the number of Datapoints        ########################
 for i in range (Datapoints):
 	FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
 	SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
@@ -83,6 +83,10 @@ for i in range (Datapoints):
 	FirAtt_Vec[0:5] = 1
 	SecAtt_Vec[0:6] = 1
 	ThrAtt_Vec[0:5] = 1
+	FirAtt_Vec[5:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec)-5)
+	FirAtt_Vec[6:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec)-6)
+	FirAtt_Vec[5:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec)-5)
+	
 	Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
 			   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
 			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
