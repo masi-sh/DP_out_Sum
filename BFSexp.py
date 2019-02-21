@@ -73,13 +73,13 @@ ThrAtt_lst = df2['Calendar Year'].unique()
 df2 = df2.loc[df2['Job Title'].isin(FirAtt_lst) & df2['Employer'].isin(SecAtt_lst) & df2['Calendar Year'].isin(ThrAtt_lst)]
 df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
 
-FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
-SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
-ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
-
-###################################     Forming a context   #######################################
 # Repeat for the number of Datapoints
 for i in range (Datapoints):
+	FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
+	SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
+	ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
+	
+###################################     Forming a context   #######################################	
 	FirAtt_Vec[0:5] = 1
 	SecAtt_Vec[0:6] = 1
 	ThrAtt_Vec[0:5] = 1
