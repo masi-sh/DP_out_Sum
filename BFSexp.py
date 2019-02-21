@@ -52,9 +52,9 @@ def maxctx(Ref_file, Queried_ID):
 	return max;
 
 # Writing final data 
-def writefinal(Data_to_write, dpt, runtime):
+def writefinal(Data_to_write, dpt, runtime, ID):
 	ff = open(Store_file,'a+')
-	savetxt(ff, column_stack(Data_to_write), fmt=('%5i'), header = str(dpt)+ 'th data point in BFSexp alg.' + 'takes' + runtime)
+	savetxt(ff, column_stack(Data_to_write), fmt=('%5i'), header = dpt+ 'th data point, ' + ID + ', in BFSexp alg. takes' + runtime)
 	ff.close()
 	return;
 
@@ -171,7 +171,7 @@ for dpt in range (Datapoints):
 	t1 = time.time()
 	runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
-	writefinal(Data_to_write, dpt, runtime)	
+	writefinal(Data_to_write, str(dpt), runtime, str(Queried_ID))	
 
 	print '\n The final Queue is \n', Queue     
 
