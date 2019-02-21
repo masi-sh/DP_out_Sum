@@ -21,7 +21,7 @@ import random
 ################ Reference file to find the maximal context ###############
 Ref_file = 'AllCTXOUT.txt.gz'
 Store_file = 'Output.dat'
-Datapoints = 1
+Datapoints = 3
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
