@@ -52,10 +52,10 @@ def maxctx(Ref_file, Queried_ID):
 	return max;
 
 # Writing final data 
-def writefinal(Data_to_write, dpt):
+def writefinal(Data_to_write, dpt, runtime):
 	ff = open(Store_file,'a+')
-	savetxt(ff, column_stack(Data_to_write), header = str(dpt)+ 'th data point in BFSexp algorithm')
-	ff.close(), fmt=('%i5')
+	savetxt(ff, column_stack(Data_to_write), fmt=('%5i'), header = str(dpt)+ 'th data point in BFSexp alg.' + 'takes' + runtime)
+	ff.close()
 	return;
 
 #### TO FIX: how to get the same number of output as the go file after filtering?
@@ -169,8 +169,10 @@ for dpt in range (Datapoints):
 	###################################       Writing final data ###############################
 
 	t1 = time.time()
-	writefinal(Data_to_write, dpt)	
+	runtime = str(int((t1-t0) / 3600)) + ' hours and ' str(int(((t1-t0) % 3600)/60)) + \
+	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
+	writefinal(Data_to_write, dpt, runtime)	
 
-	print '\n The final Queue is \n', Queue     	
-	print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', int((t1-t0) / 3600), 'hours and',\
-	int(((t1-t0) % 3600)/60), ' minutes and',  ((t1-t0) % 3600)%60, 'seconds\n'
+	print '\n The final Queue is \n', Queue     
+
+	print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', runtime
