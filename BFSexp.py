@@ -82,7 +82,7 @@ def maxctx(Ref_file, Queried_ID):
 	f.close()
 	return max;
 
-Maximal = maxctx(Ref_file, Queried_ID)
+#Maximal = maxctx(Ref_file, Queried_ID)
 
   ###########       Making Queue of samples and initiating it, with Org_Vec, BFS_Vec is the transferring vector    ############################
 Org_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
