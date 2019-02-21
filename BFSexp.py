@@ -21,45 +21,14 @@ import random
 ################ Reference file to find the maximal context ###############
 Ref_file = 'AllCTXOUT.txt.gz'
 Store_file = 'Output.dat'
+Datapoints = 1
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
 # To get the same original contexts in all files
 random.seed(2019)
 
-#### TO FIX: how to get the same number of output as the go file after filtering?
-emp_counts = df['Employer'].value_counts()
-df2 = df[df['Employer'].isin(emp_counts[emp_counts > 3000].index)]
-
-job_counts = df2["Job Title"].value_counts()
-df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
-
-FirAtt_lst = df2['Job Title'].unique()
-SecAtt_lst = df2['Employer'].unique()
-ThrAtt_lst = df2['Calendar Year'].unique()
-
-df2 = df2.loc[df2['Job Title'].isin(FirAtt_lst) & df2['Employer'].isin(SecAtt_lst) & df2['Calendar Year'].isin(ThrAtt_lst)]
-df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
-
-FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
-SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
-ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
-
-###################################     Forming a context   #######################################
-FirAtt_Vec[0:5] = 1
-SecAtt_Vec[0:6] = 1
-ThrAtt_Vec[0:5] = 1
-Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
-		   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
-		   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
-
-#######################     Finding an outlier in the selected context      #######################
-clf = LocalOutlierFactor(n_neighbors=20)
-Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
-Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
-print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
-
-#######################     Finding the maximal context for the Queried_ID      #######################
+# Finds the maximal context for the Queried_ID      
 def maxctx(Ref_file, Queried_ID):
 	max = 0
 	out_size = 0
@@ -82,75 +51,7 @@ def maxctx(Ref_file, Queried_ID):
 	f.close()
 	return max;
 
-#Maximal = maxctx(Ref_file, Queried_ID)
-
-  ###########       Making Queue of samples and initiating it, with Org_Vec, BFS_Vec is the transferring vector    ############################
-Org_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
-np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
-BFS_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
-np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
-           ################################# Initiating queue with Org_ctx informaiton  ########################
-Epsilon = 0.0001
-Queue = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
-Data_to_write = []
-
-###############      Make the queue by BFS traverse from ctx_org by exp through children, ctx_Flpr(=100) times    ###################
-
-Ctx_Flpr = 0
-t0       = time.time()
-BFS_Flp  = np.zeros(len(BFS_Vec)) 
-
-while Ctx_Flpr<99:  
-	sub_q        = []
-	flpd	 = []
-	
-	for Flp_bit in range(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))):
-		Sub_Sal_list = []
-		Sub_ID_list  = []
-		BFS_Flp[:] = BFS_Vec[:]
-		#if BFS_Flp[Flp_bit] == 0:
-		BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
-		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
-				   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
-				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
-		if (BFS_Ctx.shape[0] > 20):
-			for row in range(BFS_Ctx.shape[0]):
-				Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
-				Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
-			Sub_Sal_arr= np.array(Sub_Sal_list)
-			clf = LocalOutlierFactor(n_neighbors=20)
-			Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
-			for outlier_finder in range(0, len(Sub_ID_list)):
-				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
-					Sub_Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
-					flpd[:] = BFS_Flp[:]
-            				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
-			
-	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
-	Sub_elements = [elem[0] for elem in sub_q]	
-	Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
-	SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
-	### delete next line, we can store the sub-exp result directly in the queue, we dont need an intermediate bfs_flp 
-	#BFS_Flp[:]  = sub_q[SubRes[0]][3][:]
-	for child in range(0, len(sub_q)):
-		if sub_q[child][0] == SubRes[0]:
-			Q_indx = child
-	while not any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
-		Queue.append([Ctx_Flpr+1, sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
-		Ctx_Flpr+=1
-
-	print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
-	###################################       Sampling form the Queue ###############################
-	elements = [elem[0] for elem in Queue]	
-	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
-	ExpRes = np.random.choice(elements, 1, p = probabilities)
-	BFS_Vec[:]  = Queue[ExpRes[0]][3][:]
-	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],\
-	' and has ', Queue[ExpRes[0]][2], 'population'
-	
-	Data_to_write.append(Queue[ExpRes[0]][2]) 
-	
-	###################################       Writing final data ###############################
+# Writing final data 
 def writefinal(Data_to_write):
 	ff = open(Store_file,'a+')
 	DataOut = column_stack(Data_to_write)
@@ -158,9 +59,115 @@ def writefinal(Data_to_write):
 	ff.close(), fmt=('%i5')
 	return;
 
-writefinal(Data_to_write)	
+#### TO FIX: how to get the same number of output as the go file after filtering?
+emp_counts = df['Employer'].value_counts()
+df2 = df[df['Employer'].isin(emp_counts[emp_counts > 3000].index)]
 
-t1 = time.time()
-print '\n The final Queue is \n', Queue     
-print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', int((t1-t0) / 3600), 'hours and',\
-int(((t1-t0) % 3600)/60), ' minutes and',  ((t1-t0) % 3600)%60, 'seconds\n'
+job_counts = df2["Job Title"].value_counts()
+df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
+
+FirAtt_lst = df2['Job Title'].unique()
+SecAtt_lst = df2['Employer'].unique()
+ThrAtt_lst = df2['Calendar Year'].unique()
+
+df2 = df2.loc[df2['Job Title'].isin(FirAtt_lst) & df2['Employer'].isin(SecAtt_lst) & df2['Calendar Year'].isin(ThrAtt_lst)]
+df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
+
+FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
+SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
+ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
+
+###################################     Forming a context   #######################################
+# Repeat for the number of Datapoints
+for i in range (Datapoints):
+	FirAtt_Vec[0:5] = 1
+	SecAtt_Vec[0:6] = 1
+	ThrAtt_Vec[0:5] = 1
+	Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
+			   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
+			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
+
+#######################     Finding an outlier in the selected context      #######################
+	clf = LocalOutlierFactor(n_neighbors=20)
+	Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
+	Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
+	print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
+
+#######################     Finding the maximal context for the Queried_ID      #######################
+
+	#Maximal = maxctx(Ref_file, Queried_ID)
+
+  ###########       Making Queue of samples and initiating it, with Org_Vec, BFS_Vec is the transferring vector    ############################
+	Org_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+	np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
+	BFS_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+	np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
+           ################################# Initiating queue with Org_ctx informaiton  ########################
+	Epsilon = 0.0001
+	Queue = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+	Data_to_write = []
+
+###############      Make the queue by BFS traverse from ctx_org by exp through children, ctx_Flpr(=100) times    ###################
+
+	Ctx_Flpr = 0
+	t0       = time.time()
+	BFS_Flp  = np.zeros(len(BFS_Vec)) 
+
+	while Ctx_Flpr<99:  
+		sub_q        = []
+		flpd	 = []
+	
+		for Flp_bit in range(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))):
+			Sub_Sal_list = []
+			Sub_ID_list  = []
+			BFS_Flp[:] = BFS_Vec[:]
+			#if BFS_Flp[Flp_bit] == 0:
+			BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
+			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
+					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
+					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
+			if (BFS_Ctx.shape[0] > 20):
+				for row in range(BFS_Ctx.shape[0]):
+					Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
+					Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
+				Sub_Sal_arr= np.array(Sub_Sal_list)
+				clf = LocalOutlierFactor(n_neighbors=20)
+				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
+				for outlier_finder in range(0, len(Sub_ID_list)):
+					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
+						Sub_Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
+						flpd[:] = BFS_Flp[:]
+            					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
+			
+	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
+		Sub_elements = [elem[0] for elem in sub_q]	
+		Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
+		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
+	### delete next line, we can store the sub-exp result directly in the queue, we dont need an intermediate bfs_flp 
+		#BFS_Flp[:]  = sub_q[SubRes[0]][3][:]
+		for child in range(0, len(sub_q)):
+			if sub_q[child][0] == SubRes[0]:
+				Q_indx = child
+		while not any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
+			Queue.append([Ctx_Flpr+1, sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
+			Ctx_Flpr+=1
+
+		print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
+	###################################       Sampling form the Queue ###############################
+		elements = [elem[0] for elem in Queue]	
+		probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
+		ExpRes = np.random.choice(elements, 1, p = probabilities)
+		BFS_Vec[:]  = Queue[ExpRes[0]][3][:]
+		print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],\
+		' and has ', Queue[ExpRes[0]][2], 'population'
+	
+		Data_to_write.append(Queue[ExpRes[0]][2]) 
+	
+	###################################       Writing final data ###############################
+
+	writefinal(Data_to_write)	
+
+	t1 = time.time()
+	print '\n The final Queue is \n', Queue     	
+	print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', int((t1-t0) / 3600), 'hours and',\
+	int(((t1-t0) % 3600)/60), ' minutes and',  ((t1-t0) % 3600)%60, 'seconds\n'
