@@ -21,12 +21,15 @@ import random
 ################ Reference file to find the maximal context ###############
 Ref_file = 'AllCTXOUT.txt.gz'
 Store_file = 'Output.dat'
-Datapoints = 3
+
+# Parallelizing using multiple cors, so each core needs to test just one data point 
+Datapoints = 1
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
-# To get the same original contexts in all files
-random.seed(2019)
+# To get the same original contexts in all files, each core gets seed from the bash file
+#random.seed(2019)
+random.seed(int(sys.argv[1])
 
 # Finds the maximal context for the Queried_ID      
 def maxctx(Ref_file, Queried_ID):
@@ -52,9 +55,11 @@ def maxctx(Ref_file, Queried_ID):
 	return max;
 
 # Writing final data 
-def writefinal(Data_to_write, dpt, runtime, ID):
+def writefinal(Data_to_write, dpt, runtime, ID):	
 	ff = open(Store_file,'a+')
+	fcntl.flock(ff, fcntl.LOCK_EX)
 	savetxt(ff, column_stack(Data_to_write), fmt=('%5i'), header = dpt+ 'th data point, ' + ID + ', in BFSexp alg. takes' + runtime)
+	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
 
@@ -171,6 +176,7 @@ for dpt in range (Datapoints):
 	t1 = time.time()
 	runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
+	    	   
 	writefinal(Data_to_write, str(dpt), runtime, str(Queried_ID))	
 
 	print '\n The final Queue is \n', Queue     
