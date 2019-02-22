@@ -20,7 +20,42 @@ import random
 #Maxfilename = 'Max.txt'
 
 # To get the same original contexts in all files
-random.seed(2019)
+random.seed(int(sys.argv[1]))
+
+Ref_file = 'AllCTXOUT.txt.gz'
+Store_file = 'BFSDataPointsOutput.dat'
+
+# Finds the maximal context for the Queried_ID      
+def maxctx(Ref_file, Queried_ID):
+	max = 0
+	out_size = 0
+	#line_num = 0
+	size = 0
+	#Ctx_line = 0
+	with gzip.open(Ref_file,'rt') as f:
+        	for num, line in enumerate(f, 1):
+                	if line.split(' ')[0].strip()=="Matching":
+				#Ctx_line = num
+                        	size = int((line.split(' '))[5].strip(':\n'))
+			elif line.strip().startswith("ID"):
+				if line.split(' ')[3].strip('#')==str(Queried_ID):
+					out_size = size
+					#Valid_line = Ctx_line
+                	if (max < out_size):
+				max = out_size
+				#line_num = Valid_line 
+	#print "max so far is :", max, "in line number ", line_num
+	f.close()
+	return max;
+
+# Writing final data 
+def writefinal(Data_to_write, randomness, runtime, ID):	
+	ff = open(Store_file,'a+')
+	fcntl.flock(ff, fcntl.LOCK_EX)
+	savetxt(ff, column_stack(Data_to_write), fmt=('%5i'), header = randomness+ ' Generates outlier , ' + ID + ', BFSexp alg. takes' + runtime)
+	fcntl.flock(ff, fcntl.LOCK_UN)
+	ff.close()
+return;
 
 #### TO FIX: how to get the same number of output as the go file after filtering?
 emp_counts = df['Employer'].value_counts()
@@ -45,6 +80,10 @@ Orgn_Ctx_Create = random.random()
 FirAtt_Vec[0:5] = 1
 SecAtt_Vec[0:6] = 1
 ThrAtt_Vec[0:5] = 1
+FirAtt_Vec[5:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec)-5)
+SecAtt_Vec[6:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec)-6)
+ThrAtt_Vec[5:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec)-5)
+
 Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
 		   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
 		   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
@@ -60,8 +99,9 @@ print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 Org_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
 np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
         ################################# Initiating queue with Org_ctx informaiton  ########################
-Epsilon = 0.1
-Queue	     = [[0, np.exp(Epsilon *(0.01*Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Epsilon = 0.0001
+Queue	     = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Data_to_write = []
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 t0 = time.time()
 BFS_Flp   = np.zeros(len(Org_Vec)) 
@@ -93,7 +133,7 @@ while Ctx_Flpr<99:
         Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
         for outlier_finder in range(0, len(ID_list)):
             if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
-                Score = np.exp(Epsilon *(0.01*BFS_Ctx.shape[0]))
+                Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
                 Queue.append([Ctx_Flpr+1, Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
                 for i in  range (len(Queue[len(Queue)-1][3])):      
                     Queue[len(Queue)-1][3][i]  = BFS_Flp[i]
@@ -107,9 +147,14 @@ while Ctx_Flpr<99:
         if Queue[child][0] == ExpRes[0]:
             Q_indx = child      
     Ctx_Flpr+=1
+    
+    Data_to_write.append(Queue[ExpRes[0]][1]) 
 
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
 t1 = time.time()
+runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
+	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
+	    	   
+writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
 print '\n The final Queue is \n', Queue     
-print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', int((t1-t0) / 3600), 'hours and',\
-int(((t1-t0) % 3600)/60), ' minutes and',  ((t1-t0) % 3600)%60, 'seconds\n'
+print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', runtime
