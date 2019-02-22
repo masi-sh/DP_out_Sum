@@ -156,4 +156,4 @@ runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60
 	    	   
 writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
 print '\n The final Queue is \n', Queue     
-print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', runtime
+print '\n The BFS runtime, starting from org_ctx and choosing randomly one among childern in each layer is \n', runtime
