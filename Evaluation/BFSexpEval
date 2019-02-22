@@ -1,5 +1,5 @@
 #!/bin/bash
 for ((i=1; i<=10; i++))
 do
-    python ~/DP_out_Sum/BFSexp.py "$i" &
+    python ~/DP_out_Sum/MainAlgorithms/BFSexp.py "$i" &
 done
