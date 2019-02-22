@@ -55,10 +55,10 @@ def maxctx(Ref_file, Queried_ID):
 	return max;
 
 # Writing final data 
-def writefinal(Data_to_write, dpt, runtime, ID):	
+def writefinal(Data_to_write, randomness, runtime, ID):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
-	savetxt(ff, column_stack(Data_to_write), fmt=('%5i'), header = dpt+ 'th data point, ' + ID + ', in BFSexp alg. takes' + runtime)
+	savetxt(ff, column_stack(Data_to_write), fmt=('%5i'), header = randomness+ ' Generates outlier , ' + ID + ', BFSexp alg. takes' + runtime)
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
@@ -177,7 +177,7 @@ for dpt in range (Datapoints):
 	runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
-	writefinal(Data_to_write, str(dpt), runtime, str(Queried_ID))	
+	writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
 
 	print '\n The final Queue is \n', Queue     
 
