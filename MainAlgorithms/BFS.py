@@ -55,7 +55,7 @@ def writefinal(Data_to_write, randomness, runtime, ID):
 	savetxt(ff, column_stack(Data_to_write), fmt=('%5i'), header = randomness+ ' Generates outlier , ' + ID + ', BFSexp alg. takes' + runtime)
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
-return;
+	return;
 
 #### TO FIX: how to get the same number of output as the go file after filtering?
 emp_counts = df['Employer'].value_counts()
