@@ -29,7 +29,7 @@ Datapoints = 1
 
 # To get the same original contexts in all files, each core gets seed from the bash file
 #random.seed(2019)
-random.seed(int(sys.argv[1])
+random.seed(int(sys.argv[1]))
 
 # Finds the maximal context for the Queried_ID      
 def maxctx(Ref_file, Queried_ID):
