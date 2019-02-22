@@ -20,7 +20,7 @@ import random
 
 ################ Reference file to find the maximal context ###############
 Ref_file = 'AllCTXOUT.txt.gz'
-Store_file = 'Output.dat'
+Store_file = 'BFSexpDataPointsOutput.dat'
 
 # Parallelizing using multiple cors, so each core needs to test just one data point 
 Datapoints = 1
