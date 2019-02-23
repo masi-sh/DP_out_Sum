@@ -171,12 +171,19 @@ while Ctx_Flpr<99:
 	elements = [elem[0] for elem in Queue]	
 	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
 	ExpRes = np.random.choice(elements, 1, p = probabilities)
-	trsf_Vec[:]  = Queue[ExpRes[0]][3][:]
+	ExpRes = np.random.choice(elements, 1, p = probabilities)
+    	for child in range(0, len(Queue)):
+        	if Queue[child][0] == ExpRes[0]:
+            		Q_indx = child      
+    	Ctx_Flpr+=1
+    
+	trsf_Vec[:]  = Queue[Q_indx][3][:]
 	Ctx_Flpr+=1
-	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],\
-	' and has ', Queue[ExpRes[0]][2], 'population'
 	
-	Data_to_write.append(Queue[ExpRes[0]][1]) 
+	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[Q_indx][3][:],\
+	' and has ', Queue[Q_indx][2], 'population'
+	
+	Data_to_write.appData_to_write.append(Queue[Q_indx][1])
 	
 t1 = time.time()
 
