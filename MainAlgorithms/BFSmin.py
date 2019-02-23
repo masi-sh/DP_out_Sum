@@ -174,9 +174,7 @@ while Ctx_Flpr<99:
 	ExpRes = np.random.choice(elements, 1, p = probabilities)
     	for child in range(0, len(Queue)):
         	if Queue[child][0] == ExpRes[0]:
-            		Q_indx = child      
-    	Ctx_Flpr+=1
-    
+            		Q_indx = child          
 	trsf_Vec[:]  = Queue[Q_indx][3][:]
 	Ctx_Flpr+=1
 	
