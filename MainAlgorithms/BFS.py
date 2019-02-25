@@ -20,7 +20,7 @@ import random
 #Maxfilename = 'Max.txt'
 
 # To get the same original contexts in all files
-random.seed(int(sys.argv[1]))
+random.seed(100*int(sys.argv[1]))
 
 Ref_file = 'AllCTXOUT.txt.gz'
 Store_file = 'BFSDataPointsOutput.dat'
@@ -134,6 +134,7 @@ while Ctx_Flpr<99:
             if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
                 Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
                 Queue.append([Ctx_Flpr+1, Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+		Ctx_Flpr+=1
                 for i in  range (len(Queue[len(Queue)-1][3])):      
                     Queue[len(Queue)-1][3][i]  = BFS_Flp[i]
                 #print '\n Queue updated!'
@@ -145,8 +146,7 @@ while Ctx_Flpr<99:
     for child in range(0, len(Queue)):
         if Queue[child][0] == ExpRes[0]:
             Q_indx = child      
-    Ctx_Flpr+=1
-    
+	
     Data_to_write.append(Queue[ Q_indx][1]) 
 
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
