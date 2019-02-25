@@ -99,7 +99,7 @@ print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 Org_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
 np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
         ################################# Initiating queue with Org_ctx informaiton  ########################
-Epsilon = 0.0001
+Epsilon = 0.001
 Queue	     = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 Data_to_write = []
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
