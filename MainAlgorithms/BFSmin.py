@@ -113,7 +113,7 @@ trsf_Vec[np.where(FirAtt_lst == df2.values[Queried_ID][5])] = 1
 trsf_Vec[np.where(SecAtt_lst == df2.values[Queried_ID][4])[0]+len(FirAtt_lst)] = 1 
 trsf_Vec[np.where(ThrAtt_lst == df2.values[Queried_ID][7])[0]+(len(FirAtt_lst)+len(SecAtt_lst))] = 1
 ################################# Initiating queue with Minimal Context informaiton  ########################
-Epsilon = 0.0001
+Epsilon = 0.001
 Data_to_write = []
 Min_Sal_list = []
 Min_ID_list  = []
