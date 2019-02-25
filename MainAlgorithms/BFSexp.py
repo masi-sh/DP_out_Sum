@@ -78,110 +78,106 @@ df2 = df2.loc[df2['Job Title'].isin(FirAtt_lst) & df2['Employer'].isin(SecAtt_ls
 df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
 
 #################              Repeat for the number of Datapoints        ########################
-for dpt in range (Datapoints):
-	FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
-	SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
-	ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
+FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
+SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
+ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 	
 ###################################     Forming a context   #######################################	
-	FirAtt_Vec[0:5] = 1
-	SecAtt_Vec[0:6] = 1
-	ThrAtt_Vec[0:5] = 1
-	FirAtt_Vec[5:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec)-5)
-	SecAtt_Vec[6:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec)-6)
-	ThrAtt_Vec[5:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec)-5)
+FirAtt_Vec[0:5] = 1
+SecAtt_Vec[0:6] = 1
+ThrAtt_Vec[0:5] = 1
+FirAtt_Vec[5:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec)-5)
+SecAtt_Vec[6:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec)-6)
+ThrAtt_Vec[5:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec)-5)
 	
-	Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
-			   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
-			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
+Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
+		   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
+		   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
 
 #######################     Finding an outlier in the selected context      #######################
-	clf = LocalOutlierFactor(n_neighbors=20)
-	Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
-	Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
-	print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
+clf = LocalOutlierFactor(n_neighbors=20)
+Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
+Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
+print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 
 #######################     Finding the maximal context for the Queried_ID      #######################
 
 	#Maximal = maxctx(Ref_file, Queried_ID)
 
   ###########       Making Queue of samples and initiating it, with Org_Vec, BFS_Vec is the transferring vector    ############################
-	Org_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
-	np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
-	BFS_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
-	np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
+Org_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
+BFS_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
            ################################# Initiating queue with Org_ctx informaiton  ########################
-	Epsilon = 0.0001
-	Queue = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
-	Data_to_write = []
+Epsilon = 0.001
+Queue = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Data_to_write = []
 
 ###############      Make the queue by BFS traverse from ctx_org by exp through children, ctx_Flpr(=100) times    ###################
+Ctx_Flpr = 0
+t0       = time.time()
+BFS_Flp  = np.zeros(len(BFS_Vec)) 
 
-	Ctx_Flpr = 0
-	t0       = time.time()
-	BFS_Flp  = np.zeros(len(BFS_Vec)) 
-
-	while Ctx_Flpr<99:  
-		sub_q        = []
-		flpd	 = []
-	
-		for Flp_bit in range(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))):
-			Sub_Sal_list = []
-			Sub_ID_list  = []
-			BFS_Flp[:] = BFS_Vec[:]
-			#if BFS_Flp[Flp_bit] == 0:
-			BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
-			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
-					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
-					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
-			if (BFS_Ctx.shape[0] > 20):
-				for row in range(BFS_Ctx.shape[0]):
-					Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
-					Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
-				Sub_Sal_arr= np.array(Sub_Sal_list)
-				clf = LocalOutlierFactor(n_neighbors=20)
-				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
-				for outlier_finder in range(0, len(Sub_ID_list)):
-					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
-						Sub_Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
-						flpd[:] = BFS_Flp[:]
-            					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
+while Ctx_Flpr<99:  
+	sub_q        = []
+	flpd	 = []
+	for Flp_bit in range(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))):
+		Sub_Sal_list = []
+		Sub_ID_list  = []
+		BFS_Flp[:] = BFS_Vec[:]
+		#if BFS_Flp[Flp_bit] == 0:
+		BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
+		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
+				   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
+				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
+		if (BFS_Ctx.shape[0] > 20):
+			for row in range(BFS_Ctx.shape[0]):
+				Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
+				Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
+			Sub_Sal_arr= np.array(Sub_Sal_list)
+			clf = LocalOutlierFactor(n_neighbors=20)
+			Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
+			for outlier_finder in range(0, len(Sub_ID_list)):
+				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
+					Sub_Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
+					flpd[:] = BFS_Flp[:]
+          				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
-		Sub_elements = [elem[0] for elem in sub_q]	
-		Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
-		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
+	Sub_elements = [elem[0] for elem in sub_q]	
+	Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
+	SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 	### delete next line, we can store the sub-exp result directly in the queue, we dont need an intermediate bfs_flp 
-		#BFS_Flp[:]  = sub_q[SubRes[0]][3][:]
-		for child in range(0, len(sub_q)):
-			if sub_q[child][0] == SubRes[0]:
-				Q_indx = child
-		while not any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
-			Queue.append([Ctx_Flpr+1, sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
-			Ctx_Flpr+=1
+	#BFS_Flp[:]  = sub_q[SubRes[0]][3][:]
+	for child in range(0, len(sub_q)):
+		if sub_q[child][0] == SubRes[0]:
+			Q_indx = child
+	while not any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
+		Queue.append([Ctx_Flpr+1, sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
 
-		print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
-	###################################       Sampling form the Queue ###############################
-		elements = [elem[0] for elem in Queue]	
-		probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
-		ExpRes = np.random.choice(elements, 1, p = probabilities)
-		for child in range(0, len(Queue)):
-      	  		if Queue[child][0] == ExpRes[0]:
-            			QQ_indx = child        		
-		BFS_Vec[:]  = Queue[QQ_indx][3][:]
-		print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[QQ_indx][3][:],\
-		' and has ', Queue[QQ_indx][2], 'population'
-		
-		Data_to_write.append(Queue[QQ_indx][1]) 
+	print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
+	##################################       Sampling form the Queue ###############################
+	elements = [elem[0] for elem in Queue]	
+	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
+	ExpRes = np.random.choice(elements, 1, p = probabilities)
+	for child in range(0, len(Queue)):
+      		if Queue[child][0] == ExpRes[0]:
+        		QQ_indx = child        		
+	BFS_Vec[:]  = Queue[QQ_indx][3][:]
+	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[QQ_indx][3][:],\
+	' and has ', Queue[QQ_indx][2], 'population'
+	Ctx_Flpr+=1
+	Data_to_write.append(Queue[QQ_indx][1]) 
 	
 	###################################       Writing final data ###############################
 
-	t1 = time.time()
-	runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
-	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
+t1 = time.time()
+runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
+' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
-	writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
+writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
 
-	print '\n The final Queue is \n', Queue     
+print '\n The final Queue is \n', Queue     
 
-	print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', runtime
+print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', runtime
