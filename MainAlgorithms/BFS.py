@@ -23,7 +23,7 @@ import random
 random.seed(100*int(sys.argv[1]))
 
 Ref_file = 'AllCTXOUT.txt.gz'
-Store_file = 'BFSDataPointsOutput.dat'
+Store_file = 'BFSDataPointsOutputqeueu.dat'
 
 # Finds the maximal context for the Queried_ID      
 def maxctx(Ref_file, Queried_ID):
