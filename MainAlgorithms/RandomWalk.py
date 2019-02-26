@@ -117,7 +117,7 @@ while len(Flp_lst)<100:
 		for row in range(Flp_Ctx.shape[0]):
                     Sal_list.append(Flp_Ctx.iloc[row]['Salary Paid'])
 		    ID_list.append(Flp_Ctx.iloc[row]['Unnamed: 0'])
-                Score = np.exp(Epsilon *(np.log(Flp_Ctx.shape[0])))
+                Score = np.exp(Epsilon *(Flp_Ctx.shape[0]))
                 Sal_arr= np.array(Sal_list)
                 clf = LocalOutlierFactor(n_neighbors=20)
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
