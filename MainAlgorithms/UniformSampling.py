@@ -15,22 +15,38 @@ from sklearn.neighbors import LocalOutlierFactor
 from collections import Counter
 import time
 import fcntl
-
+import random
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
+# To get the same original contexts in all files
+random.seed(100*int(sys.argv[1]))
+
+Ref_file = 'AllCTXOUT.txt.gz'
+Store_file = 'USampleDataPointsOutput.dat'
+
+# Writing final data 
+def writefinal(Data_to_write, randomness, runtime, ID):	
+	ff = open(Store_file,'a+')
+	fcntl.flock(ff, fcntl.LOCK_EX)
+	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%5i'), header = randomness+ ' Generates outlier , ' + ID + ', BFSexp alg. takes' + runtime)
+	fcntl.flock(ff, fcntl.LOCK_UN)
+	ff.close()
+return;
 
 emp_counts = df['Employer'].value_counts()
 df2 = df[df['Employer'].isin(emp_counts[emp_counts > 3000].index)]
 
-emp_counts = df2["Job Title"].value_counts()
-df2 = df2[df2["Job Title"].isin(emp_counts[emp_counts > 3000].index)]
-df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
-
+job_counts = df2["Job Title"].value_counts()
+df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
-ThrAtt_lst = df2['Calendar Year'].unique()
+ThrAtt_lst = df['Calendar Year'].unique()
+
+df2 = df.loc[df['Job Title'].isin(FirAtt_lst) & df['Employer'].isin(SecAtt_lst) & df['Calendar Year'].isin(ThrAtt_lst)]
+df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
+
 FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
 SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
@@ -39,6 +55,10 @@ ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 FirAtt_Vec[0:5]=1
 SecAtt_Vec[0:6]=1
 ThrAtt_Vec[0:5]=1
+FirAtt_Vec[5:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec)-5)
+SecAtt_Vec[6:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec)-6)
+ThrAtt_Vec[5:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec)-5)
+
 Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
 		   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
 		   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
@@ -56,9 +76,9 @@ Flp_p        = 0.5
 Flp_q        = 0.5
 Flp_lst      = []
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
-Epsilon = 0.1
-Ctx_Flpr = 0
-while Ctx_Flpr<100:
+Epsilon = 0.001
+#Ctx_Flpr = 0
+while len(Flp_lst)<100:
 	##### context separator scans all elements in the attribute lists to find where to apply p or q #######
     	FirAtt_Flp   = np.zeros(len(FirAtt_lst), dtype=np.int)
     	for Ctx_sprt in range (0, len(FirAtt_lst)):
@@ -113,21 +133,4 @@ for ids in ExpRes:
 print '\n\nThe population size in the perturbed candidates are: \n\n', Flp_Ctx_sizes
 
 
-	#	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          FIXED UP TO HERE           %%%%%%%%5%%%%%%%%%%%%%%
 
-	########################    Sample distance from outlier(in the number of attribute values)    ##############
-print '\n\noutlier_index is: ', Queried_ID
-#Smpl_out_dist =  [(len(Flp_lst[ids][3] - FirAtt_lst) + (len(Flp_lst[ids][4] - SecAtt_lst)\
-#		+ (len(Flp_lst[ids][5] - ThrAtt_lst) for ids in ExpRes] 
-
-#print '\n\nThe distance(in the number of attribute values) between perturbed candidates and the outlier is: \n\n', \
-#       Smpl_out_dist
-
-#t1 = time.time()
-#print '\n\nThe required time for running the program is:',  t1-t0
-
-plt.figure(1)
-pd.Series(Flp_Ctx_sizes).value_counts().plot('bar')
-#plt.figure(2)
-#pd.Series(Smpl_out_dist).value_counts().plot('bar')
-plt.show()
