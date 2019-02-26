@@ -76,7 +76,6 @@ SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 
 ###################################     Forming a context   #######################################
-Orgn_Ctx_Create = random.random()
 FirAtt_Vec[0:5] = 1
 SecAtt_Vec[0:6] = 1
 ThrAtt_Vec[0:5] = 1
