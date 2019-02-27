@@ -115,7 +115,7 @@ print '\n\nThe number of candidates in Exponential mechanism range is:'         
 print '\n\nIDs sampled from Exponential mechanism output are\n\n',  ExpRes
 
 for ids in ExpRes:
-	Data_to_write.append(Flp_lst[ids][1]) 
+	Data_to_write.append(Flp_lst[ids][2]) 
 
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
