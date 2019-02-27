@@ -188,7 +188,7 @@ while Ctx_Flpr<99:
 	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[QQ_indx][3][:],\
 	' and has ', Queue[QQ_indx][2], 'population'
 	
-	Data_to_write.append(Queue[QQ_indx][1]) 
+	Data_to_write.append(Queue[QQ_indx][2]) 
 	
 ###################################       Writing final data ###############################
 t1 = time.time()
