@@ -69,6 +69,8 @@ Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
+Org_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
 
         ############### The probability of dding an attribute value to the context  ###############
 Flp_p        = 0.5
