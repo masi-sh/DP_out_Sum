@@ -145,7 +145,7 @@ while len(Queue)<100:
         if Queue[child][0] == ExpRes[0]:
             Q_indx = child      
     #Ctx_Flpr+=1
-    Data_to_write.append(Queue[ Q_indx][1]) 
+    Data_to_write.append(Queue[ Q_indx][2]) 
 
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
 t1 = time.time()
