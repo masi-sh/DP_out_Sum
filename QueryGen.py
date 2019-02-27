@@ -82,4 +82,4 @@ np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
 
 #Queries.loc[query_num]=[Queried_ID, maxctx(Ref_file, Queried_ID), Org_Vec]
 #TEST, WITHOUT MAX
-Queries.loc[query_num]=[Queried_ID, 0, Org_Vec]
+Queries.loc[query_num]=[query_num, Queried_ID, 0, Org_Vec]
