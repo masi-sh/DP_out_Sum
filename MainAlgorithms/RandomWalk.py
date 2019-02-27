@@ -142,7 +142,7 @@ probabilities = [prob[1] for prob in Flp_lst]/(sum ([prob[1] for prob in Flp_lst
 ExpRes = np.random.choice(elements, numofsamples, p = probabilities)  
 
 for ids in ExpRes:
-	Data_to_write.append(Flp_lst[ids][1]) 
+	Data_to_write.append(Flp_lst[ids][2]) 
 
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
