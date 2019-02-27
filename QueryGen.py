@@ -84,6 +84,8 @@ np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
 #TEST, WITHOUT MAX
 Queries.loc[query_num]=[query_num, Queried_ID, 0, Org_Vec]
 
-fcntl.flock(Query_file, fcntl.LOCK_EX)
-Queries.to_csv(Query_file)
-fcntl.flock(Query_file, fcntl.LOCK_UN)
+ff = open(Query_file,'a+')
+fcntl.flock(ff, fcntl.LOCK_EX)
+Queries.to_csv(ff)
+fcntl.flock(ff, fcntl.LOCK_UN)
+ff.close()
