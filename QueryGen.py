@@ -28,13 +28,13 @@ def maxctx(Ref_file, Queried_ID):
                 	if line.split(' ')[0].strip()=="Matching":
                           #Ctx_line = num
                         	size = int((line.split(' '))[5].strip(':\n'))
-			            elif line.strip().startswith("ID"):
-				                  if line.split(' ')[3].strip('#')==str(Queried_ID):
-					                out_size = size
-					                #Valid_line = Ctx_line
+			elif line.strip().startswith("ID"):
+			        if line.split(' ')[3].strip('#')==str(Queried_ID):
+				out_size = size
+				#Valid_line = Ctx_line
                 	if (max < out_size):
-			        	          max = out_size
-				                  #line_num = Valid_line 
+			        max = out_size
+				#line_num = Valid_line 
 	#print "max so far is :", max, "in line number ", line_num
 	f.close()
   	return max;
