@@ -36,7 +36,7 @@ emp_counts = df['Employer'].value_counts()
 df2 = df[df['Employer'].isin(emp_counts[emp_counts > 3000].index)]
 
 job_counts = df2["Job Title"].value_counts()
-df2 = df2[df2["Job Title"].isin(job_counts[emp_counts > 3000].index)]
+df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
