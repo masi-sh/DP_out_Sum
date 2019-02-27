@@ -30,7 +30,7 @@ def maxctx(Ref_file, Queried_ID):
                         	size = int((line.split(' '))[5].strip(':\n'))
 			elif line.strip().startswith("ID"):
 			        if line.split(' ')[3].strip('#')==str(Queried_ID):
-				out_size = size
+					out_size = size
 				#Valid_line = Ctx_line
                 	if (max < out_size):
 			        max = out_size
