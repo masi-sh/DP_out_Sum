@@ -37,7 +37,7 @@ def maxctx(Ref_file, Queried_ID):
 				                  #line_num = Valid_line 
 	#print "max so far is :", max, "in line number ", line_num
 	f.close()
-  return max;
+  	return max;
 
 #### TO FIX: how to get the same number of output as the go file after filtering?
 emp_counts = df['Employer'].value_counts()
