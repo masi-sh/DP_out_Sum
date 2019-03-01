@@ -79,6 +79,8 @@ Data_to_write = []
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 Epsilon = 0.001
 #Ctx_Flpr = 0
+
+t0 = time.time()
 while len(Flp_lst)<100:
 	
 	Ctx_Flp = np.zeros(len(Org_Vec), dtype=np.int) 
