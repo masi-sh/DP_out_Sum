@@ -28,6 +28,7 @@ Store_file = 'BFSDataPointsOutput.dat'
 
 # Finds the maximal context for the Queried_ID      
 def maxctx(Ref_file, Queried_ID):
+	print '\nChecking for the maximal context ... \n'
 	max = 0
 	out_size = 0
 	#line_num = 0
@@ -76,8 +77,8 @@ SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 
 ###################################     Forming a context   #######################################
-Sal_outliers =[]
-while(len(Sal_outliers)==0):
+Sal_outliers = np.array([1])
+while(Sal_outliers(Sal_outliers.argmin())==1):
 	print '\n Looking for an original context \n'
 	FirAtt_Vec[0:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec))
 	SecAtt_Vec[0:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec))
@@ -110,6 +111,7 @@ Q_indx        = 0
 index         = 0
 
 while len(Queue)<100:     
+    print '\nSampling & Queueing...  \n'
     for i in  range (len(Queue[Q_indx][3])):      
         BFS_Flp[i]  = Queue[Q_indx][3][i]
     while any(np.array_equal(BFS_Flp[:],x[3][:]) for x in Queue):
