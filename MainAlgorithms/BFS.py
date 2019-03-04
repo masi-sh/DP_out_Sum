@@ -23,7 +23,7 @@ import random
 random.seed(100*int(sys.argv[1]))
 # This file is filtered, no extra filtering required
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-Ref_file = 'Reffile.txt.gz'
+Ref_file = '~/Reffile.txt.gz'
 Store_file = 'BFSDataPointsOutput.dat'
 
 # Finds the maximal context for the Queried_ID      
