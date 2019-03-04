@@ -65,7 +65,7 @@ def writefinal(Data_to_write, randomness, runtime, ID):
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
-ThrAtt_lst = df['Calendar Year'].unique()
+ThrAtt_lst = df2['Calendar Year'].unique()
 
 #df2 = df.loc[df['Job Title'].isin(FirAtt_lst) & df['Employer'].isin(SecAtt_lst) & df['Calendar Year'].isin(ThrAtt_lst)]
 #df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
