@@ -8,7 +8,6 @@ import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
 cf.go_offline()
-df = pd.read_csv("~/DP_out_Sum/dataset/combined.csv")
 import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
@@ -21,8 +20,9 @@ import random
 
 # To get the same original contexts in all files
 random.seed(100*int(sys.argv[1]))
-
-Ref_file = 'AllCTXOUT.txt.gz'
+# This file is filtered, no extra filtering required
+df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
+Ref_file = 'Reffile.txt.gz'
 Store_file = 'BFSDataPointsOutput.dat'
 
 # Finds the maximal context for the Queried_ID      
@@ -57,56 +57,56 @@ def writefinal(Data_to_write, randomness, runtime, ID):
 	ff.close()
 	return;
 
-#### TO FIX: how to get the same number of output as the go file after filtering?
-emp_counts = df['Employer'].value_counts()
-df2 = df[df['Employer'].isin(emp_counts[emp_counts > 3000].index)]
-
-job_counts = df2["Job Title"].value_counts()
-df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
+### Data is filtered, no more polishing required
+#emp_counts = df['Employer'].value_counts()
+#df2 = df[df['Employer'].isin(emp_counts[emp_counts > 3000].index)]
+#job_counts = df2["Job Title"].value_counts()
+#df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df['Calendar Year'].unique()
 
-df2 = df.loc[df['Job Title'].isin(FirAtt_lst) & df['Employer'].isin(SecAtt_lst) & df['Calendar Year'].isin(ThrAtt_lst)]
-df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
+#df2 = df.loc[df['Job Title'].isin(FirAtt_lst) & df['Employer'].isin(SecAtt_lst) & df['Calendar Year'].isin(ThrAtt_lst)]
+#df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
 
 FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
 SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 
 ###################################     Forming a context   #######################################
-FirAtt_Vec[0:5] = 1
-SecAtt_Vec[0:6] = 1
-ThrAtt_Vec[0:5] = 1
-FirAtt_Vec[5:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec)-5)
-SecAtt_Vec[6:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec)-6)
-ThrAtt_Vec[5:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec)-5)
+Sal_outliers =[]
+while(not Sal_outliers):
+	print '\n Looking for an original context \n'
+	FirAtt_Vec[0:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec))
+	SecAtt_Vec[0:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec))
+	ThrAtt_Vec[0:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec))
 
-Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
-		   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
-		   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
+	Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
+			   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
+			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
 
 #######################     Finding an outlier in the selected context      #######################
-clf = LocalOutlierFactor(n_neighbors=20)
-Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
+	clf = LocalOutlierFactor(n_neighbors=20)
+	Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
-
+# finding maximal context's size for queried_ID
+max_ctx = maxctx(Ref_file, Queried_ID)
 
   ###########       Making Queue of samples and initiating it, with Org_Vec   ############################
-Org_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+Org_Vec       = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
 np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
         ################################# Initiating queue with Org_ctx informaiton  ########################
-Epsilon = 0.001
-Queue	     = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Epsilon       = 0.001
+Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 Data_to_write = []
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 t0 = time.time()
-BFS_Flp   = np.zeros(len(Org_Vec)) 
-#Ctx_Flpr  = 0
-Q_indx    = 0
-index     = 0
+BFS_Flp       = np.zeros(len(Org_Vec)) 
+#Ctx_Flpr     = 0
+Q_indx        = 0
+index         = 0
 
 while len(Queue)<100:     
     for i in  range (len(Queue[Q_indx][3])):      
@@ -145,7 +145,7 @@ while len(Queue)<100:
         if Queue[child][0] == ExpRes[0]:
             Q_indx = child      
     #Ctx_Flpr+=1
-    Data_to_write.append(Queue[ Q_indx][2]) 
+    Data_to_write.append(Queue[ Q_indx][2]/max_ctx) 
 
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
 t1 = time.time()
