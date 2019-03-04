@@ -46,7 +46,7 @@ def maxctx(Ref_file, Queried_ID):
                 	if (max < out_size):
 				max = out_size
 				#line_num = Valid_line 
-				print "\nmax so far is :", max, "   at time: ", tmaxt=time.time()
+				print "\nmax so far is :", max, "   at time: ", time.time()
 	f.close()
 	return max;
 
