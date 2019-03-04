@@ -91,6 +91,8 @@ while(Sal_outliers[Sal_outliers.argmin()]==1):
 #######################     Finding an outlier in the selected context      #######################
 	clf = LocalOutlierFactor(n_neighbors=20)
 	Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
+	print '\n Sal_outliers is: \n',Sal_outliers
+	
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 # finding maximal context's size for queried_ID
