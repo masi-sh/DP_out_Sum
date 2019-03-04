@@ -76,7 +76,7 @@ ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 
 ###################################     Forming a context   #######################################
 Sal_outliers =[]
-while(not Sal_outliers):
+while(len(Sal_outliers)==0):
 	print '\n Looking for an original context \n'
 	FirAtt_Vec[0:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec))
 	SecAtt_Vec[0:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec))
