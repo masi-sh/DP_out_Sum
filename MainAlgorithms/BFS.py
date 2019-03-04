@@ -95,6 +95,7 @@ Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 # finding maximal context's size for queried_ID
 max_ctx = maxctx(Ref_file, Queried_ID)
+print '\nmaximal context has the population :\n', max_ctx
 
   ###########       Making Queue of samples and initiating it, with Org_Vec   ############################
 Org_Vec       = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
@@ -156,5 +157,5 @@ runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
 writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
-print '\n The final Queue is \n', Queue     
+#print '\n The final Queue is \n', Queue     
 print '\n The BFS runtime, starting from org_ctx and choosing randomly one among childern in each layer is \n', runtime
