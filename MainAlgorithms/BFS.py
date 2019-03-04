@@ -1,7 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
 import sys
-import gzip
+#import gzip
 import pandas as pd
 import numpy as np
 import cufflinks as cf
@@ -23,7 +23,7 @@ import random
 random.seed(100*int(sys.argv[1]))
 # This file is filtered, no extra filtering required
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-Ref_file = '/home/sm2shafi/Reffile.txt.gz'
+Ref_file = '/home/sm2shafi/Reffile.txt'
 Store_file = 'BFSDataPointsOutput.dat'
 
 # Finds the maximal context for the Queried_ID      
@@ -34,7 +34,7 @@ def maxctx(Ref_file, Queried_ID):
 	#line_num = 0
 	size = 0
 	#Ctx_line = 0
-	with gzip.open(Ref_file,'rt') as f:
+	with open(Ref_file,'rt') as f:
         	for num, line in enumerate(f, 1):
                 	if line.split(' ')[0].strip()=="Matching":
 				#Ctx_line = num
