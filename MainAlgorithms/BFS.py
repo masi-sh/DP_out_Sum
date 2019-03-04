@@ -46,7 +46,7 @@ def maxctx(Ref_file, Queried_ID):
                 	if (max < out_size):
 				max = out_size
 				#line_num = Valid_line 
-	#print "max so far is :", max, "in line number ", line_num
+				print "\nmax so far is :", max, "   at time: ", tmaxt=time.time()
 	f.close()
 	return max;
 
@@ -83,15 +83,14 @@ while(Sal_outliers[Sal_outliers.argmin()]==1):
 	FirAtt_Vec[0:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec))
 	SecAtt_Vec[0:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec))
 	ThrAtt_Vec[0:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec))
-
 	Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
 			   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
 			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
-
 #######################     Finding an outlier in the selected context      #######################
 	clf = LocalOutlierFactor(n_neighbors=20)
 	Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
-	print '\n Sal_outliers is: \n',Sal_outliers
+	for i in range(len(Sal_outliers)):
+  		print '\n ith bit in Sal_outliers is: \n',Sal_outliers[i]
 	
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
