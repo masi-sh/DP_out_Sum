@@ -88,9 +88,9 @@ while(Sal_outliers[Sal_outliers.argmin()]==1):
 			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
 #######################     Finding an outlier in the selected context      #######################
 	clf = LocalOutlierFactor(n_neighbors=20)
+	print '\n Sal_outliers is(before): \n',str(Sal_outliers)
 	Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
-	for i in range(len(Sal_outliers)):
-  		print '\n ith bit in Sal_outliers is: \n',Sal_outliers[i]
+  	print '\n Sal_outliers is(after): \n',str(Sal_outliers)
 	
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
