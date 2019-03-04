@@ -1,6 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
 import sys
+import gzip
 import pandas as pd
 import numpy as np
 import cufflinks as cf
