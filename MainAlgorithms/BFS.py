@@ -1,3 +1,4 @@
+from __future__ import division
 import matplotlib
 matplotlib.use('Agg')
 import sys
@@ -16,7 +17,6 @@ from collections import Counter
 import time
 import fcntl
 import random
-from __future__ import division
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
