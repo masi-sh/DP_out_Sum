@@ -92,7 +92,7 @@ while(Sal_outliers[Sal_outliers.argmin()]==1):
 	Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
   	print '\n Sal_outliers is(after): \n'
 	for i in range (len(Sal_outliers)):
-		print Sal_outliers[i]
+		print Sal_outliers[i],
 	
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
