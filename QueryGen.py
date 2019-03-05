@@ -9,13 +9,14 @@ from collections import Counter
 import time
 import fcntl
 import random
+import csv
 
 random.seed(100*int(sys.argv[1]))
 query_num = int(sys.argv[1])
-Ref_file = '/home/sm2shafi/Reffile.txt'
-Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
+Query_file = '~/DP_out_Sum/Queries.csv'
 Queries = pd.read_csv(Query_file)
-df = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
+df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
+Ref_file = '/home/sm2shafi/Reffile.txt'
 
 def maxctx(Ref_file, Queried_ID):
 	max         = 0
@@ -43,13 +44,13 @@ def maxctx(Ref_file, Queried_ID):
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
-ThrAtt_lst = df['Calendar Year'].unique()
+ThrAtt_lst = df2['Calendar Year'].unique()
+FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
+SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
+ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 ###################################     Forming a context   #######################################
 Sal_outliers = np.array([1])
 while(Sal_outliers[Sal_outliers.argmin()]==1):
-	FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
-	SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
-	ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 	FirAtt_Vec[0:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec))
 	SecAtt_Vec[0:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec))
 	ThrAtt_Vec[0:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec))
@@ -58,23 +59,23 @@ while(Sal_outliers[Sal_outliers.argmin()]==1):
 			   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
 			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
 #######################     Finding an outlier in the selected context      #######################
-	clf = LocalOutlierFactor(n_neighbors=20)
-	Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
+	if (len(Orgn_Ctx)!=0):
+		clf = LocalOutlierFactor(n_neighbors=20)
+		Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
 
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
-print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
+#print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 max_ctx, count = maxctx(Ref_file, Queried_ID)
 
   ###########       Making Queue of samples and initiating it, with Org_Vec   ############################
 Org_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
 np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
+#print '\n Org_Vec is: ' , Org_Vec
 
-if (max_ctx !=0 && count>1000):
-	#Queries.loc[query_num]=[Queried_ID, maxctx(Ref_file, Queried_ID), Org_Vec]
-	#TEST, WITHOUT MAX
-	Queries.loc[query_num]=[query_num, Queried_ID, max, Org_Vec]
-	#ff = open(Query_file,'a+')
-	#fcntl.flock(ff, fcntl.LOCK_EX)
-	Queries.to_csv(Query_file)
-	#fcntl.flock(ff, fcntl.LOCK_UN)
-	#ff.close()
+if (max_ctx !=0 and count>1000):
+	with open(Query_file, 'ab') as csvfile:
+        	writer = csv.writer(csvfile)
+        	fcntl.flock(csvfile, fcntl.LOCK_EX)
+        	writer.writerow([query_num, Queried_ID, max_ctx, str(Org_Vec)])
+        	fcntl.flock(csvfile, fcntl.LOCK_UN)
+	csvfile.close()
