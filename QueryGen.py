@@ -13,7 +13,7 @@ import csv
 
 random.seed(100*int(sys.argv[1]))
 query_num = int(sys.argv[1])
-Query_file = '~/DP_out_Sum/Queries.csv'
+Query_file = '~/DP_out_Sum/MainAlgorithms/Queries.csv'
 Queries = pd.read_csv(Query_file)
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Ref_file = '/home/sm2shafi/Reffile.txt'
