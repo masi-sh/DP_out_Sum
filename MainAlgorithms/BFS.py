@@ -16,6 +16,7 @@ from collections import Counter
 import time
 import fcntl
 import random
+from __future__ import division
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
@@ -87,12 +88,13 @@ while(Sal_outliers[Sal_outliers.argmin()]==1):
 			   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
 			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
 #######################     Finding an outlier in the selected context      #######################
-	clf = LocalOutlierFactor(n_neighbors=20)
-	print '\n Sal_outliers is(before): \n',str(Sal_outliers)
-	Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
-  	print '\n Sal_outliers is(after): \n'
-	for i in range (len(Sal_outliers)):
-		print Sal_outliers[i],
+	if (len(Orgn_Ctx)!=0):
+		clf = LocalOutlierFactor(n_neighbors=20)
+		print '\n Sal_outliers is(before): \n',str(Sal_outliers)
+		Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
+  		print '\n Sal_outliers is(after): \n'
+		for i in range (len(Sal_outliers)):
+			print Sal_outliers[i],
 	
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
@@ -115,7 +117,7 @@ Q_indx        = 0
 index         = 0
 
 while len(Queue)<100:     
-    print '\nSampling & Queueing...  \n'
+    print '\nSampling & Queueing...  \n',
     for i in  range (len(Queue[Q_indx][3])):      
         BFS_Flp[i]  = Queue[Q_indx][3][i]
     while any(np.array_equal(BFS_Flp[:],x[3][:]) for x in Queue):
