@@ -57,10 +57,11 @@ def maxctx(Ref_file, Queried_ID):
 	return max;
 
 # Writing final data 
-def writefinal(Data_to_write, randomness, runtime, ID):	
+def writefinal(Data_to_write, randomness, t0, t1, runtime, ID):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
-	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', BFSexp alg. takes' + runtime)
+	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', \
+	BFSexp alg. takes' + runtime + 'from'+ t0 + 'to' + t1)
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
@@ -180,6 +181,6 @@ t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
-writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
+writefinal(Data_to_write, str(int(sys.argv[1])), str(t0), str(t1), runtime, str(Queried_ID))	
 #print '\n The final Queue is \n', Queue     
 print '\n The BFS runtime, starting from org_ctx and choosing randomly one among childern in each layer is \n', runtime
