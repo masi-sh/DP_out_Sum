@@ -25,7 +25,7 @@ import csv
 #random.seed(100*int(sys.argv[1]))
 #Ref_file = '/home/sm2shafi/Reffile.txt'
 
-Query_num = sys.argv[1]
+Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
