@@ -17,14 +17,19 @@ from collections import Counter
 import time
 import fcntl
 import random
+import csv
 #outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
 #Maxfilename = 'Max.txt'
 
 # To get the same original contexts in all files
-random.seed(100*int(sys.argv[1]))
+#random.seed(100*int(sys.argv[1]))
+#Ref_file = '/home/sm2shafi/Reffile.txt'
+
+Query_num = sys.argv[1]
 # This file is filtered, no extra filtering required
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-Ref_file = '/home/sm2shafi/Reffile.txt'
+Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
+Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
 Store_file = 'BFSDataPointsOutput.dat'
 
 # Finds the maximal context for the Queried_ID      
@@ -78,33 +83,42 @@ SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 
 ###################################     Forming a context   #######################################
-Sal_outliers = np.array([1])
-while(Sal_outliers[Sal_outliers.argmin()]==1):
-	print '\n Looking for an original context \n'
-	FirAtt_Vec[0:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec))
-	SecAtt_Vec[0:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec))
-	ThrAtt_Vec[0:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec))
-	Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
-			   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
-			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
+#Sal_outliers = np.array([1])
+#while(Sal_outliers[Sal_outliers.argmin()]==1):
+#	print '\n Looking for an original context \n'
+#	FirAtt_Vec[0:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec))
+#	SecAtt_Vec[0:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec))
+#	ThrAtt_Vec[0:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec))
+#	Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
+#			   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
+#			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
 #######################     Finding an outlier in the selected context      #######################
-	if (len(Orgn_Ctx)!=0):
-		clf = LocalOutlierFactor(n_neighbors=20)
-		print '\n Sal_outliers is(before): \n',str(Sal_outliers)
-		Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
-  		print '\n Sal_outliers is(after): \n'
-		for i in range (len(Sal_outliers)):
-			print Sal_outliers[i],
+#	if (len(Orgn_Ctx)!=0):
+#		clf = LocalOutlierFactor(n_neighbors=20)
+#		print '\n Sal_outliers is(before): \n',str(Sal_outliers)
+#		Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
+ # 		print '\n Sal_outliers is(after): \n'
+#		for i in range (len(Sal_outliers)):
+#			print Sal_outliers[i],
 	
-Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
+#Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
+Queried_ID = Queries.iloc[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 # finding maximal context's size for queried_ID
-max_ctx = maxctx(Ref_file, Queried_ID)
+max_ctx = Queries.iloc[Query_num]['Max']
+#max_ctx = maxctx(Ref_file, Queried_ID)
 print '\nmaximal context has the population :\n', max_ctx
 
   ###########       Making Queue of samples and initiating it, with Org_Vec   ############################
 Org_Vec       = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
-np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
+#np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
+
+# polishing Ctx in Query_file and reading Org_Vec from it
+Queries['Ctx'] = Queries['Ctx'].replace({'\n': ''}, regex=True)
+Org_Str = Queries.iloc[Query_num]['Ctx'][1:-2].strip('[]').replace('.','').replace(' ', '')
+for i in range(len(Org_Vec)):
+	if (Org_Str[i] =='1'):
+		Org_Vec[i] = 1
         ################################# Initiating queue with Org_ctx informaiton  ########################
 Epsilon       = 0.001
 Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
