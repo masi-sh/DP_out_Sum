@@ -119,9 +119,14 @@ Org_Str = Queries.iloc[Query_num]['Ctx'][1:-2].strip('[]').replace('.','').repla
 for i in range(len(Org_Vec)):
 	if (Org_Str[i] =='1'):
 		Org_Vec[i] = 1
+		
+Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
+		       df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
+		       df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
+   
         ################################# Initiating queue with Org_ctx informaiton  ########################
 Epsilon       = 0.001
-Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0]/max_ctx, Org_Vec]]
 Data_to_write = []
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 t0 = time.time()
