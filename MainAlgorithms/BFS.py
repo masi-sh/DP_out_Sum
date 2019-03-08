@@ -57,10 +57,11 @@ def maxctx(Ref_file, Queried_ID):
 	return max;
 
 # Writing final data 
-def writefinal(Data_to_write, randomness, runtime, ID):	
+def writefinal(Data_to_write, randomness, t0, t1, runtime, ID):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
-	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', BFSexp alg. takes' + runtime)
+	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', \
+	BFSexp alg. takes' + runtime + 'from'+ t0 + 'to' + t1)
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
@@ -126,8 +127,9 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
    
         ################################# Initiating queue with Org_ctx informaiton  ########################
 Epsilon       = 0.001
-Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0]/max_ctx, Org_Vec]]
-Data_to_write = []
+Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+# Samples start with org_vec info
+Data_to_write = [(Queue[0][2])/max_ctx]
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 t0 = time.time()
 BFS_Flp       = np.zeros(len(Org_Vec)) 
@@ -135,7 +137,8 @@ BFS_Flp       = np.zeros(len(Org_Vec))
 Q_indx        = 0
 index         = 0
 
-while len(Queue)<100:     
+while len(Queue)<100:
+    Addtosamples = False
     print '\nSampling & Queueing...  \n',
     for i in  range (len(Queue[Q_indx][3])):      
         BFS_Flp[i]  = Queue[Q_indx][3][i]
@@ -161,6 +164,7 @@ while len(Queue)<100:
             if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
                 Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
                 Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+		Addtosamples = True
                 for i in  range (len(Queue[len(Queue)-1][3])):      
                     Queue[len(Queue)-1][3][i]  = BFS_Flp[i]
                 #print '\n Queue updated!'
@@ -171,15 +175,16 @@ while len(Queue)<100:
     ExpRes = np.random.choice(elements, 1, p = probabilities)
     for child in range(0, len(Queue)):
         if Queue[child][0] == ExpRes[0]:
-            Q_indx = child      
+            Q_indx = child
     #Ctx_Flpr+=1
-    Data_to_write.append(Queue[ Q_indx][2]/max_ctx) 
+    if (Addtosamples):
+	Data_to_write.append((Queue[Q_indx][2])/max_ctx) 
 
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
-writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
+writefinal(Data_to_write, str(int(sys.argv[1])), str(t0), str(t1), runtime, str(Queried_ID))	
 #print '\n The final Queue is \n', Queue     
 print '\n The BFS runtime, starting from org_ctx and choosing randomly one among childern in each layer is \n', runtime
