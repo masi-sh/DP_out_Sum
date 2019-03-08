@@ -127,7 +127,7 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
    
         ################################# Initiating queue with Org_ctx informaiton  ########################
 Epsilon       = 0.001
-Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0]/max_ctx, Org_Vec]]
+Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 Data_to_write = []
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
 t0 = time.time()
@@ -174,7 +174,7 @@ while len(Queue)<100:
         if Queue[child][0] == ExpRes[0]:
             Q_indx = child      
     #Ctx_Flpr+=1
-    Data_to_write.append(Queue[ Q_indx][2]/max_ctx) 
+    Data_to_write.append((Queue[Q_indx][2])/max_ctx) 
 
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
 t1 = time.time()
