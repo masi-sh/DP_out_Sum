@@ -136,15 +136,19 @@ BFS_Flp       = np.zeros(len(Org_Vec))
 #Ctx_Flpr     = 0
 Q_indx        = 0
 index         = 0
-
+termination_threshold =100
+Terminator    = 0
 while len(Queue)<100:
-    Addtosamples = False
+    Terminator += 1
+    if Terminator > termination_threshold:
+	break
+    Addtosamples    = False
     print '\nSampling & Queueing...  \n',
     for i in  range (len(Queue[Q_indx][3])):      
-        BFS_Flp[i]  = Queue[Q_indx][3][i]
+        BFS_Flp[i]        = Queue[Q_indx][3][i]
     while any(np.array_equal(BFS_Flp[:],x[3][:]) for x in Queue):
         for i in  range (len(Queue[Q_indx][3])):      
-            BFS_Flp[i]  = Queue[Q_indx][3][i]
+            BFS_Flp[i]    = Queue[Q_indx][3][i]
         Flp_bit           = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1))
         BFS_Flp[Flp_bit]  = 1 - BFS_Flp[Flp_bit]
     BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
@@ -165,6 +169,7 @@ while len(Queue)<100:
                 Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
                 Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 		Addtosamples = True
+		Terminator   = 0
                 for i in  range (len(Queue[len(Queue)-1][3])):      
                     Queue[len(Queue)-1][3][i]  = BFS_Flp[i]
                 #print '\n Queue updated!'
@@ -180,6 +185,7 @@ while len(Queue)<100:
     if (Addtosamples):
 	Data_to_write.append((Queue[Q_indx][2])/max_ctx) 
 
+Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
