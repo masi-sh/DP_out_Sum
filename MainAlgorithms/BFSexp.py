@@ -96,7 +96,8 @@ Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_
 Data_to_write = [(Queue[0][2])/max_ctx]
 
 BFS_Vec      = np.zeros(len(Org_Vec))
-np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
+for i in range(len(Org_Vec)):
+	BFS_Vec[i]  = Org_Vec[i]
 
 ###############      Make the queue by BFS traverse from ctx_org by exp through children, ctx_Flpr(=100) times    ###################
 Ctx_Flpr = 0
@@ -137,7 +138,7 @@ while len(Queue)<100:
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
 	Sub_elements = [elem[0] for elem in sub_q]	
-	Sub_probabilities = np.array([prob[1] for prob in sub_q])/(sum ([prob[1] for prob in sub_q]))
+	Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
 	SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 	for child in range(0, len(sub_q)):
 		if sub_q[child][0] == SubRes[0]:
