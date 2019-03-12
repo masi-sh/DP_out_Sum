@@ -158,7 +158,7 @@ while len(Queue)<100:
 		BFS_Vec[i]  = Queue[QQ_indx][3][i]
 	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[QQ_indx][3][:],\
 	' and has ', Queue[QQ_indx][2], 'population'
-	 if (Addtosamples):
+	if (Addtosamples):
 		Data_to_write.append(Queue[QQ_indx][2]/max_ctx) 
 	
 	###################################       Writing final data ###############################
