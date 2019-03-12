@@ -1,6 +1,8 @@
+from __future__ import division
 import matplotlib
 matplotlib.use('Agg')
 import sys
+#import gzip
 import pandas as pd
 import numpy as np
 import cufflinks as cf
@@ -8,37 +10,31 @@ import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
 cf.go_offline()
-df = pd.read_csv("~/DP_out_Sum/dataset/combined.csv")
 import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
 from collections import Counter
 import time
 import fcntl
-import gzip
 import random
+import csv
 
-################ Reference file to find the maximal context ###############
-Ref_file = 'AllCTXOUT.txt.gz'
-Store_file = 'BFSexpDataPointsOutput.dat'
-
-# Parallelizing using multiple cors, so each core needs to test just one data point 
-Datapoints = 1
-#outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
-#Maxfilename = 'Max.txt'
-
-# To get the same original contexts in all files, each core gets seed from the bash file
-#random.seed(2019)
-random.seed(100*int(sys.argv[1]))
+Query_num = int(sys.argv[1])
+# This file is filtered, no extra filtering required
+df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
+Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
+Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
+Store_file = 'BFSDataPointsOutput.dat'
 
 # Finds the maximal context for the Queried_ID      
 def maxctx(Ref_file, Queried_ID):
+	print '\nChecking for the maximal context ... \n'
 	max = 0
 	out_size = 0
 	#line_num = 0
 	size = 0
 	#Ctx_line = 0
-	with gzip.open(Ref_file,'rt') as f:
+	with open(Ref_file,'rt') as f:
         	for num, line in enumerate(f, 1):
                 	if line.split(' ')[0].strip()=="Matching":
 				#Ctx_line = num
@@ -50,7 +46,7 @@ def maxctx(Ref_file, Queried_ID):
                 	if (max < out_size):
 				max = out_size
 				#line_num = Valid_line 
-	#print "max so far is :", max, "in line number ", line_num
+				print "\nmax so far is :", max, "   at time: ", time.time()
 	f.close()
 	return max;
 
@@ -58,74 +54,68 @@ def maxctx(Ref_file, Queried_ID):
 def writefinal(Data_to_write, randomness, runtime, ID):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
-	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%5i'), header = randomness+ ' Generates outlier , ' + ID + ', BFSexp alg. takes' + runtime)
+	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', BFSexp alg. takes' + runtime)
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
-
-#### TO FIX: how to get the same number of output as the go file after filtering?
-emp_counts = df['Employer'].value_counts()
-df2 = df[df['Employer'].isin(emp_counts[emp_counts > 3000].index)]
-
-job_counts = df2["Job Title"].value_counts()
-df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
 
-df2 = df2.loc[df2['Job Title'].isin(FirAtt_lst) & df2['Employer'].isin(SecAtt_lst) & df2['Calendar Year'].isin(ThrAtt_lst)]
-df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
-
-#################              Repeat for the number of Datapoints        ########################
 FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
 SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 	
-###################################     Forming a context   #######################################	
-FirAtt_Vec[0:5] = 1
-SecAtt_Vec[0:6] = 1
-ThrAtt_Vec[0:5] = 1
-FirAtt_Vec[5:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec)-5)
-SecAtt_Vec[6:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec)-6)
-ThrAtt_Vec[5:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec)-5)
-	
-Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
-		   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
-		   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
-
-#######################     Finding an outlier in the selected context      #######################
-clf = LocalOutlierFactor(n_neighbors=20)
-Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
-Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
+# Reading a Queried_ID from the list in the Queries file
+Queried_ID = Queries.iloc[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
+# finding maximal context's size for queried_ID
+max_ctx = Queries.iloc[Query_num]['Max']
+print '\nmaximal context has the population :\n', max_ctx
 
-#######################     Finding the maximal context for the Queried_ID      #######################
+# Making Queue of samples and initiating it, with Org_Vec  
+Org_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+# polishing Ctx in Query_file and reading Org_Vec from it
+Queries['Ctx'] = Queries['Ctx'].replace({'\n': ''}, regex=True)
+Org_Str = Queries.iloc[Query_num]['Ctx'][1:-2].strip('[]').replace('.','').replace(' ', '')
+for i in range(len(Org_Vec)):
+	if (Org_Str[i] =='1'):
+		Org_Vec[i] = 1
+		
+Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
+		       df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
+		       df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
 
-	#Maximal = maxctx(Ref_file, Queried_ID)
 
   ###########       Making Queue of samples and initiating it, with Org_Vec, BFS_Vec is the transferring vector    ############################
-Org_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
-np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
-BFS_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+        ################################# Initiating queue with Org_ctx informaiton  ########################
+Epsilon       = 0.001
+Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+# Samples start with org_vec info
+Data_to_write = [(Queue[0][2])/max_ctx]
+
+BFS_Vec      = np.zeros(len(Org_Vec))
 np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=BFS_Vec)
-           ################################# Initiating queue with Org_ctx informaiton  ########################
-Epsilon = 0.001
-Queue = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
-Data_to_write = []
 
 ###############      Make the queue by BFS traverse from ctx_org by exp through children, ctx_Flpr(=100) times    ###################
 Ctx_Flpr = 0
 t0       = time.time()
-BFS_Flp  = np.zeros(len(BFS_Vec)) 
-
-while Ctx_Flpr<99:  
-	sub_q        = []
+BFS_Flp  = np.zeros(len(Org_Vec)) 
+termination_threshold =500
+Terminator = 0
+while len(Queue)<100:  
+	Terminator += 1
+   	if (Terminator>termination_threshold):
+		break
+	Addtosamples = False
+	sub_q    = []
 	flpd	 = []
-	for Flp_bit in range(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))):
+	for Flp_bit in range(0,(len(Org_Vec))):
 		Sub_Sal_list = []
 		Sub_ID_list  = []
-		BFS_Flp[:] = BFS_Vec[:]
+		for i in  range (len(BFS_Vec)):      
+			BFS_Flp[i] = BFS_Vec[i]
 		#if BFS_Flp[Flp_bit] == 0:
 		BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
 		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
@@ -141,20 +131,20 @@ while Ctx_Flpr<99:
 			for outlier_finder in range(0, len(Sub_ID_list)):
 				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
 					Sub_Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
-					flpd[:] = BFS_Flp[:]
+					for i in  range (len(BFS_Flp)):      
+						flpd[i] = BFS_Flp[i]
           				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
 	Sub_elements = [elem[0] for elem in sub_q]	
 	Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
 	SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
-	### delete next line, we can store the sub-exp result directly in the queue, we dont need an intermediate bfs_flp 
-	#BFS_Flp[:]  = sub_q[SubRes[0]][3][:]
 	for child in range(0, len(sub_q)):
 		if sub_q[child][0] == SubRes[0]:
 			Q_indx = child
 	while not any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
-		Queue.append([Ctx_Flpr+1, sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
+		Queue.append([len(Queue), sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
+		Addtosamples = True
 
 	print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
 	##################################       Sampling form the Queue ###############################
@@ -163,21 +153,18 @@ while Ctx_Flpr<99:
 	ExpRes = np.random.choice(elements, 1, p = probabilities)
 	for child in range(0, len(Queue)):
       		if Queue[child][0] == ExpRes[0]:
-        		QQ_indx = child        		
-	BFS_Vec[:]  = Queue[QQ_indx][3][:]
+        		QQ_indx = child
+	for i in  range (len(Queue[QQ_indx][3])): 
+		BFS_Vec[i]  = Queue[QQ_indx][3][i]
 	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[QQ_indx][3][:],\
 	' and has ', Queue[QQ_indx][2], 'population'
-	Ctx_Flpr+=1
-	Data_to_write.append(Queue[QQ_indx][2]) 
+	 if (Addtosamples):
+		Data_to_write.append(Queue[QQ_indx][2]/max_ctx) 
 	
 	###################################       Writing final data ###############################
-
+Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 ' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
 writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
-
-print '\n The final Queue is \n', Queue     
-
-print '\n The BFS runtime, starting from org_ctx and using Exp among childern in each layer is \n', runtime

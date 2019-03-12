@@ -147,6 +147,7 @@ while len(Queue)<100:
     for i in  range (len(Queue[Q_indx][3])):      
         BFS_Flp[i]        = Queue[Q_indx][3][i]
     while any(np.array_equal(BFS_Flp[:],x[3][:]) for x in Queue):
+	print '\nThis is already on the queue too!'
         for i in  range (len(Queue[Q_indx][3])):      
             BFS_Flp[i]    = Queue[Q_indx][3][i]
         Flp_bit           = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1))
