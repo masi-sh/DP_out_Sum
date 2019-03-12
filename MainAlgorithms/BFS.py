@@ -138,9 +138,9 @@ Q_indx        = 0
 index         = 0
 termination_threshold =100
 Terminator    = 0
-while len(Queue)<100:
+while len(Queue)<500:
     Terminator += 1
-    if Terminator > termination_threshold:
+    if (Terminator>termination_threshold):
 	break
     Addtosamples    = False
     print '\nSampling & Queueing...  \n',
