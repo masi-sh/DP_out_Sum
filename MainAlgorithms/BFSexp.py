@@ -111,7 +111,7 @@ while len(Queue)<100:
 		break
 	Addtosamples = False
 	sub_q    = []
-	flpd	 = []
+	flpd	 = np.zeros(len(Org_Vec)) 
 	for Flp_bit in range(0,(len(Org_Vec))):
 		Sub_Sal_list = []
 		Sub_ID_list  = []
