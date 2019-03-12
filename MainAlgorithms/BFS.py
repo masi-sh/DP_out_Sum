@@ -136,11 +136,11 @@ BFS_Flp       = np.zeros(len(Org_Vec))
 #Ctx_Flpr     = 0
 Q_indx        = 0
 index         = 0
-termination_threshold =100
+termination_threshold =500
 Terminator    = 0
 while len(Queue)<100:
     Terminator += 1
-    if Terminator > termination_threshold:
+    if (Terminator>termination_threshold):
 	break
     Addtosamples    = False
     print '\nSampling & Queueing...  \n',
