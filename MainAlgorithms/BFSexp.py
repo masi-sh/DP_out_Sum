@@ -137,7 +137,7 @@ while len(Queue)<100:
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
 	Sub_elements = [elem[0] for elem in sub_q]	
-	Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
+	Sub_probabilities = np.array([prob[1] for prob in sub_q])/(sum ([prob[1] for prob in sub_q]))
 	SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 	for child in range(0, len(sub_q)):
 		if sub_q[child][0] == SubRes[0]:
