@@ -72,7 +72,7 @@ Org_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
 np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
 #print '\n Org_Vec is: ' , Org_Vec
 
-if (max_ctx !=0 and count>1000):
+if (max_ctx !=0 and count>500):
 	with open(Query_file, 'ab') as csvfile:
         	writer = csv.writer(csvfile)
         	fcntl.flock(csvfile, fcntl.LOCK_EX)
