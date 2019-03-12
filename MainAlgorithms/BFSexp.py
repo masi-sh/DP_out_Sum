@@ -24,7 +24,7 @@ Query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'BFSDataPointsOutput.dat'
+Store_file = 'BFSexpDataPointsOutput.dat'
 
 # Finds the maximal context for the Queried_ID      
 def maxctx(Ref_file, Queried_ID):
@@ -100,7 +100,6 @@ for i in range(len(Org_Vec)):
 	BFS_Vec[i]  = Org_Vec[i]
 
 ###############      Make the queue by BFS traverse from ctx_org by exp through children, ctx_Flpr(=100) times    ###################
-Ctx_Flpr = 0
 t0       = time.time()
 BFS_Flp  = np.zeros(len(Org_Vec)) 
 termination_threshold =500
@@ -147,7 +146,7 @@ while len(Queue)<100:
 		Queue.append([len(Queue), sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
 		Addtosamples = True
 
-	print '\n Ctx_Flpr is = ', Ctx_Flpr, '\n The private context candidates are: \n', Queue
+	print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
 	##################################       Sampling form the Queue ###############################
 	elements = [elem[0] for elem in Queue]	
 	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
