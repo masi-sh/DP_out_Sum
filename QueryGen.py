@@ -59,10 +59,9 @@ while(Sal_outliers[Sal_outliers.argmin()]==1):
 			   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
 			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
 #######################     Finding an outlier in the selected context      #######################
-	if (len(Orgn_Ctx)!=0):
+	if (Orgn_Ctx.shape[0] > 20):
 		clf = LocalOutlierFactor(n_neighbors=20)
 		Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
-
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 #print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 max_ctx, count = maxctx(Ref_file, Queried_ID)
