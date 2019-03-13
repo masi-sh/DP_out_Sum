@@ -145,6 +145,7 @@ while len(Queue)<100:
 	while not any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
 		Queue.append([len(Queue), sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
 		Addtosamples = True
+		Terminator = 0
 
 	print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
 	##################################       Sampling form the Queue ###############################
