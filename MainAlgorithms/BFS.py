@@ -57,11 +57,11 @@ def maxctx(Ref_file, Queried_ID):
 	return max;
 
 # Writing final data 
-def writefinal(Data_to_write, randomness, t0, t1, runtime, ID):	
+def writefinal(Data_to_write, randomness, runtime, ID):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
 	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', \
-	BFSexp alg. takes' + runtime + 'from'+ t0 + 'to' + t1)
+	BFS alg. takes' + runtime)
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
@@ -78,11 +78,6 @@ ThrAtt_lst = df2['Calendar Year'].unique()
 
 #df2 = df.loc[df['Job Title'].isin(FirAtt_lst) & df['Employer'].isin(SecAtt_lst) & df['Calendar Year'].isin(ThrAtt_lst)]
 #df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
-
-FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
-SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
-ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
-
 ###################################     Forming a context   #######################################
 #Sal_outliers = np.array([1])
 #while(Sal_outliers[Sal_outliers.argmin()]==1):
@@ -111,7 +106,7 @@ max_ctx = Queries.iloc[Query_num]['Max']
 print '\nmaximal context has the population :\n', max_ctx
 
   ###########       Making Queue of samples and initiating it, with Org_Vec   ############################
-Org_Vec       = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+Org_Vec       = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
 #np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
 
 # polishing Ctx in Query_file and reading Org_Vec from it
@@ -192,6 +187,6 @@ t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
-writefinal(Data_to_write, str(int(sys.argv[1])), str(t0), str(t1), runtime, str(Queried_ID))	
+writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
 #print '\n The final Queue is \n', Queue     
 print '\n The BFS runtime, starting from org_ctx and choosing randomly one among childern in each layer is \n', runtime
