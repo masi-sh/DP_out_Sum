@@ -131,9 +131,9 @@ while len(Queue)<100:
 			for outlier_finder in range(0, len(Sub_ID_list)):
 				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
 					Sub_Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
-					for i in  range (len(BFS_Flp)):      
-						flpd[i] = BFS_Flp[i]
-          				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], flpd[:]])
+          				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+					for i in  range (len(sub_q[len(sub_q)-1][3])):      
+						sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
 	Sub_elements = [elem[0] for elem in sub_q]	
