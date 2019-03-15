@@ -109,8 +109,8 @@ while len(Queue)<100:
 				for outlier_finder in range(0, len(Sub_ID_list)):
 					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
 						effective_pop = BFS_Ctx.shape[0]
-				Sub_Score = np.exp(Epsilon *(effective_pop)
-            			sub_q.append([Flp_bit ,Sub_Score , effective_pop,  np.zeros(len(mnml_Vec))])
+				Sub_Score = np.exp(Epsilon *(effective_pop))
+            			sub_q.append([Flp_bit ,Sub_Score , effective_pop, np.zeros(len(mnml_Vec))])
 				for i in  range (len(sub_q[len(sub_q)-1][3])):      
 					sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
 			
