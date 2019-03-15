@@ -114,6 +114,7 @@ while len(Queue)<100:
 		for i in  range (len(Queue[len(Queue)-1][3])):      
 			Queue[len(Queue)-1][3][i] = BFS_Flp[i]
 		print '\n Len(Queue) is = ', len(Queue), '\n The private context candidates are: \n', Queue
+
 	###################################       Sampling form the Queue ###############################
 	elements = [elem[0] for elem in Queue]	
 	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
