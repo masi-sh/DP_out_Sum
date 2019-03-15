@@ -73,7 +73,7 @@ clf = LocalOutlierFactor(n_neighbors=20)
 Min_Sal_outliers = clf.fit_predict(Min_Sal_arr.reshape(-1,1))
 for outlier_finder in range(0, len(Min_ID_list)):
 	if ((Min_Sal_outliers[outlier_finder]==-1) and (Min_ID_list[outlier_finder]==Queried_ID)): 
-		effective_pop = shape[0]
+		effective_pop = mnml_Ctx.shape[0]
 Min_Score = np.exp(Epsilon*(effective_pop))
 Queue	= [[0, Min_Score, effective_pop, mnml_Vec]]
 Data_to_write = [effective_pop/max_ctx]
