@@ -144,7 +144,7 @@ while len(Queue)<100:
 		Data_to_write.append(Queue[QQ_indx][2]/max_ctx) 
 	
 ###################################       Writing final data ###############################
-Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
+#Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 ' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
