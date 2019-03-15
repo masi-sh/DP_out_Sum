@@ -56,9 +56,9 @@ mnml_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(mnml_Vec[0:len(FirA
                    df2['Calendar Year'].isin(ThrAtt_lst[np.where(mnml_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 
 trsf_Vec = np.zeros(len(mnml_Vec))
-trsf_Vec[np.where(FirAtt_lst == df2.values[Queried_ID][5])] = 1 
-trsf_Vec[np.where(SecAtt_lst == df2.values[Queried_ID][4])[0]+len(FirAtt_lst)] = 1 
-trsf_Vec[np.where(ThrAtt_lst == df2.values[Queried_ID][7])[0]+(len(FirAtt_lst)+len(SecAtt_lst))] = 1
+trsf_Vec[np.where(FirAtt_lst == df2.values[Queried_ID][6])] = 1 
+trsf_Vec[np.where(SecAtt_lst == df2.values[Queried_ID][5])[0]+len(FirAtt_lst)] = 1 
+trsf_Vec[np.where(ThrAtt_lst == df2.values[Queried_ID][8])[0]+(len(FirAtt_lst)+len(SecAtt_lst))] = 1
 # Initiating queue with Minimal Context informaiton 
 Epsilon       = 0.001
 effective_pop = 0
