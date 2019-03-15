@@ -59,8 +59,9 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
                     df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
                     df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 
-  ###########       Making Queue of samples and initiating it, with Org_Vec, BFS_Vec is the transferring vector    ############################
-        ################################# Initiating queue with Org_ctx informaiton  ########################
+# Making Queue of samples and initiating it, with Org_Vec
+# BFS_Vec is the transferring vector 
+# Initiating queue with Org_ctx informaiton
 Epsilon       = 0.001
 Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
@@ -70,7 +71,7 @@ BFS_Vec      = np.zeros(len(Org_Vec))
 for i in range(len(Org_Vec)):
 	BFS_Vec[i]  = Org_Vec[i]
 
-###############      Make the queue by BFS traverse from ctx_org by exp through children, ctx_Flpr(=100) times    ###################
+#  Make the queue by BFS traverse from ctx_org by exp through children, 100 times 
 t0       = time.time()
 BFS_Flp  = np.zeros(len(Org_Vec)) 
 termination_threshold =500
