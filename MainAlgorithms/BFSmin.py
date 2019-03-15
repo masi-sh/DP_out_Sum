@@ -132,14 +132,13 @@ while len(Queue)<100:
 	
 	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[Q_indx][3][:],\
 	' and has ', Queue[Q_indx][2], 'population'
-	
+			      
 	Data_to_write.append(Queue[Q_indx][2]/max_ctx)
 	
 t1 = time.time()
 
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'   
-
 writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
 
 print '\n The final Queue is \n', Queue     
