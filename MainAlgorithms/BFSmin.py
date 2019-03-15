@@ -108,7 +108,7 @@ while len(Queue)<100:
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
-			effective_pop = shape[0]
+			effective_pop = BFS_Ctx.shape[0]
 	        Score = np.exp(Epsilon*(effective_pop))
 		Queue.append([len(Queue), Score, effective_pop, np.zeros(len(mnml_Vec))])
 		for i in  range (len(Queue[len(Queue)-1][3])):      
