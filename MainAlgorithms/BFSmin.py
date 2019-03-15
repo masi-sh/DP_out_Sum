@@ -48,9 +48,9 @@ print '\nmaximal context has the population :\n', max_ctx
 
 # Minimal Context, and transfer vector to use as intermediate variable in queue  
 mnml_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
-mnml_Vec[np.where(FirAtt_lst == df2.values[Queried_ID][5])] = 1 
-mnml_Vec[np.where(SecAtt_lst == df2.values[Queried_ID][4])[0]+len(FirAtt_lst)] = 1 
-mnml_Vec[np.where(ThrAtt_lst == df2.values[Queried_ID][7])[0]+(len(FirAtt_lst)+len(SecAtt_lst))] = 1 
+mnml_Vec[np.where(FirAtt_lst == df2.values[Queried_ID][6])] = 1 
+mnml_Vec[np.where(SecAtt_lst == df2.values[Queried_ID][5])[0]+len(FirAtt_lst)] = 1 
+mnml_Vec[np.where(ThrAtt_lst == df2.values[Queried_ID][8])[0]+(len(FirAtt_lst)+len(SecAtt_lst))] = 1 
 mnml_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(mnml_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
                    df2['Employer'].isin(SecAtt_lst[np.where(mnml_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
                    df2['Calendar Year'].isin(ThrAtt_lst[np.where(mnml_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
