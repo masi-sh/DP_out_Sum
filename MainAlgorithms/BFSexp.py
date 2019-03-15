@@ -38,10 +38,6 @@ def writefinal(Data_to_write, randomness, runtime, ID):
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
-
-FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
-SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
-ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
 	
 # Reading a Queried_ID from the list in the Queries file
 Queried_ID = Queries.iloc[Query_num]['Outlier']
@@ -51,7 +47,7 @@ max_ctx = Queries.iloc[Query_num]['Max']
 print '\nmaximal context has the population :\n', max_ctx
 
 # Making Queue of samples and initiating it, with Org_Vec  
-Org_Vec = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
+Org_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
 # polishing Ctx in Query_file and reading Org_Vec from it
 Queries['Ctx'] = Queries['Ctx'].replace({'\n': ''}, regex=True)
 Org_Str = Queries.iloc[Query_num]['Ctx'][1:-2].strip('[]').replace('.','').replace(' ', '')
