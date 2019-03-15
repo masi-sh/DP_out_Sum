@@ -39,11 +39,6 @@ FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
 
-###########################REMOVE THESE!!!!!!!!!!!!!!!!!!!!#######################
-FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
-SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
-ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
-
 # Reading a Queried_ID from the list in the Queries file
 Queried_ID = Queries.iloc[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
