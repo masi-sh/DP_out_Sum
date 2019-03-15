@@ -110,7 +110,7 @@ while len(Queue)<100:
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
 			effective_pop = shape[0]
 	        Score = np.exp(Epsilon*(effective_pop))
-		Queue.append([len(Queue), Score, effective_pop, np.zeros(len(mnml_Vec)])
+		Queue.append([len(Queue), Score, effective_pop, np.zeros(len(mnml_Vec))])
 		for i in  range (len(Queue[len(Queue)-1][3])):      
 			Queue[len(Queue)-1][3][i] = BFS_Flp[i]
 		print '\n Len(Queue) is = ', len(Queue), '\n The private context candidates are: \n', Queue
