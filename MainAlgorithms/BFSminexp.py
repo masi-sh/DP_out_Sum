@@ -122,7 +122,7 @@ while len(Queue)<100:
 		if sub_q[child][0] == SubRes[0]:
 			Q_indx = child
 	while not any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
-        	Queue.append([len(Queue), sub_q[child][1], sub_q[child][2], sub_q[Q_indx][3][:]])
+        	Queue.append([len(Queue), sub_q[Q_indx][1], sub_q[Q_indx][2], sub_q[Q_indx][3][:]])
 		Addtosamples = True
 		Terminator = 0
 	
