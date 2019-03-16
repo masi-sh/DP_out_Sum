@@ -27,10 +27,11 @@ Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
 Store_file = 'BFSexpDataPointsOutput.dat'
 
 # Writing final data 
-def writefinal(Data_to_write, randomness, runtime, ID):	
+def writefinal(Data_to_write, randomness, runtime, ID, max_ctx):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
-	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', BFSexp alg. takes' + runtime)
+	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = 'BFSexp for query number: '+ randomness +\
+	'for outlier' + ID + 'with Ctx_max '+ str(max_ctx) + 'takes ' + runtime)	
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
@@ -139,4 +140,4 @@ t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 ' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
-writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
+writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID), max_ctx)	
