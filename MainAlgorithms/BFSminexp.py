@@ -22,8 +22,8 @@ import csv
 Query_num = int(sys.argv[1])
 random.seed(Query_num)
 # This file is filtered, no extra filtering required
-df2 = pd.read_csv("FilteredData.csv")
-Query_file = 'Queries.csv'
+df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
+Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
 Store_file = 'BFSminexpDataPointsOutput.dat'
 
