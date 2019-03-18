@@ -42,11 +42,11 @@ def maxctx(Ref_file, Queried_ID):
 	#print "max so far is :", max, "in line number ", line_num
 	f.close()
 	with open(Ref_file,'rt') as ff:
-	print "\nMax context is wiht size", max ,"is:\n"
-	for i, x in enumerate(ff):
-		if i in range (line_num+1, line_num+4):
-			print x
-			Ctx_Max = Ctx_Max + x
+		print "\nMax context is wiht size", max ,"is:\n"
+		for i, x in enumerate(ff):
+			if i in range (line_num+1, line_num+4):
+				print x
+				Ctx_Max = Ctx_Max + x
 	ff.close()
   	return max, outlier_ctr, Ctx_Max;
 
