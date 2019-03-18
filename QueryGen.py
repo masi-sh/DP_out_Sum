@@ -13,7 +13,7 @@ import csv
 
 random.seed(100*int(sys.argv[1]))
 query_num = int(sys.argv[1])
-Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
+Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/QuerieswithMax.csv'
 Queries = pd.read_csv(Query_file)
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Ref_file = '/home/sm2shafi/Reffile.txt'
@@ -21,26 +21,34 @@ Ref_file = '/home/sm2shafi/Reffile.txt'
 def maxctx(Ref_file, Queried_ID):
 	max         = 0
 	out_size    = 0
-	#line_num   = 0
+	line_num    = 0
 	size        = 0
 	outlier_ctr = 0
-	#Ctx_line   = 0
+	Ctx_line    = 0
+	Ctx_Max     = ''
 	with open(Ref_file,'rt') as f:
         	for num, line in enumerate(f, 1):
                 	if line.split(' ')[0].strip()=="Matching":
-                          #Ctx_line = num
+                          	Ctx_line = num
                         	size = int((line.split(' '))[5].strip(':\n'))
 			elif line.strip().startswith("ID"):
 			        if line.split(' ')[3].strip('#')==str(Queried_ID):
 					out_size = size
 					outlier_ctr += 1
-				#Valid_line = Ctx_line
+					Valid_line = Ctx_line
                 	if (max < out_size):
 			        max = out_size
-				#line_num = Valid_line 
+				line_num = Valid_line 
 	#print "max so far is :", max, "in line number ", line_num
 	f.close()
-  	return max, outlier_ctr;
+	with open(Ref_file,'rt') as ff:
+	print "\nMax context is wiht size", max ,"is:\n"
+	for i, x in enumerate(ff):
+		if i in range (line_num+1, line_num+4):
+			print x
+			Ctx_Max = Ctx_Max + x
+	ff.close()
+  	return max, outlier_ctr, Ctx_Max;
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
@@ -64,7 +72,7 @@ while(Sal_outliers[Sal_outliers.argmin()]==1):
 		Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 #print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
-max_ctx, count = maxctx(Ref_file, Queried_ID)
+max_ctx, count, Ctx_Max = maxctx(Ref_file, Queried_ID)
 
   ###########       Making Queue of samples and initiating it, with Org_Vec   ############################
 Org_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
@@ -75,6 +83,6 @@ if (max_ctx !=0 and count>500):
 	with open(Query_file, 'ab') as csvfile:
         	writer = csv.writer(csvfile)
         	fcntl.flock(csvfile, fcntl.LOCK_EX)
-        	writer.writerow([query_num, Queried_ID, max_ctx, str(Org_Vec)])
+        	writer.writerow([query_num, Queried_ID, max_ctx, str(Org_Vec), Ctx_Max])
         	fcntl.flock(csvfile, fcntl.LOCK_UN)
 	csvfile.close()
