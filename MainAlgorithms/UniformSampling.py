@@ -47,9 +47,6 @@ print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 max_ctx = Queries.iloc[Query_num]['Max']
 print '\nmaximal context has the population :\n', max_ctx
 
-
-
-
         ############### The probability of adding an attribute value to the context  ###############
 Flp_p         = 0.5
 Flp_lst       = []
@@ -59,7 +56,7 @@ Epsilon       = 0.001
 
 t0 = time.time()
 while len(Flp_lst)<100:
-	
+	print "len(Flp_lst) is: ", len(Flp_lst)
 	Vec_Flp = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst), dtype=np.int) 
 	for Ctx_sprt in range (0, len(Vec_Flp)):
         	if (np.random.binomial(size=1, n=1, p= Flp_p)==1):
