@@ -1,6 +1,8 @@
+from __future__ import division
 import matplotlib
 matplotlib.use('Agg')
 import sys
+#import gzip
 import pandas as pd
 import numpy as np
 import cufflinks as cf
@@ -8,7 +10,6 @@ import plotly
 import plotly.offline as py
 import plotly.graph_objs as go
 cf.go_offline()
-df = pd.read_csv("~/DP_out_Sum/dataset/combined.csv")
 import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
@@ -16,81 +17,57 @@ from collections import Counter
 import time
 import fcntl
 import random
-#outputname  = 'Outputs/output'+sys.argv[1]+'.txt'
-#Maxfilename = 'Max.txt'
+import csv
 
-# To get the same original contexts in all files
-random.seed(100*int(sys.argv[1]))
-
-Ref_file = 'AllCTXOUT.txt.gz'
+Query_num = int(sys.argv[1])
+# This file is filtered, no extra filtering required
+df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
+Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
+Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
 Store_file = 'USampleDataPointsOutput.dat'
 
 # Writing final data 
-def writefinal(Data_to_write, randomness, runtime, ID):	
+def writefinal(Data_to_write, randomness, runtime, ID, max_ctx):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
-	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%5i'), header = randomness+ ' Generates outlier , ' + ID + ', BFSexp alg. takes' + runtime)
+	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = 'UniSampling for query number: '+ randomness +\
+	'for outlier' + ID + 'with Ctx_max '+ str(max_ctx) + 'takes ' + runtime)	
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
 
-emp_counts = df['Employer'].value_counts()
-df2 = df[df['Employer'].isin(emp_counts[emp_counts > 3000].index)]
-
-job_counts = df2["Job Title"].value_counts()
-df2 = df2[df2["Job Title"].isin(job_counts[job_counts > 3000].index)]
-
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
-ThrAtt_lst = df['Calendar Year'].unique()
-
-df2 = df.loc[df['Job Title'].isin(FirAtt_lst) & df['Employer'].isin(SecAtt_lst) & df['Calendar Year'].isin(ThrAtt_lst)]
-df2['Salary Paid'] = df2['Salary Paid'].apply(lambda x:x.split('.')[0].strip()).replace({'\$':'', ',':''}, regex=True)
-
-FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
-SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
-ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
-
-###################################     Forming a context   #######################################
-FirAtt_Vec[0:5]=1
-SecAtt_Vec[0:6]=1
-ThrAtt_Vec[0:5]=1
-FirAtt_Vec[5:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec)-5)
-SecAtt_Vec[6:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec)-6)
-ThrAtt_Vec[5:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec)-5)
-
-Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
-		   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
-		   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
-
-#######################     Finding an outlier in the selected context      #######################
-clf = LocalOutlierFactor(n_neighbors=20)
-Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
-Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
-
+ThrAtt_lst = df2['Calendar Year'].unique()
+	
+# Reading a Queried_ID from the list in the Queries file
+Queried_ID = Queries.iloc[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
-Org_Vec      = np.zeros(len(FirAtt_Vec)+len(SecAtt_Vec)+len(ThrAtt_Vec))
-np.concatenate((FirAtt_Vec, SecAtt_Vec, ThrAtt_Vec), axis=0, out=Org_Vec)
+# finding maximal context's size for queried_ID
+max_ctx = Queries.iloc[Query_num]['Max']
+print '\nmaximal context has the population :\n', max_ctx
 
-        ############### The probability of dding an attribute value to the context  ###############
-Flp_p        = 0.5
-Flp_lst      = []
+
+
+
+        ############### The probability of adding an attribute value to the context  ###############
+Flp_p         = 0.5
+Flp_lst       = []
 Data_to_write = []
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
-Epsilon = 0.001
-#Ctx_Flpr = 0
+Epsilon       = 0.001
 
 t0 = time.time()
 while len(Flp_lst)<100:
 	
-	Ctx_Flp = np.zeros(len(Org_Vec), dtype=np.int) 
-	for Ctx_sprt in range (0, len(Ctx_Flp)):
+	Vec_Flp = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst), dtype=np.int) 
+	for Ctx_sprt in range (0, len(Vec_Flp)):
         	if (np.random.binomial(size=1, n=1, p= Flp_p)==1):
-                	Ctx_Flp[Ctx_sprt]=1
+                	Vec_Flp[Ctx_sprt]=1
 			
-	Flp_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Ctx_Flp[0:len(FirAtt_lst)-1] == 1)].tolist()) &\
-		       df2['Employer'].isin(SecAtt_lst[np.where(Ctx_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)-1] == 1)].tolist())  &\
-		       df2['Calendar Year'].isin(ThrAtt_lst[np.where(Ctx_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1] == 1)].tolist())]
+	Flp_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Vec_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
+		       df2['Employer'].isin(SecAtt_lst[np.where(Vec_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
+		       df2['Calendar Year'].isin(ThrAtt_lst[np.where(Vec_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 	
 	Sal_list     = []
 	ID_list      = []
@@ -105,10 +82,8 @@ while len(Flp_lst)<100:
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)):  
 			Flp_lst.append([len(Flp_lst), Score, Flp_Ctx.shape[0], np.zeros(len(Org_Vec))])
-			print '\n Ctx_Flpr is = ', len(Flp_lst), '\n The private context candidates are: \n',Flp_lst
                 	for i in  range (len(Flp_lst[len(Flp_lst)-1][3])):      
-				Flp_lst[len(Flp_lst)-1][3][i] = Ctx_Flp[i]
-				#Ctx_Flpr+=1
+				Flp_lst[len(Flp_lst)-1][3][i] = Vec_Flp[i]
 
        ###################################      Sampling form Exp Mech Result      #################################
 num_smp  = 100
