@@ -54,7 +54,7 @@ print '\nmaximal context has the population :\n', max_ctx
 Flp_p         = 0.5
 Flp_lst       = []
 Data_to_write = []
-###################################        Flip the context ctx_Flpr(=100) times            ###############################
+###################################        Flip the context, 100 times            ###############################
 Epsilon       = 0.001
 
 t0 = time.time()
@@ -81,25 +81,23 @@ while len(Flp_lst)<100:
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)):  
-			Flp_lst.append([len(Flp_lst), Score, Flp_Ctx.shape[0], np.zeros(len(Org_Vec))])
+			Flp_lst.append([len(Flp_lst), Score, Flp_Ctx.shape[0], np.zeros(len(Vec_Flp))])
                 	for i in  range (len(Flp_lst[len(Flp_lst)-1][3])):      
 				Flp_lst[len(Flp_lst)-1][3][i] = Vec_Flp[i]
 
        ###################################      Sampling form Exp Mech Result      #################################
-num_smp  = 100
 elements = [elem[0] for elem in Flp_lst]	
 probabilities = [prob[1] for prob in Flp_lst]/(sum ([prob[1] for prob in Flp_lst]))
-ExpRes = np.random.choice(elements, num_smp, p = probabilities)
-print '\n\nThe number of candidates in Exponential mechanism range is:'           , len(Flp_lst)
+ExpRes = np.random.choice(elements, 1, p = probabilities)
+print '\n\nThe number of candidates in Exponential mechanism range is:', len(Flp_lst)
 print '\n\nIDs sampled from Exponential mechanism output are\n\n',  ExpRes
 
-for ids in ExpRes:
-	Data_to_write.append(Flp_lst[ids][2]) 
+Data_to_write.append(Flp_lst[ExpRes[0]][2]/max_ctx) 
 
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
-writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID)) 
+writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID), max_ctx) 
 print '\n\nThe required time for running the Uniform Sampling algorithm is:', runtime
 
