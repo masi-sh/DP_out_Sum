@@ -65,7 +65,7 @@ Flp_q        = 0.4
 # Flip the context, 100 times    
 Epsilon = 0.001
 Flp_lst	     = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
-Data_to_write = [(Flp_lst[0][2])/max_ctx]
+Data_to_write = []
 t0 = time.time()
 while len(Flp_lst)<100:
 	print '\n len(Flp_lst) is = ', len(Flp_lst)
