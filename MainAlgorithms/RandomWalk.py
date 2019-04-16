@@ -68,6 +68,7 @@ Flp_lst	     = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org
 Data_to_write = [(Flp_lst[0][2])/max_ctx]
 t0 = time.time()
 while len(Flp_lst)<100:
+	print '\n len(Flp_lst) is = ', len(Flp_lst)
 	# context separator scans all elements in the attribute lists to find where to apply p or q 
     	Vec_Flp = np.zeros(len(Org_Vec), dtype=np.int)
 	for Ctx_sprt in range (0, len(Vec_Flp)):
@@ -93,7 +94,6 @@ while len(Flp_lst)<100:
 			Flp_lst.append([len(Flp_lst), Score, Flp_Ctx.shape[0], np.zeros(len(Org_Vec))])
 			for i in  range (len(Flp_lst[len(Flp_lst)-1][3])):    
 				Flp_lst[len(Flp_lst)-1][3][i] = Vec_Flp[i]
-			print '\n len(Flp_lst) is = ', len(Flp_lst), '\n The private context candidates are: \n',Flp_lst 
 			
        ###################################      Sampling form Exp Mech Result      #################################
 elements = [elem[0] for elem in Flp_lst]
