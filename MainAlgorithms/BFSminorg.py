@@ -45,6 +45,14 @@ print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 # finding maximal context's size for queried_ID
 max_ctx = Queries.iloc[Query_num]['Max']
 print '\nmaximal context has the population :\n', max_ctx
+# Original Vector
+Org_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
+# polishing Ctx in Query_file and reading Org_Vec from it
+Queries['Ctx'] = Queries['Ctx'].replace({'\n': ''}, regex=True)
+Org_Str = Queries.iloc[Query_num]['Ctx'][1:-2].strip('[]').replace('.','').replace(' ', '')
+for i in range(len(Org_Vec)):
+	if (Org_Str[i] =='1'):
+		Org_Vec[i] = 1
 
 # Minimal Context, and transfer vector to use as intermediate variable in queue  
 mnml_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
@@ -81,18 +89,29 @@ Data_to_write = [effective_pop/max_ctx]
 ###################################      Add to the minimal context, 100 times    ###############################
 BFS_Flp = np.zeros(len(mnml_Vec)) 
 t0      = time.time()
+# probability of adding an attribute value to the trsf_vec that is in Org_vec
+Flp_p        = 0.8
+# probability of adding an attribute value to the trsf_vec that is not in Org_vec
+Flp_q = 0.4
 
 while len(Queue)<100: 	
 	for i in  range (len(trsf_Vec)):      
 		BFS_Flp[i] = trsf_Vec[i]
 	
 	effective_pop = 0
+	
+	if any(mnml[3]!=0 for mnml in Queue):	
+		Flp_p = 0.5
+		Flp_q = 0.5
+			
    	while any(np.array_equal(BFS_Flp[:],x[3][:]) for x in Queue):
-        	Flp_bit  = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1))
+        	Flp_bit  = random.randint(0,(len(mnml_Vec)-1))
         	while  BFS_Flp[Flp_bit] == 1: 
-            		Flp_bit  = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1)) 
-        	BFS_Flp[Flp_bit] = 1
-		
+            		Flp_bit  = random.randint(0,(len(mnml_Vec)-1)) 
+			if ((Org_Vec[Flp_bit]==1 and np.random.binomial(size=1, n=1, p= Flp_p)==1) or \
+			    (Org_Vec[Flp_bit]==0 and np.random.binomial(size=1, n=1, p= Flp_q)==1)):
+				BFS_Flp[Flp_bit]=1
+        			
 	BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
 			   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
 			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
