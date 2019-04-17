@@ -100,7 +100,7 @@ while len(Queue)<100:
 	
 	effective_pop = 0
 	
-	if any(mnml[3]!=0 for mnml in Queue):	
+	if any(mnml[2]!=0 for mnml in Queue):	
 		Flp_p = 0.5
 		Flp_q = 0.5
 			
