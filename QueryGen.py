@@ -11,9 +11,9 @@ import fcntl
 import random
 import csv
 
-random.seed(100*int(sys.argv[1]))
+random.seed(50*int(sys.argv[1]))
 query_num = int(sys.argv[1])
-Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/QuerieswithMax.csv'
+Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries500.csv'
 Queries = pd.read_csv(Query_file)
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Ref_file = '/home/sm2shafi/Reffile.txt'
@@ -41,13 +41,15 @@ def maxctx(Ref_file, Queried_ID):
 				line_num = Valid_line 
 	#print "max so far is :", max, "in line number ", line_num
 	f.close()
-	with open(Ref_file,'rt') as ff:
-		print "\nMax context is wiht size", max ,"is:\n"
-		for i, x in enumerate(ff):
-			if i in range (line_num+1, line_num+4):
-				print x
-				Ctx_Max = Ctx_Max + x
-	ff.close()
+	# Ctx_Max not necessery now, I just put 0 for it
+	Ctx_Max = 0
+	#with open(Ref_file,'rt') as ff:
+	#	print "\nMax context is wiht size", max ,"is:\n"
+	#	for i, x in enumerate(ff):
+	#		if i in range (line_num+1, line_num+4):
+	#			print x
+	#			Ctx_Max = Ctx_Max + x
+	#ff.close()
   	return max, outlier_ctr, Ctx_Max;
 
 FirAtt_lst = df2['Job Title'].unique()
