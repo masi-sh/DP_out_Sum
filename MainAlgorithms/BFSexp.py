@@ -63,7 +63,7 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
 # Making Queue of samples and initiating it, with Org_Vec
 # BFS_Vec is the transferring vector 
 # Initiating queue with Org_ctx informaiton
-Epsilon       = 0.001
+Epsilon       = 0.002
 Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
 Data_to_write = [(Queue[0][2])/max_ctx]
@@ -77,7 +77,7 @@ t0       = time.time()
 BFS_Flp  = np.zeros(len(Org_Vec)) 
 termination_threshold =500
 Terminator = 0
-while len(Queue)<100:  
+while len(Queue)<50:  
 	Terminator += 1
    	if (Terminator>termination_threshold):
 		break
