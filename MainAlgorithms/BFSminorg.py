@@ -92,7 +92,7 @@ t0      = time.time()
 # probability of adding an attribute value to the trsf_vec that is in Org_vec
 Flp_p        = 0.8
 # probability of adding an attribute value to the trsf_vec that is not in Org_vec
-Flp_q = 0.4
+Flp_q = 0.3
 
 while len(Queue)<100: 	
 	for i in  range (len(trsf_Vec)):      
