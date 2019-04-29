@@ -24,13 +24,13 @@ Query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'RWalkDataPointsOutput.dat'
+Store_file = 'BFSexpDataPointsOutput.dat'
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID, max_ctx):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
-	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = 'RandomWalk for query number: '+ randomness +\
+	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = 'BFSexp for query number: '+ randomness +\
 	'for outlier' + ID + 'with Ctx_max '+ str(max_ctx) + 'takes ' + runtime)	
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
@@ -47,6 +47,7 @@ print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 max_ctx = Queries.iloc[Query_num]['Max']
 print '\nmaximal context has the population :\n', max_ctx
 
+# Making Queue of samples and initiating it, with Org_Vec  
 Org_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
 # polishing Ctx in Query_file and reading Org_Vec from it
 Queries['Ctx'] = Queries['Ctx'].replace({'\n': ''}, regex=True)
@@ -58,52 +59,80 @@ for i in range(len(Org_Vec)):
 Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
                     df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
                     df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-# Keeping attribute values in the original context, p =pr(1-->1) 
-Flp_p        = 0.7
-# Adding attribute values not in the original context, q =pr(0-->1)
-Flp_q        = 0.4
-# Flip the context, 100 times    
-Epsilon = 0.001
-Flp_lst	     = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
-Data_to_write = []
-t0 = time.time()
-while len(Flp_lst)<100:
-	print '\n len(Flp_lst) is = ', len(Flp_lst)
-	# context separator scans all elements in the attribute lists to find where to apply p or q 
-    	Vec_Flp = np.zeros(len(Org_Vec), dtype=np.int)
-	for Ctx_sprt in range (0, len(Vec_Flp)):
-        	if ((Flp_lst[len(Flp_lst)-1][3][Ctx_sprt]==1 and np.random.binomial(size=1, n=1, p= Flp_p)==1) or \
-		    (Flp_lst[len(Flp_lst)-1][3][Ctx_sprt]==0 and np.random.binomial(size=1, n=1, p= Flp_q)==1)):
-                	Vec_Flp[Ctx_sprt]=1
-   	print '\n Vec_Flp for', len(Flp_lst)-1 ,'is', Vec_Flp  
-	Flp_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Vec_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
-			   df2['Employer'].isin(SecAtt_lst[np.where(Vec_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
-			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(Vec_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-	Sal_list     = []
-	ID_list      = []
-	if (Flp_Ctx.shape[0] >= 20):
-		for row in range(Flp_Ctx.shape[0]):
-                    Sal_list.append(Flp_Ctx.iloc[row]['Salary Paid'])
-		    ID_list.append(Flp_Ctx.iloc[row]['Unnamed: 0'])
-                Score = np.exp(Epsilon *(Flp_Ctx.shape[0]))
-                Sal_arr= np.array(Sal_list)
-                clf = LocalOutlierFactor(n_neighbors=20)
-                Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
-		for outlier_finder in range(0, len(ID_list)):
-                    if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)):  
-			Flp_lst.append([len(Flp_lst), Score, Flp_Ctx.shape[0], np.zeros(len(Org_Vec))])
-			for i in  range (len(Flp_lst[len(Flp_lst)-1][3])):    
-				Flp_lst[len(Flp_lst)-1][3][i] = Vec_Flp[i]
-			
-       ###################################      Sampling form Exp Mech Result      #################################
-elements = [elem[0] for elem in Flp_lst]
-probabilities = [prob[1] for prob in Flp_lst]/(sum ([prob[1] for prob in Flp_lst]))
-ExpRes = np.random.choice(elements, 1, p = probabilities)  
-Data_to_write.append(Flp_lst[ExpRes[0]][2]/max_ctx) 
 
+# Making Queue of samples and initiating it, with Org_Vec
+# BFS_Vec is the transferring vector 
+# Initiating queue with Org_ctx informaiton
+Epsilon       = 0.001
+Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+# Samples start with org_vec info
+Data_to_write = [(Queue[0][2])/max_ctx]
+
+BFS_Vec      = np.zeros(len(Org_Vec))
+for i in range(len(Org_Vec)):
+	BFS_Vec[i]  = Org_Vec[i]
+
+#  Make the queue by BFS traverse from ctx_org by exp through children, 100 times 
+t0       = time.time()
+BFS_Flp  = np.zeros(len(Org_Vec)) 
+termination_threshold =500
+Terminator = 0
+while len(Queue)<100:  
+	Terminator += 1
+   	if (Terminator>termination_threshold):
+		break
+	Addtosamples = False
+	sub_q    = []
+	for Flp_bit in range(0,(len(Org_Vec))):
+		Sub_Sal_list = []
+		Sub_ID_list  = []
+		for i in  range (len(BFS_Vec)):      
+			BFS_Flp[i] = BFS_Vec[i]
+		#if BFS_Flp[Flp_bit] == 0:
+		BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
+		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
+				   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
+				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+		if (BFS_Ctx.shape[0] > 20):
+			for row in range(BFS_Ctx.shape[0]):
+				Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
+				Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
+			Sub_Sal_arr= np.array(Sub_Sal_list)
+			clf = LocalOutlierFactor(n_neighbors=20)
+			Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
+			for outlier_finder in range(0, len(Sub_ID_list)):
+				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
+					Sub_Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
+          				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+					for i in  range (len(sub_q[len(sub_q)-1][3])):      
+						sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
+			
+	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
+	if sub_q:
+		Sub_elements = [elem[0] for elem in sub_q]	
+		Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
+		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
+		for child in range(0, len(sub_q)):
+			if sub_q[child][0] == SubRes[0]:
+				Q_indx = child
+	#while not any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
+		Queue.append([len(Queue), sub_q[Q_indx][1], sub_q[Q_indx][2], sub_q[Q_indx][3][:]])
+		Addtosamples = True
+		Terminator = 0
+
+	print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
+	##################################       Continuing form the Queue ###############################
+	for i in  range (len(Queue[len(Queue)-1][3])): 
+		BFS_Vec[i]  = Queue[len(Queue)-1][3][i]
+	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[QQ_indx][3][:],\
+	' and has ', Queue[len(Queue)-1][2], 'population'
+	if (Addtosamples):
+		Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx) 
+	
+	###################################       Writing final data ###############################
+Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
-	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
+' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
-writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID), max_ctx) 
-print '\n\nThe required time for running the Random Walk algorithm is:', runtime
+writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID), max_ctx)	
