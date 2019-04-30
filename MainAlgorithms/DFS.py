@@ -24,13 +24,13 @@ Query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'BFSexpDataPointsOutput.dat'
+Store_file = 'DFSDataPointsOutput.dat'
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID, max_ctx):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
-	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = 'BFSexp for query number: '+ randomness +\
+	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = 'DFS for query number: '+ randomness +\
 	'for outlier' + ID + 'with Ctx_max '+ str(max_ctx) + 'takes ' + runtime)	
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
