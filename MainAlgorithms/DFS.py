@@ -124,7 +124,7 @@ while len(Queue)<100:
 	##################################       Continuing form the Queue ###############################
 	for i in  range (len(Queue[len(Queue)-1][3])): 
 		BFS_Vec[i]  = Queue[len(Queue)-1][3][i]
-	print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[QQ_indx][3][:],\
+	print 'The candidate picked form the Q is ', Queue[len(Queue)-1][0], 'th, with context ', Queue[len(Queue)-1][3][:],\
 	' and has ', Queue[len(Queue)-1][2], 'population'
 	if (Addtosamples):
 		Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx) 
