@@ -107,8 +107,7 @@ while len(Queue)<100:
           				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 					for i in  range (len(sub_q[len(sub_q)-1][3])):      
 						sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
-					sub_q = np.asarray(sub_q)
-			
+						
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
 	if sub_q:
 		Sub_elements = [elem[0] for elem in sub_q]	
