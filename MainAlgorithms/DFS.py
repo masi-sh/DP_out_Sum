@@ -18,6 +18,7 @@ import time
 import fcntl
 import random
 import csv
+import math
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
@@ -64,7 +65,7 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
 # BFS_Vec is the transferring vector 
 # Initiating queue with Org_ctx informaiton
 Epsilon       = 0.001
-Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Queue	      = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
 Data_to_write = [(Queue[0][2])/max_ctx]
 
@@ -102,7 +103,7 @@ while len(Queue)<100:
 			Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
 			for outlier_finder in range(0, len(Sub_ID_list)):
 				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
-					Sub_Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
+					Sub_Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
           				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 					for i in  range (len(sub_q[len(sub_q)-1][3])):      
 						sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
