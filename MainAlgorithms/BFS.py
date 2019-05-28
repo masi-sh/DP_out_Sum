@@ -122,7 +122,7 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
 
         ################################# Initiating queue with Org_ctx informaiton  ########################
 Epsilon       = 0.001
-Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Queue	      = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
 Data_to_write = [(Queue[0][2])/max_ctx]
 ###################################        Flip the context ctx_Flpr(=100) times            ###############################
@@ -162,7 +162,7 @@ while len(Queue)<100:
         Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
         for outlier_finder in range(0, len(ID_list)):
             if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
-                Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
+                Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
                 Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 		Addtosamples = True
 		Terminator   = 0
