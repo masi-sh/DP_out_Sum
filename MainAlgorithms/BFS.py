@@ -175,7 +175,7 @@ while len(Queue)<100:
     elements = [elem[0] for elem in Queue]
     probabilities =[]
     for prob in Queue:
-	probabilities.append([prob[1]/(sum ([prob[1] for prob in Queue])))
+	probabilities.append(prob[1]/(sum ([prob[1] for prob in Queue])))
     ExpRes = np.random.choice(elements, 1, p = probabilities)
     for child in range(0, len(Queue)):
         if Queue[child][0] == ExpRes[0]:
