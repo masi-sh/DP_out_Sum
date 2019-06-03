@@ -76,6 +76,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	termination_threshold =500
 	Terminator = 0
 	while len(Queue)<100:  
+		print 'len(Queue) is', len(Queue)
 		Terminator += 1
    		if (Terminator>termination_threshold):
 			break
