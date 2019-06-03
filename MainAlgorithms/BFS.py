@@ -190,6 +190,6 @@ t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
-writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID))	
+writefinal(Data_to_write, str(Query_num), runtime, str(Queried_ID))	
 #print '\n The final Queue is \n', Queue     
 print '\n The BFS runtime, starting from org_ctx and choosing randomly one among childern in each layer is \n', runtime
