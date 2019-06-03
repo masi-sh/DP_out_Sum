@@ -71,7 +71,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	# BFS_Vec is the transferring vector 
 	BFS_Vec      = np.zeros(len(Org_Vec))
 	for i in range(len(Org_Vec)):
-	BFS_Vec[i]  = Org_Vec[i]
+		BFS_Vec[i]  = Org_Vec[i]
 	BFS_Flp  = np.zeros(len(Org_Vec)) 
 	termination_threshold =500
 	Terminator = 0
