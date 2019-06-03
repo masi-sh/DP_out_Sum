@@ -106,8 +106,10 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
 		# Sampling from sub_queue(sampling in each layer) 
 		if sub_q:
-			Sub_elements = [elem[0] for elem in sub_q]	
-			Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
+			Sub_elements = [elem[0] for elem in sub_q]
+			Sub_probabilities =[]
+    			for prob in sub_q:
+				Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in sub_q])))
 			SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 			for child in range(0, len(sub_q)):
 				if sub_q[child][0] == SubRes[0]:
