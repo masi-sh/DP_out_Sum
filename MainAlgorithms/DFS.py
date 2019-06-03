@@ -54,31 +54,29 @@ Queries['Ctx'] = Queries['Ctx'].replace({'\n': ''}, regex=True)
 Org_Str = Queries.iloc[Query_num]['Ctx'][1:-2].strip('[]').replace('.','').replace(' ', '')
 for i in range(len(Org_Vec)):
 	if (Org_Str[i] =='1'):
-		Org_Vec[i] = 1
-		
+		Org_Vec[i] = 1		
 Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
                     df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
                     df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-
 # Making Queue of samples and initiating it, with Org_Vec
-# BFS_Vec is the transferring vector 
 # Initiating queue with Org_ctx informaiton
 Epsilon       = 0.001
 Queue	      = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
 Data_to_write = [(Queue[0][2])/max_ctx]
 
-BFS_Vec      = np.zeros(len(Org_Vec))
-for i in range(len(Org_Vec)):
-	BFS_Vec[i]  = Org_Vec[i]
-
 # Make the queue by DFS traverse from ctx_org by exp through children, 100 times 
 t0       = time.time()
 def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
+	# BFS_Vec is the transferring vector 
+	BFS_Vec      = np.zeros(len(Org_Vec))
+	for i in range(len(Org_Vec)):
+	BFS_Vec[i]  = Org_Vec[i]
 	BFS_Flp  = np.zeros(len(Org_Vec)) 
 	termination_threshold =500
 	Terminator = 0
 	while len(Queue)<100:  
+		print 'len(Queue) is', len(Queue)
 		Terminator += 1
    		if (Terminator>termination_threshold):
 			break
@@ -105,8 +103,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 						Sub_Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
           					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
-							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
-						
+							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
 		# Sampling from sub_queue(sampling in each layer) 
 		if sub_q:
 			Sub_elements = [elem[0] for elem in sub_q]	
@@ -128,12 +125,10 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		if (Addtosamples):
 			Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx) 
 	return;
-
 DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
 # Writing final data 
 Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
-' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
-	    	   
+' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'	    	   
 writefinal(Data_to_write, str(Query_num), runtime, str(Queried_ID), max_ctx)	
