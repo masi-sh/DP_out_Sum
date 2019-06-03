@@ -150,7 +150,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		Data_to_write.append((Queue[Q_indx][2])/max_ctx) 
 	return Data_to_write;
 
-Data_to_write =  BFS_Alg(Org_Vec, Queue, Data_to_write, , Epsilon, max_ctx)
+Data_to_write =  BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
 Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
 t1 = time.time()
