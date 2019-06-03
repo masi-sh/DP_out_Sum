@@ -2,7 +2,6 @@ from __future__ import division
 import matplotlib
 matplotlib.use('Agg')
 import sys
-#import gzip
 import pandas as pd
 import numpy as np
 import cufflinks as cf
@@ -73,67 +72,68 @@ BFS_Vec      = np.zeros(len(Org_Vec))
 for i in range(len(Org_Vec)):
 	BFS_Vec[i]  = Org_Vec[i]
 
-#  Make the queue by BFS traverse from ctx_org by exp through children, 100 times 
+# Make the queue by DFS traverse from ctx_org by exp through children, 100 times 
 t0       = time.time()
-BFS_Flp  = np.zeros(len(Org_Vec)) 
-termination_threshold =500
-Terminator = 0
-while len(Queue)<100:  
-	Terminator += 1
-   	if (Terminator>termination_threshold):
-		break
-	Addtosamples = False
-	sub_q    = []
-	for Flp_bit in range(0,(len(Org_Vec))):
-		Sub_Sal_list = []
-		Sub_ID_list  = []
-		for i in  range (len(BFS_Vec)):      
-			BFS_Flp[i] = BFS_Vec[i]
-		#if BFS_Flp[Flp_bit] == 0:
-		BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
-		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
-				   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
-				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-		if (BFS_Ctx.shape[0] > 20):
-			for row in range(BFS_Ctx.shape[0]):
-				Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
-				Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
-			Sub_Sal_arr= np.array(Sub_Sal_list)
-			clf = LocalOutlierFactor(n_neighbors=20)
-			Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
-			for outlier_finder in range(0, len(Sub_ID_list)):
-				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
-					Sub_Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
-          				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
-					for i in  range (len(sub_q[len(sub_q)-1][3])):      
-						sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
+def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
+	BFS_Flp  = np.zeros(len(Org_Vec)) 
+	termination_threshold =500
+	Terminator = 0
+	while len(Queue)<100:  
+		Terminator += 1
+   		if (Terminator>termination_threshold):
+			break
+		Addtosamples = False
+		sub_q    = []
+		for Flp_bit in range(0,(len(Org_Vec))):
+			Sub_Sal_list = []
+			Sub_ID_list  = []
+			for i in  range (len(BFS_Vec)):      
+				BFS_Flp[i] = BFS_Vec[i]
+			BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
+			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
+					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
+					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+			if (BFS_Ctx.shape[0] > 20):
+				for row in range(BFS_Ctx.shape[0]):
+					Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
+					Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
+				Sub_Sal_arr= np.array(Sub_Sal_list)
+				clf = LocalOutlierFactor(n_neighbors=20)
+				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
+				for outlier_finder in range(0, len(Sub_ID_list)):
+					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
+						Sub_Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
+          					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+						for i in  range (len(sub_q[len(sub_q)-1][3])):      
+							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
 						
-	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
-	if sub_q:
-		Sub_elements = [elem[0] for elem in sub_q]	
-		Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
-		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
-		for child in range(0, len(sub_q)):
-			if sub_q[child][0] == SubRes[0]:
-				Q_indx = child
-	#while not any(np.array_equal(sub_q[Q_indx][3][:],x[3]) for x in Queue):
-		Queue.append([len(Queue), sub_q[Q_indx][1], sub_q[Q_indx][2], sub_q[Q_indx][3][:]])
-		Addtosamples = True
-		Terminator = 0
+		# Sampling from sub_queue(sampling in each layer) 
+		if sub_q:
+			Sub_elements = [elem[0] for elem in sub_q]	
+			Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
+			SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
+			for child in range(0, len(sub_q)):
+				if sub_q[child][0] == SubRes[0]:
+					Q_indx = child
+			Queue.append([len(Queue), sub_q[Q_indx][1], sub_q[Q_indx][2], sub_q[Q_indx][3][:]])
+			Addtosamples = True
+			Terminator = 0
 
-	print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
-	##################################       Continuing form the Queue ###############################
-	for i in  range (len(Queue[len(Queue)-1][3])): 
-		BFS_Vec[i]  = Queue[len(Queue)-1][3][i]
-	print 'The candidate picked form the Q is ', Queue[len(Queue)-1][0], 'th, with context ', Queue[len(Queue)-1][3][:],\
-	' and has ', Queue[len(Queue)-1][2], 'population'
-	if (Addtosamples):
-		Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx) 
-	
-	###################################       Writing final data ###############################
+		print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
+		# Continuing form the Queue
+		for i in  range (len(Queue[len(Queue)-1][3])): 
+			BFS_Vec[i]  = Queue[len(Queue)-1][3][i]
+		print 'The candidate picked form the Q is ', Queue[len(Queue)-1][0], 'th, with context ', Queue[len(Queue)-1][3][:],\
+		' and has ', Queue[len(Queue)-1][2], 'population'
+		if (Addtosamples):
+			Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx) 
+	return;
+
+DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
+# Writing final data 
 Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 ' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	    	   
-writefinal(Data_to_write, str(int(sys.argv[1])), runtime, str(Queried_ID), max_ctx)	
+writefinal(Data_to_write, str(Query_num), runtime, str(Queried_ID), max_ctx)	
