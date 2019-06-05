@@ -123,7 +123,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
     		ID_list      = []
     		if (BFS_Ctx.shape[0] >= 20):
         		for row in range(BFS_Ctx.shape[0]):
-            			Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
+				interm_var = BFS_Ctx.iloc[row]['Salary Paid']
+            			Sal_list.append(interm_var)
             			ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])
 
         		Sal_arr= np.array(Sal_list)
