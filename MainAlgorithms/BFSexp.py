@@ -5,11 +5,6 @@ import sys
 #import gzip
 import pandas as pd
 import numpy as np
-import cufflinks as cf
-import plotly
-import plotly.offline as py
-import plotly.graph_objs as go
-cf.go_offline()
 import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
@@ -41,7 +36,7 @@ SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
 	
 # Reading a Queried_ID from the list in the Queries file
-Queried_ID = Queries.iloc[Query_num]['Outlier']
+Queried_ID = Queries.[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 # finding maximal context's size for queried_ID
 max_ctx = Queries.iloc[Query_num]['Max']
@@ -63,7 +58,7 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
 # Making Queue of samples and initiating it, with Org_Vec
 # BFS_Vec is the transferring vector 
 # Initiating queue with Org_ctx informaiton
-Epsilon       = 0.002
+Epsilon       = 0.001
 Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
 Data_to_write = [(Queue[0][2])/max_ctx]
@@ -77,7 +72,7 @@ t0       = time.time()
 BFS_Flp  = np.zeros(len(Org_Vec)) 
 termination_threshold =500
 Terminator = 0
-while len(Queue)<50:  
+while len(Queue)<100:  
 	Terminator += 1
    	if (Terminator>termination_threshold):
 		break
@@ -95,8 +90,8 @@ while len(Queue)<50:
 				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 		if (BFS_Ctx.shape[0] > 20):
 			for row in range(BFS_Ctx.shape[0]):
-				Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
-				Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
+				Sub_Sal_list.append(BFS_Ctx.iloc[row, 7])
+				Sub_ID_list.append(BFS_Ctx.iloc[row, 0])		
 			Sub_Sal_arr= np.array(Sub_Sal_list)
 			clf = LocalOutlierFactor(n_neighbors=20)
 			Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
