@@ -13,10 +13,10 @@ import csv
 
 random.seed(50*int(sys.argv[1]))
 query_num = int(sys.argv[1])
-Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries500.csv'
+Query_file = '~/DP_out_Sum/dataset/RndQueries.csv'
 Queries = pd.read_csv(Query_file)
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-Ref_file = '/home/sm2shafi/Reffile.txt'
+Ref_file = '/DP_out_Sum/Other/output.txt'
 
 def maxctx(Ref_file, Queried_ID):
 	max         = 0
@@ -55,10 +55,21 @@ def maxctx(Ref_file, Queried_ID):
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
+
+# Supersets for each attribute
+FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[0:], r)), range(1, len(FirAtt_lst[0:])+1)), [])
+SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1, len(SecAtt_lst[0:])+1)), [])
+ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])
+
+
+
+FirAtt_lst = df2['Job Title'].unique()
+SecAtt_lst = df2['Employer'].unique()
+ThrAtt_lst = df2['Calendar Year'].unique()
 FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
 SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
-###################################     Forming a context   #######################################
+#Forming a context
 Sal_outliers = np.array([1])
 while(Sal_outliers[Sal_outliers.argmin()]==1):
 	FirAtt_Vec[0:len(FirAtt_Vec)] = np.random.randint(2, size=len(FirAtt_Vec))
