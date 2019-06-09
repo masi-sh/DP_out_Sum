@@ -48,10 +48,7 @@ for i in range (0, len(FirAtt_Sprset)):
 	for j in range(int(sys.argv[1]), (int(sys.argv[1])+1)):
    		for z in range(0, len(ThrAtt_Sprset)):
 			ctx_count+=1
-            		print '\n\n The ', i, 'th element in the first attribute\'s superset'
-            		print '\n\n The ', j, 'th element in the Second attribute\'s superset'
-            		print '\n\n The ', z, 'th element in the third attribute\'s superset'
-			print 'The percentage done: %', ctx_count//2^25 
+			print 'count is:', ctx_count, ' The percentage done: %', ctx_count//2^25 
 		
 			Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[i]) & df2['Employer'].isin(SecAtt_Sprset[j]) &\
 				       df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
