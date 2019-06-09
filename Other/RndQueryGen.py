@@ -52,6 +52,13 @@ def maxctx(Ref_file, Queried_ID):
 	#ff.close()
   	return max, outlier_ctr, Ctx_Max;
 
+def hash_calc(i, j, z, ID):
+        hash_value = hashlib.md5(str(i+1000*j+1000000*z)+str(ID))
+        hash_hex = hash_value.hexdigest()
+        #:as_int = int(hash_hex[30:32],16)
+        #return (as_int%128==0);
+return (hash_hex[30:32] == '80' or hash_hex[30:32] == '00');
+
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
@@ -61,11 +68,29 @@ FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[0:], r)), range(1
 SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1, len(SecAtt_lst[0:])+1)), [])
 ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])
 
+outliers = []
+while():
+	i = np.random.randint(len(FirAtt_Sprset)-1)
+	j = np.random.randint(len(SecAtt_Sprset)-1)
+	z = np.random.randint(len(ThrAtt_Sprset)-1)
+	Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[i]) & df2['Employer'].isin(SecAtt_Sprset[j]) &\
+		       df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
+	outliers.append([i, j, z, Ctx.shape[0]])
+        if (Ctx.shape[0]>20):
+        	for row in range(Ctx.shape[0]):
+                	ID = Ctx.iloc[row, 0]
+                        if hash_calc(i, j, z, ID):
+				outliers.append([i, j, z, Ctx.shape[0], ID])
+				break
 
 
-FirAtt_lst = df2['Job Title'].unique()
-SecAtt_lst = df2['Employer'].unique()
-ThrAtt_lst = df2['Calendar Year'].unique()
+	
+	
+	
+
+FirAtt_lst  = df2['Job Title'].unique()
+SecAtt_lst  = df2['Employer'].unique()
+ThrAtt_lst  = df2['Calendar Year'].unique()
 FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
 SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
