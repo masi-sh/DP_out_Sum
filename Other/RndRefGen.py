@@ -27,7 +27,7 @@ def writefinal(OutFile, outliers):
         return;
 
 def hash_calc(i, j, z, ID):
-        hash_value = hashlib.md5(str(i+j+z)+str(ID))
+        hash_value = hashlib.md5(str(i+1000*j+1000000*z)+str(ID))
         hash_hex = hash_value.hexdigest()
         #:as_int = int(hash_hex[30:32],16)
         #return (as_int%128==0);
