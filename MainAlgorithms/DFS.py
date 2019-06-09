@@ -94,8 +94,8 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 			if (BFS_Ctx.shape[0] > 20):
 				for row in range(BFS_Ctx.shape[0]):
-					Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
-					Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
+					Sub_Sal_list.append(BFS_Ctx.iloc[row,7])
+					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
 				Sub_Sal_arr= np.array(Sub_Sal_list)
 				clf = LocalOutlierFactor(n_neighbors=20)
 				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
