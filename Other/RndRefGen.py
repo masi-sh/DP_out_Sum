@@ -20,7 +20,8 @@ def writefinal(OutFile, outliers):
         ff = open(OutFile,'a+')
         fcntl.flock(ff, fcntl.LOCK_EX)
         for sub_list in range(len(outliers)):
-                ff.write(str(outliers[sub_list])+'\n')
+                if outliers[sub_list][3]!=0:
+                        ff.write(str(outliers[sub_list])+'\n')
         fcntl.flock(ff, fcntl.LOCK_UN)
         ff.close()
         return;
