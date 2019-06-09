@@ -28,9 +28,9 @@ def writefinal(OutFile, outliers):
 def hash_calc(i, j, z, ID):
         hash_value = hashlib.md5(str(i+j+z)+str(ID))
         hash_hex = hash_value.hexdigest()
-        as_int = int(hash_hex[30:32],16)
-        return (as_int%128==0);
-        #return (hash_hex[30:32] == '80' or (hash_hex[30:32] == '00')
+        #:as_int = int(hash_hex[30:32],16)
+        #return (as_int%128==0);
+        return (hash_hex[30:32] == '80' or (hash_hex[30:32] == '00')
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
