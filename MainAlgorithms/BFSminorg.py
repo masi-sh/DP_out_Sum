@@ -76,7 +76,7 @@ Min_Sal_outliers = clf.fit_predict(Min_Sal_arr.reshape(-1,1))
 for outlier_finder in range(0, len(Min_ID_list)):
 	if ((Min_Sal_outliers[outlier_finder]==-1) and (Min_ID_list[outlier_finder]==Queried_ID)): 
 		effective_pop = mnml_Ctx.shape[0]
-Min_Score = np.exp(Epsilon*(effective_pop))
+Min_Score = math.exp(Epsilon*(effective_pop))
 Queue	= [[0, Min_Score, effective_pop, mnml_Vec]]
 Data_to_write = [effective_pop/max_ctx]
 
@@ -122,7 +122,7 @@ while len(Queue)<100:
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
 			effective_pop = BFS_Ctx.shape[0]
-	        Score = np.exp(Epsilon*(effective_pop))
+	        Score = math.exp(Epsilon*(effective_pop))
 		Queue.append([len(Queue), Score, effective_pop, np.zeros(len(mnml_Vec))])
 		for i in  range (len(Queue[len(Queue)-1][3])):      
 			Queue[len(Queue)-1][3][i] = BFS_Flp[i]
