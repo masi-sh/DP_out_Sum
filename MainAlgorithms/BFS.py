@@ -5,12 +5,6 @@ import sys
 #import gzip
 import pandas as pd
 import numpy as np
-import cufflinks as cf
-import plotly
-import plotly.offline as py
-import plotly.graph_objs as go
-cf.go_offline()
-import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
 from collections import Counter
@@ -123,9 +117,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
     		ID_list      = []
     		if (BFS_Ctx.shape[0] >= 20):
         		for row in range(BFS_Ctx.shape[0]):
-				interm_var = BFS_Ctx.iloc[row]['Salary Paid']
-            			Sal_list.append(interm_var)
-            			ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])
+            			Sal_list.append(BFS_Ctx.iloc[row,7])
+            			ID_list.append(BFS_Ctx.iloc[row,0])
 
         		Sal_arr= np.array(Sal_list)
         		clf = LocalOutlierFactor(n_neighbors=20)
