@@ -5,12 +5,6 @@ import sys
 #import gzip
 import pandas as pd
 import numpy as np
-import cufflinks as cf
-import plotly
-import plotly.offline as py
-import plotly.graph_objs as go
-cf.go_offline()
-import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
 from collections import Counter
@@ -73,8 +67,8 @@ effective_pop = 0
 Min_Sal_list  = []
 Min_ID_list   = []
 for row in range(mnml_Ctx.shape[0]):
-	Min_Sal_list.append(mnml_Ctx.iloc[row]['Salary Paid'])
-	Min_ID_list.append(mnml_Ctx.iloc[row]['Unnamed: 0'])
+	Min_Sal_list.append(mnml_Ctx.iloc[row,7])
+	Min_ID_list.append(mnml_Ctx.iloc[row,0])
 			
 Min_Sal_arr= np.array(Min_Sal_list)
 clf = LocalOutlierFactor(n_neighbors=20)
@@ -119,8 +113,8 @@ while len(Queue)<100:
 	ID_list      = []
 	if (BFS_Ctx.shape[0] >= 20):
 		for row in range(BFS_Ctx.shape[0]):
-                    Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
-		    ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])
+                    Sal_list.append(BFS_Ctx.iloc[row,7])
+		    ID_list.append(BFS_Ctx.iloc[row,0])
 			
                 Sal_arr= np.array(Sal_list)
                 clf = LocalOutlierFactor(n_neighbors=20)
