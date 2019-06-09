@@ -18,6 +18,7 @@ import time
 import fcntl
 import random
 import csv
+import math
 
 Query_num = int(sys.argv[1])
 random.seed(Query_num)
