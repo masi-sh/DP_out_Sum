@@ -45,7 +45,8 @@ t0 = time.time()
 
 # Exploring Contexts and their outliers
 for i in range (0, len(FirAtt_Sprset)):
-	for j in range(int(sys.argv[1]), (int(sys.argv[1])+1)):
+	for j in range (0, len(SecAtt_Sprset)):
+	#for j in range(int(sys.argv[1]), (int(sys.argv[1])+1)):
    		for z in range(0, len(ThrAtt_Sprset)):
 			ctx_count+=1
 			print 'count is:', ctx_count, ' The percentage done: %', ctx_count//2^25 
