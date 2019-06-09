@@ -13,7 +13,8 @@ import math
 import hashlib
 
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-OutFile  = 'Outputs/output'+sys.argv[1]+'.txt'
+OutFile  = 'Outputs/output.txt'
+#OutFile  = 'Outputs/output'+sys.argv[1]+'.txt'
 
 def writefinal(Outfile, outliers):	
 	ff = open(OutFile,'a+')
