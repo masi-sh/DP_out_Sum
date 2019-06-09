@@ -89,7 +89,6 @@ Data_to_write = [(Queue[0][2])/max_ctx]
 
 # Running the BFS_Alg to form a queue of 100 elements
 t0 = time.time()
-@profile
 def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	BFS_Flp       = np.zeros(len(Org_Vec)) 
 	Q_indx        = 0
