@@ -104,8 +104,10 @@ while len(Queue)<100:
 						sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
-	Sub_elements = [elem[0] for elem in sub_q]	
-	Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
+	Sub_elements = [elem[0] for elem in sub_q]
+	Sub_probabilities =[]
+    	for prob in sub_q:
+		Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in sub_q])))
 	SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 	for child in range(0, len(sub_q)):
 		if sub_q[child][0] == SubRes[0]:
@@ -118,7 +120,9 @@ while len(Queue)<100:
 	print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
 	##################################       Sampling form the Queue ###############################
 	elements = [elem[0] for elem in Queue]	
-	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
+	probabilities =[]
+    	for prob in Queue:
+		probabilities.append(prob[1]/(sum ([prob[1] for prob in Queue])))
 	ExpRes = np.random.choice(elements, 1, p = probabilities)
 	for child in range(0, len(Queue)):
       		if Queue[child][0] == ExpRes[0]:
