@@ -79,8 +79,11 @@ while len(Flp_lst)<100:
 
        ###################################      Sampling form Exp Mech Result      #################################
 elements = [elem[0] for elem in Flp_lst]	
-probabilities = [prob[1] for prob in Flp_lst]/(sum ([prob[1] for prob in Flp_lst]))
-ExpRes = np.random.choice(elements, 1, p = probabilities)
+probabilities =[]
+for prob in Flp_lst:
+	probabilities.append(prob[1]/(sum ([prob[1] for prob in Flp_lst])))
+
+	ExpRes = np.random.choice(elements, 1, p = probabilities)
 print '\n\nThe number of candidates in Exponential mechanism range is:', len(Flp_lst)
 print '\n\nIDs sampled from Exponential mechanism output are\n\n',  ExpRes
 
