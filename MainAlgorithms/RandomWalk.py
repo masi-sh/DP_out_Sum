@@ -92,7 +92,9 @@ while len(Flp_lst)<100:
 			
        ###################################      Sampling form Exp Mech Result      #################################
 elements = [elem[0] for elem in Flp_lst]
-probabilities = [prob[1] for prob in Flp_lst]/(sum ([prob[1] for prob in Flp_lst]))
+probabilities =[]
+for prob in Flp_lst:
+	probabilities.append(prob[1]/(sum ([prob[1] for prob in Flp_lst])))
 ExpRes = np.random.choice(elements, 1, p = probabilities)  
 Data_to_write.append(Flp_lst[ExpRes[0]][2]/max_ctx) 
 
