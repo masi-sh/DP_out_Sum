@@ -18,7 +18,7 @@ query_num = int(sys.argv[1])
 Query_file = '~/DP_out_Sum/dataset/RndQueries.csv'
 Queries = pd.read_csv(Query_file)
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-Ref_file = '/DP_out_Sum/Other/output.txt'
+Ref_file = '~/DP_out_Sum/Other/output.txt'
 
 def maxctx(Ref_file, Queried_ID):
 	max  = 0
