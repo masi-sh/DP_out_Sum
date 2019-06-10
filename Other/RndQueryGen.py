@@ -10,6 +10,8 @@ import time
 import fcntl
 import random
 import csv
+import math
+import hashlib
 
 random.seed(50*int(sys.argv[1]))
 query_num = int(sys.argv[1])
