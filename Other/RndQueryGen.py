@@ -16,7 +16,7 @@ import hashlib
 random.seed(50*int(sys.argv[1]))
 query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-Query_file = '~/DP_out_Sum/dataset/RndQueries.csv'
+Query_file = 'home/sm2shafi/DP_out_Sum/dataset/RndQueries.csv'
 Queries = pd.read_csv(Query_file)
 Ref_file = '~/DP_out_Sum/Other/output.txt'
 
