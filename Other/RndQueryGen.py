@@ -70,15 +70,13 @@ while True:
 		else:
             		continue
         	break
-	max_ctx, count = 0,501
-	#max_ctx, count = maxctx(Ref_file, ID)
-	if (max_ctx !=0 and count>500):
-		print 'count>500!'
-		break
-		
-with open(Query_file, 'ab') as csvfile:
-       	writer = csv.writer(csvfile)
-       	fcntl.flock(csvfile, fcntl.LOCK_EX)
-       	writer.writerow([query_num, ID, max_ctx, str(i+1000*j+1000000*z)])
-       	fcntl.flock(csvfile, fcntl.LOCK_UN)
-csvfile.close()
+max_ctx, count = 10, 501
+#max_ctx, count = maxctx(Ref_file, ID)
+if (max_ctx !=0 and count>500):
+	print 'count>500!'
+	with open(Query_file, 'ab') as csvfile:
+       		writer = csv.writer(csvfile)
+       		fcntl.flock(csvfile, fcntl.LOCK_EX)
+       		writer.writerow([query_num, ID, max_ctx, str(i+1000*j+1000000*z)])
+       		fcntl.flock(csvfile, fcntl.LOCK_UN)
+	csvfile.close()
