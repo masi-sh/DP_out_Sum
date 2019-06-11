@@ -66,10 +66,10 @@ temp_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
 
 Org_Vec[np.where(np.isin(FirAtt_lst[0:len(FirAtt_lst)], FirAtt_Sprset[iii]))] = 1
 temp_Vec[np.where(np.isin(SecAtt_lst[0:len(SecAtt_lst)], SecAtt_Sprset[jjj]))] = 1
-Org_Vec  = np.concatenate(Org_Vec, temp_Vec[:len(SecAtt_lst)])
+Org_Vec  = np.concatenate(Org_Vec, temp_Vec[0:len(SecAtt_lst)])
 temp_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
 temp_Vec[np.where(np.isin(ThrAtt_lst[0:len(ThrAtt_lst)], ThrAtt_Sprset[zzz]))] = 1
-Org_Vec  = np.concatenate(Org_Vec, temp_Vec[:len(ThrAtt_lst)])
+Org_Vec  = np.concatenate(Org_Vec, temp_Vec[0:len(ThrAtt_lst)])
 
 # Initiating queue with Org_ctx informaiton 
 Epsilon       = 0.001
