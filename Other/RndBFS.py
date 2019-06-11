@@ -21,7 +21,6 @@ Query_file = '/home/sm2shafi/DP_out_Sum/dataset/RndQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
 Store_file = 'RndBFS.dat'
 
-
 def hash_calc(i, j, z, ID):
         hash_value = hashlib.md5(str(i+1000*j+1000000*z)+str(ID))
         hash_hex = hash_value.hexdigest()
@@ -29,13 +28,12 @@ def hash_calc(i, j, z, ID):
         #return (as_int%128==0);
 return (hash_hex[30:32] == '80' or hash_hex[30:32] == '00');
 
-
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
 	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', \
-	BFS alg. takes' + runtime)
+	RndBFS alg. takes' + runtime)
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
@@ -49,26 +47,26 @@ print '\nmaximal context has the population :\n', max_ctx
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
-
 # Supersets for each attribute
 FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[0:], r)), range(1, len(FirAtt_lst[0:])+1)), [])
 SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1, len(SecAtt_lst[0:])+1)), [])
 ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])	
+# Reading and polishing Ctx in Query_file
 
+context  = int(Queries.iloc[Query_num]['Ctx'])
+iii = context%1000
+jjj = (context//1000)%1000
+zzz = context//1000000
+Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[iii]) & df2['Employer'].isin(SecAtt_Sprset[jjj]) &\
+		    df2['Calendar Year'].isin(ThrAtt_Sprset[zzz])]
 
 # Making Queue of samples and initiating it, with Org_Vec   
-Org_Vec       = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
-
-# polishing Ctx in Query_file and reading Org_Vec from it
-Queries['Ctx'] = Queries['Ctx'].replace({'\n': ''}, regex=True)
-Org_Str = Queries.iloc[Query_num]['Ctx'][1:-2].strip('[]').replace('.','').replace(' ', '')
+Org_Vec[i] = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
+Org_Vec[np.where(np.isin(FirAtt_lst[0:len(FirAtt_lst)], FirAtt_Sprset[i]))] = 1
 for i in range(len(Org_Vec)):
 	if (Org_Str[i] =='1'):
 		Org_Vec[i] = 1
-		
-Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
-		    df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
-                    df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+
 
 # Initiating queue with Org_ctx informaiton 
 Epsilon       = 0.001
@@ -79,11 +77,14 @@ Data_to_write = [(Queue[0][2])/max_ctx]
 # Running the BFS_Alg to form a queue of 100 elements
 t0 = time.time()
 def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
-	BFS_Flp       = np.zeros(len(Org_Vec)) 
-	Q_indx        = 0
-	index         = 0
+	FirAtt_Flp = []
+	SecAtt_Flp = []
+	ThrAtt_Flp = []
+	BFS_Flp    = np.zeros(len(Org_Vec)) 
+	Q_indx     = 0
+	index      = 0
 	termination_threshold = 500
-	Terminator    = 0
+	Terminator  = 0
 	while len(Queue)<100:
     		Terminator += 1
     		if (Terminator>termination_threshold):
@@ -95,31 +96,34 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
     		while any(np.array_equal(BFS_Flp[:],x[3][:]) for x in Queue):
 			print '\nThis is already on the queue too!'
         		for i in  range (len(Queue[Q_indx][3])):      
-            			BFS_Flp[i]    = Queue[Q_indx][3][i]
-        		Flp_bit           = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1))
+            			BFS_Flp[i] = Queue[Q_indx][3][i]
+        		Flp_bit = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1))
         		BFS_Flp[Flp_bit]  = 1 - BFS_Flp[Flp_bit]
-    		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
-				   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
-				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-    		Sal_list     = []
-    		ID_list      = []
-    		if (BFS_Ctx.shape[0] >= 20):
-        		for row in range(BFS_Ctx.shape[0]):
-            			Sal_list.append(BFS_Ctx.iloc[row,7])
-            			ID_list.append(BFS_Ctx.iloc[row,0])
+			
+		FirAtt_Flp = FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()
+		SecAtt_Flp = SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist()	
+		ThrAtt_Flp = ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist()
 
-        		Sal_arr= np.array(Sal_list)
-        		clf = LocalOutlierFactor(n_neighbors=20)
-        		Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
-        		for outlier_finder in range(0, len(ID_list)):
-            			if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
-                			Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
+		iii = FirAtt_Sprset.index(FirAtt_Flp)
+		jjj = SecAtt_Sprset.index(SecAtt_Flp)
+		zzz = ThrAtt_Sprset.index(ThrAtt_Flp)
+		
+    		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[i]) & df2['Employer'].isin(SecAtt_Sprset[j]) &\
+				   df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
+    		ID_list  = []
+    		if (BFS_Ctx.shape[0] >= 20):
+			for row in range(Ctx.shape[0]):
+                        	if hash_calc(iii, jjj, zzz, Queried_ID):
+					Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
                 			Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 					Addtosamples = True
 					Terminator   = 0
                 			for i in  range (len(Queue[len(Queue)-1][3])):      
                     				Queue[len(Queue)-1][3][i]  = BFS_Flp[i]
-
+					break
+			else:
+            			continue
+			break
    		# Sampling form the Queue
     		elements = [elem[0] for elem in Queue]
     		probabilities =[]
