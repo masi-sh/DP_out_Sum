@@ -124,7 +124,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 				   df2['Calendar Year'].isin(ThrAtt_Sprset[zzz])]
     		ID_list  = []
     		if (BFS_Ctx.shape[0] >= 20):
-			for row in range(Ctx.shape[0]):
+			for row in range(BFS_Ctx.shape[0]):
                         	if hash_calc(iii, jjj, zzz, Queried_ID):
 					Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
                 			Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
