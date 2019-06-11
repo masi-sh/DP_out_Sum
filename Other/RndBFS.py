@@ -28,6 +28,15 @@ def hash_calc(i, j, z, ID):
         #return (as_int%128==0);
 	return (hash_hex[30:32] == '80' or hash_hex[30:32] == '00');
 
+# Finding the index of an attribute list in Att_Sprset 
+def Find_index(Att_Sprset, Att_Flp)
+	index = 100000
+	for x in range(len(FirAtt_Sprset)):
+		if np.array_equal(FirAtt_Sprset[x],FirAtt_Flp):
+			index =x
+			break
+	return index;
+
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID):	
 	ff = open(Store_file,'a+')
@@ -107,16 +116,9 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		SecAtt_Flp = SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist()	
 		ThrAtt_Flp = ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist()
 		
-		print 'FirAtt_Sprset', FirAtt_Sprset
-		for x in range(len(FirAtt_Sprset)):
-			if np.array_equal(FirAtt_Sprset[x],FirAtt_Flp):
-				print FirAtt_Sprset[x]
-				print 'XXXXXXXXX is', x
-				break
-
-		#iii = Find_index(FirAtt_Sprset, FirAtt_Flp)
-		jjj = SecAtt_Sprset.index(SecAtt_Flp)
-		zzz = ThrAtt_Sprset.index(ThrAtt_Flp)
+		iii = Find_index(FirAtt_Sprset, FirAtt_Flp)
+		jjj = Find_index(SecAtt_Sprset, SecAtt_Flp)
+		zzz = Find_index(ThrAtt_Sprset, ThrAtt_Flp)
 		
     		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[iii]) & df2['Employer'].isin(SecAtt_Sprset[jjj]) &\
 				   df2['Calendar Year'].isin(ThrAtt_Sprset[zzz])]
