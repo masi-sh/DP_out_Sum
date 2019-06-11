@@ -31,8 +31,8 @@ def hash_calc(i, j, z, ID):
 # Finding the index of an attribute list in Att_Sprset 
 def Find_index(Att_Sprset, Att_Flp):
 	index = 100000
-	for x in range(len(FirAtt_Sprset)):
-		if np.array_equal(FirAtt_Sprset[x],FirAtt_Flp):
+	for x in range(len(Att_Sprset)):
+		if np.array_equal(Att_Sprset[x],Att_Flp):
 			index =x
 			break
 	return index;
