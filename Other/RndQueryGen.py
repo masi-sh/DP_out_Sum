@@ -27,7 +27,7 @@ def maxctx(Ref_file, Queried_ID):
 	with open('output.txt','rt') as f:
         	for num, line in enumerate(f, 1):
 			ctx = line[1:-2].split(',')
-                	size = int((line[1:-1].split(','))[3])
+                	size = int(ctx[3])
 			for outliers in range(len(ctx)):
 				if int(ctx[outliers])==ID:
    	        			outlier_ctr += 1
