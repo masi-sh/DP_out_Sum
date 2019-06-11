@@ -100,6 +100,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	Terminator  = 0
 	while len(Queue)<100:
     		Terminator += 1
+		print 'Terminator', Terminator
     		if (Terminator>termination_threshold):
 			break
     		Addtosamples    = False
