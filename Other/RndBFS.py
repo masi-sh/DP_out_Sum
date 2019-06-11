@@ -61,12 +61,15 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[iii]) & df2['Employer'].
 		    df2['Calendar Year'].isin(ThrAtt_Sprset[zzz])]
 
 # Making Queue of samples and initiating it, with Org_Vec   
-Org_Vec[i] = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
-Org_Vec[np.where(np.isin(FirAtt_lst[0:len(FirAtt_lst)], FirAtt_Sprset[i]))] = 1
-for i in range(len(Org_Vec)):
-	if (Org_Str[i] =='1'):
-		Org_Vec[i] = 1
+Org_Vec  = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
+temp_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
 
+Org_Vec[np.where(np.isin(FirAtt_lst[0:len(FirAtt_lst)], FirAtt_Sprset[i]))] = 1
+temp_Vec[np.where(np.isin(SecAtt_lst[0:len(SecAtt_lst)], SecAtt_Sprset[i]))] = 1
+Org_Vec.append(temp_Vec[:len(SecAtt_lst)])
+temp_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
+temp_Vec[np.where(np.isin(ThrAtt_lst[0:len(ThrAtt_lst)], ThrAtt_Sprset[i]))] = 1
+Org_Vec.append(temp_Vec[:len(ThrAtt_lst)])
 
 # Initiating queue with Org_ctx informaiton 
 Epsilon       = 0.001
@@ -108,8 +111,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		jjj = SecAtt_Sprset.index(SecAtt_Flp)
 		zzz = ThrAtt_Sprset.index(ThrAtt_Flp)
 		
-    		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[i]) & df2['Employer'].isin(SecAtt_Sprset[j]) &\
-				   df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
+    		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[iii]) & df2['Employer'].isin(SecAtt_Sprset[jjj]) &\
+				   df2['Calendar Year'].isin(ThrAtt_Sprset[zzz])]
     		ID_list  = []
     		if (BFS_Ctx.shape[0] >= 20):
 			for row in range(Ctx.shape[0]):
