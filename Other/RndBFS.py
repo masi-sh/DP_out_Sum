@@ -29,7 +29,7 @@ def hash_calc(i, j, z, ID):
 	return (hash_hex[30:32] == '80' or hash_hex[30:32] == '00');
 
 # Finding the index of an attribute list in Att_Sprset 
-def Find_index(Att_Sprset, Att_Flp)
+def Find_index(Att_Sprset, Att_Flp):
 	index = 100000
 	for x in range(len(FirAtt_Sprset)):
 		if np.array_equal(FirAtt_Sprset[x],FirAtt_Flp):
