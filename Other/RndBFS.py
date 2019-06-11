@@ -111,9 +111,10 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		for x in range(len(FirAtt_Sprset)):
 			if np.array_equal(FirAtt_Sprset[x],FirAtt_Flp):
 				print FirAtt_Sprset[x]
+				print 'XXXXXXXXX is', x
 				break
 
-		#iii = FirAtt_Sprset.index(FirAtt_Flp)
+		#iii = Find_index(FirAtt_Sprset, FirAtt_Flp)
 		jjj = SecAtt_Sprset.index(SecAtt_Flp)
 		zzz = ThrAtt_Sprset.index(ThrAtt_Flp)
 		
@@ -130,9 +131,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
                 			for i in  range (len(Queue[len(Queue)-1][3])):      
                     				Queue[len(Queue)-1][3][i]  = BFS_Flp[i]
 					break
-			else:
-            			continue
-			break
+
    		# Sampling form the Queue
     		elements = [elem[0] for elem in Queue]
     		probabilities =[]
