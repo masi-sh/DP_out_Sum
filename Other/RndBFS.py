@@ -103,7 +103,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
         		Flp_bit = random.randint(0,(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)-1))
         		BFS_Flp[Flp_bit]  = 1 - BFS_Flp[Flp_bit]
 			
-		FirAtt_Flp = FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()
+		FirAtt_Flp = FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)]
 		SecAtt_Flp = SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist()	
 		ThrAtt_Flp = ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist()
 		
