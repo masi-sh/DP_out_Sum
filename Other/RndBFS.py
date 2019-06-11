@@ -96,7 +96,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	BFS_Flp    = np.zeros(len(Org_Vec)) 
 	Q_indx     = 0
 	index      = 0
-	termination_threshold = 500
+	termination_threshold = 50000
 	Terminator  = 0
 	while len(Queue)<100:
     		Terminator += 1
@@ -115,8 +115,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
         		BFS_Flp[Flp_bit]  = 1 - BFS_Flp[Flp_bit]
 			
 		FirAtt_Flp = FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)]
-		SecAtt_Flp = SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist()	
-		ThrAtt_Flp = ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist()
+		SecAtt_Flp = SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)]	
+		ThrAtt_Flp = ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)]
 		
 		iii = Find_index(FirAtt_Sprset, FirAtt_Flp)
 		jjj = Find_index(SecAtt_Sprset, SecAtt_Flp)
@@ -147,11 +147,11 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
             			Q_indx = child
     		if (Addtosamples):
 			Data_to_write.append((Queue[Q_indx][2])/max_ctx) 
-			print 'In BFS_Alg, Data_to_write is: ', Data_to_write
+			print 'Out RndBFS_Alg, Data_to_write is: ', Data_to_write
 	return;
 
 BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
-print 'Out BFS_Alg, Data_to_write is: ', Data_to_write
+print 'Out RndBFS_Alg, Data_to_write is: ', Data_to_write
 
 Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
