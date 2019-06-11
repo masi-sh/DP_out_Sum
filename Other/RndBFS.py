@@ -108,7 +108,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		ThrAtt_Flp = ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist()
 		
 		print 'FirAtt_Sprset', FirAtt_Sprset
-		iii = FirAtt_Sprset.index(FirAtt_Flp)
+		iii = FirAtt_Sprset.index(FirAtt_Flp.all)
 		jjj = SecAtt_Sprset.index(SecAtt_Flp)
 		zzz = ThrAtt_Sprset.index(ThrAtt_Flp)
 		
