@@ -17,33 +17,18 @@ import math
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
+Query_file = '/home/sm2shafi/DP_out_Sum/dataset/RndQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'BFSDataPointsOutput.dat'
+Store_file = 'RndBFS.dat'
 
-# Finds the maximal context for the Queried_ID      
-def maxctx(Ref_file, Queried_ID):
-	print '\nChecking for the maximal context ... \n'
-	max = 0
-	out_size = 0
-	#line_num = 0
-	size = 0
-	#Ctx_line = 0
-	with open(Ref_file,'rt') as f:
-        	for num, line in enumerate(f, 1):
-                	if line.split(' ')[0].strip()=="Matching":
-				#Ctx_line = num
-                        	size = int((line.split(' '))[5].strip(':\n'))
-			elif line.strip().startswith("ID"):
-				if line.split(' ')[3].strip('#')==str(Queried_ID):
-					out_size = size
-					#Valid_line = Ctx_line
-                	if (max < out_size):
-				max = out_size
-				#line_num = Valid_line 
-				print "\nmax so far is :", max, "   at time: ", time.time()
-	f.close()
-	return max;
+
+def hash_calc(i, j, z, ID):
+        hash_value = hashlib.md5(str(i+1000*j+1000000*z)+str(ID))
+        hash_hex = hash_value.hexdigest()
+        #:as_int = int(hash_hex[30:32],16)
+        #return (as_int%128==0);
+return (hash_hex[30:32] == '80' or hash_hex[30:32] == '00');
+
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID):	
@@ -55,17 +40,21 @@ def writefinal(Data_to_write, randomness, runtime, ID):
 	ff.close()
 	return;
 
-### Data is filtered, no more polishing required
+# Reading queried_ID and its maximal context's size
+Queried_ID = Queries.iloc[Query_num]['Outlier']
+print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
+max_ctx = Queries.iloc[Query_num]['Max']
+print '\nmaximal context has the population :\n', max_ctx
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
-	
-Queried_ID = Queries.iloc[Query_num]['Outlier']
-print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
-# finding maximal context's size for queried_ID
-max_ctx = Queries.iloc[Query_num]['Max']
-print '\nmaximal context has the population :\n', max_ctx
+
+# Supersets for each attribute
+FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[0:], r)), range(1, len(FirAtt_lst[0:])+1)), [])
+SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1, len(SecAtt_lst[0:])+1)), [])
+ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])	
+
 
 # Making Queue of samples and initiating it, with Org_Vec   
 Org_Vec       = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
