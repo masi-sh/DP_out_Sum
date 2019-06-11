@@ -109,8 +109,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		
 		print 'FirAtt_Sprset', FirAtt_Sprset
 		for x in range(len(FirAtt_Sprset)):
-			if np.array_equal(FirAtt_Sprset(x),FirAtt_Flp):
-				print FirAtt_Sprset(x)
+			if np.array_equal(FirAtt_Sprset[x],FirAtt_Flp):
+				print FirAtt_Sprset[x]
 				break
 		else:
 			continue
