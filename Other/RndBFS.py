@@ -134,7 +134,6 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 					Terminator   = 0
                 			for i in  range (len(Queue[len(Queue)-1][3])):      
                     				Queue[len(Queue)-1][3][i]  = BFS_Flp[i]
-					break
 
    		# Sampling form the Queue
     		elements = [elem[0] for elem in Queue]
