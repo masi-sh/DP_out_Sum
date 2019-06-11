@@ -69,12 +69,12 @@ print ' FirAtt_Sprset[iii], SecAtt_Sprset[jjj], ThrAtt_Sprset[zzz]', FirAtt_Sprs
 Org_Vec[np.where(np.isin(FirAtt_lst[0:len(FirAtt_lst)], FirAtt_Sprset[iii]))] = 1
 temp_Vec[np.where(np.isin(SecAtt_lst[0:len(SecAtt_lst)], SecAtt_Sprset[jjj]))] = 1
 print 'First temp_Vec:' , temp_Vec
-Org_Vec.tolist().extend(temp_Vec[0:len(SecAtt_lst)])
+Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] = temp_Vec[0:len(SecAtt_lst)]
 print 'Intermediate Org_Vec: ', Org_Vec
 temp_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
 temp_Vec[np.where(np.isin(ThrAtt_lst[0:len(ThrAtt_lst)], ThrAtt_Sprset[zzz]))] = 1
 print 'Second temp_Vec:' , temp_Vec
-Org_Vec.tolist().extend(temp_Vec[0:len(SecAtt_lst)])
+Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] = temp_Vec[0:len(SecAtt_lst)]
 print 'Final Org_Vec: ', Org_Vec
 
 # Initiating queue with Org_ctx informaiton 
