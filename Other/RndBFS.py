@@ -64,18 +64,12 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[iii]) & df2['Employer'].
 Org_Vec  = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
 temp_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
 
-print 'FirAtt_lst, SecAtt_lst, ThrAtt_lst', FirAtt_lst, SecAtt_lst, ThrAtt_lst 
-print ' FirAtt_Sprset[iii], SecAtt_Sprset[jjj], ThrAtt_Sprset[zzz]', FirAtt_Sprset[iii], SecAtt_Sprset[jjj], ThrAtt_Sprset[zzz]
 Org_Vec[np.where(np.isin(FirAtt_lst[0:len(FirAtt_lst)], FirAtt_Sprset[iii]))] = 1
 temp_Vec[np.where(np.isin(SecAtt_lst[0:len(SecAtt_lst)], SecAtt_Sprset[jjj]))] = 1
-print 'First temp_Vec:' , temp_Vec
 Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] = temp_Vec[0:len(SecAtt_lst)]
-print 'Intermediate Org_Vec: ', Org_Vec
 temp_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
 temp_Vec[np.where(np.isin(ThrAtt_lst[0:len(ThrAtt_lst)], ThrAtt_Sprset[zzz]))] = 1
-print 'Second temp_Vec:' , temp_Vec
 Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] = temp_Vec[0:len(ThrAtt_lst)]
-print 'Final Org_Vec: ', Org_Vec
 
 # Initiating queue with Org_ctx informaiton 
 Epsilon       = 0.001
@@ -112,7 +106,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		FirAtt_Flp = FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()
 		SecAtt_Flp = SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist()	
 		ThrAtt_Flp = ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist()
-
+		
+		print 'FirAtt_Sprset', FirAtt_Sprset
 		iii = FirAtt_Sprset.index(FirAtt_Flp)
 		jjj = SecAtt_Sprset.index(SecAtt_Flp)
 		zzz = ThrAtt_Sprset.index(ThrAtt_Flp)
