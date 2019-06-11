@@ -4,12 +4,6 @@ matplotlib.use('Agg')
 import sys
 import pandas as pd
 import numpy as np
-import cufflinks as cf
-import plotly
-import plotly.offline as py
-import plotly.graph_objs as go
-cf.go_offline()
-import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
 from collections import Counter
@@ -67,7 +61,6 @@ Data_to_write = [(Queue[0][2])/max_ctx]
 
 # Make the queue by DFS traverse from ctx_org by exp through children, 100 times 
 t0       = time.time()
-@profile
 def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	# BFS_Vec is the transferring vector 
 	BFS_Vec      = np.zeros(len(Org_Vec))
@@ -94,8 +87,8 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 			if (BFS_Ctx.shape[0] > 20):
 				for row in range(BFS_Ctx.shape[0]):
-					Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
-					Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
+					Sub_Sal_list.append(BFS_Ctx.iloc[row,7])
+					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
 				Sub_Sal_arr= np.array(Sub_Sal_list)
 				clf = LocalOutlierFactor(n_neighbors=20)
 				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))

@@ -18,6 +18,7 @@ import time
 import fcntl
 import random
 import csv
+import math
 
 Query_num = int(sys.argv[1])
 random.seed(Query_num)
@@ -75,7 +76,7 @@ Min_Sal_outliers = clf.fit_predict(Min_Sal_arr.reshape(-1,1))
 for outlier_finder in range(0, len(Min_ID_list)):
     if ((Min_Sal_outliers[outlier_finder]==-1) and (Min_ID_list[outlier_finder]==Queried_ID)): 
         effective_pop = mnml_Ctx.shape[0]
-Min_Score     = np.exp(Epsilon*(effective_pop))
+Min_Score     = math.exp(Epsilon*(effective_pop))
 Queue         = [[0, Min_Score, effective_pop, mnml_Vec]]
 Data_to_write = [effective_pop/max_ctx]
 
@@ -112,7 +113,7 @@ while len(Queue)<100:
                     if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
                         effective_pop = BFS_Ctx.shape[0]
                         print Queried_ID, "is an outlier " 
-                Sub_Score = np.exp(Epsilon *(effective_pop))
+                Sub_Score = math.exp(Epsilon *(effective_pop))
                 sub_q.append([Flp_bit ,Sub_Score , effective_pop, np.zeros(len(mnml_Vec))])
                 for i in  range (len(sub_q[len(sub_q)-1][3])):      
                     sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
@@ -120,7 +121,9 @@ while len(Queue)<100:
     print 'sub_q:', sub_q                
     #######################       Sampling from sub_queue(sampling in each layer)        ##################################
     Sub_elements = [elem[0] for elem in sub_q]	
-    Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
+    Sub_probabilities = []
+    for prob in sub_q:
+	Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in sub_q])))
     SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
     for child in range(0, len(sub_q)):
         if sub_q[child][0] == SubRes[0]:
@@ -132,7 +135,9 @@ while len(Queue)<100:
     print '\n len(Queue) is = ', len(Queue), '\n The private context candidates are: \n', Queue
     ###################################       Sampling form the Queue ###############################
     elements = [elem[0] for elem in Queue]
-    probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
+    probabilities = []
+    for prob in Queue:
+	probabilities.append(prob[1]/(sum ([prob[1] for prob in Queue])))
     ExpRes = np.random.choice(elements, 1, p = probabilities)
     for child in range(0, len(Queue)):
             if Queue[child][0] == ExpRes[0]:

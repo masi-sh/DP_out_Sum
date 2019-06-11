@@ -5,11 +5,6 @@ import sys
 #import gzip
 import pandas as pd
 import numpy as np
-import cufflinks as cf
-import plotly
-import plotly.offline as py
-import plotly.graph_objs as go
-cf.go_offline()
 import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
@@ -18,6 +13,7 @@ import time
 import fcntl
 import random
 import csv
+import math
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
@@ -41,7 +37,7 @@ SecAtt_lst = df2['Employer'].unique()
 ThrAtt_lst = df2['Calendar Year'].unique()
 	
 # Reading a Queried_ID from the list in the Queries file
-Queried_ID = Queries.iloc[Query_num]['Outlier']
+Queried_ID = Queries.[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 # finding maximal context's size for queried_ID
 max_ctx = Queries.iloc[Query_num]['Max']
@@ -63,8 +59,8 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
 # Making Queue of samples and initiating it, with Org_Vec
 # BFS_Vec is the transferring vector 
 # Initiating queue with Org_ctx informaiton
-Epsilon       = 0.002
-Queue	      = [[0, np.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Epsilon       = 0.001
+Queue	      = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
 Data_to_write = [(Queue[0][2])/max_ctx]
 
@@ -77,7 +73,7 @@ t0       = time.time()
 BFS_Flp  = np.zeros(len(Org_Vec)) 
 termination_threshold =500
 Terminator = 0
-while len(Queue)<50:  
+while len(Queue)<100:  
 	Terminator += 1
    	if (Terminator>termination_threshold):
 		break
@@ -95,21 +91,23 @@ while len(Queue)<50:
 				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 		if (BFS_Ctx.shape[0] > 20):
 			for row in range(BFS_Ctx.shape[0]):
-				Sub_Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
-				Sub_ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])		
+				Sub_Sal_list.append(BFS_Ctx.iloc[row, 7])
+				Sub_ID_list.append(BFS_Ctx.iloc[row, 0])		
 			Sub_Sal_arr= np.array(Sub_Sal_list)
 			clf = LocalOutlierFactor(n_neighbors=20)
 			Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
 			for outlier_finder in range(0, len(Sub_ID_list)):
 				if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
-					Sub_Score = np.exp(Epsilon *(BFS_Ctx.shape[0]))
+					Sub_Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
           				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 					for i in  range (len(sub_q[len(sub_q)-1][3])):      
 						sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
 			
 	#######################       Sampling from sub_queue(sampling in each layer)        ##################################
-	Sub_elements = [elem[0] for elem in sub_q]	
-	Sub_probabilities = [prob[1] for prob in sub_q]/(sum ([prob[1] for prob in sub_q]))
+	Sub_elements = [elem[0] for elem in sub_q]
+	Sub_probabilities =[]
+    	for prob in sub_q:
+		Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in sub_q])))
 	SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 	for child in range(0, len(sub_q)):
 		if sub_q[child][0] == SubRes[0]:
@@ -122,7 +120,9 @@ while len(Queue)<50:
 	print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
 	##################################       Sampling form the Queue ###############################
 	elements = [elem[0] for elem in Queue]	
-	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
+	probabilities =[]
+    	for prob in Queue:
+		probabilities.append(prob[1]/(sum ([prob[1] for prob in Queue])))
 	ExpRes = np.random.choice(elements, 1, p = probabilities)
 	for child in range(0, len(Queue)):
       		if Queue[child][0] == ExpRes[0]:

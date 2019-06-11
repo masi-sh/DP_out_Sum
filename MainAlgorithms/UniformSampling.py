@@ -5,12 +5,6 @@ import sys
 #import gzip
 import pandas as pd
 import numpy as np
-import cufflinks as cf
-import plotly
-import plotly.offline as py
-import plotly.graph_objs as go
-cf.go_offline()
-import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
 from collections import Counter
@@ -18,6 +12,7 @@ import time
 import fcntl
 import random
 import csv
+import math
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
@@ -70,9 +65,9 @@ while len(Flp_lst)<100:
 	ID_list      = []
 	if (Flp_Ctx.shape[0] >= 20):
 		for row in range(Flp_Ctx.shape[0]):
-                    Sal_list.append(Flp_Ctx.iloc[row]['Salary Paid'])
-		    ID_list.append(Flp_Ctx.iloc[row]['Unnamed: 0'])
-                Score = np.exp(Epsilon *(Flp_Ctx.shape[0]))
+                    Sal_list.append(Flp_Ctx.iloc[row,7])
+		    ID_list.append(Flp_Ctx.iloc[row,0])
+                Score = math.exp(Epsilon *(Flp_Ctx.shape[0]))
                 Sal_arr= np.array(Sal_list)
                 clf = LocalOutlierFactor(n_neighbors=20)
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
@@ -84,7 +79,10 @@ while len(Flp_lst)<100:
 
        ###################################      Sampling form Exp Mech Result      #################################
 elements = [elem[0] for elem in Flp_lst]	
-probabilities = [prob[1] for prob in Flp_lst]/(sum ([prob[1] for prob in Flp_lst]))
+probabilities =[]
+for prob in Flp_lst:
+	probabilities.append(prob[1]/(sum ([prob[1] for prob in Flp_lst])))
+
 ExpRes = np.random.choice(elements, 1, p = probabilities)
 print '\n\nThe number of candidates in Exponential mechanism range is:', len(Flp_lst)
 print '\n\nIDs sampled from Exponential mechanism output are\n\n',  ExpRes

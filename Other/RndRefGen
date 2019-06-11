@@ -1,5 +1,6 @@
 #!/bin/bash
-for ((i=0; i<=256; i++))
+python ~/DP_out_Sum/Other/RndQueryInit.py &
+for ((i=0; i<256; i++))
 do
     python ~/DP_out_Sum/Other/RndRefGen.py "$i" &
 done

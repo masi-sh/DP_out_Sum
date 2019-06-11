@@ -5,12 +5,6 @@ import sys
 #import gzip
 import pandas as pd
 import numpy as np
-import cufflinks as cf
-import plotly
-import plotly.offline as py
-import plotly.graph_objs as go
-cf.go_offline()
-import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
 from collections import Counter
@@ -18,6 +12,7 @@ import time
 import fcntl
 import random
 import csv
+import math 
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
@@ -65,8 +60,8 @@ effective_pop = 0
 Min_Sal_list  = []
 Min_ID_list   = []
 for row in range(mnml_Ctx.shape[0]):
-	Min_Sal_list.append(mnml_Ctx.iloc[row]['Salary Paid'])
-	Min_ID_list.append(mnml_Ctx.iloc[row]['Unnamed: 0'])
+	Min_Sal_list.append(mnml_Ctx.iloc[row, 7])
+	Min_ID_list.append(mnml_Ctx.iloc[row, 0])
 			
 Min_Sal_arr= np.array(Min_Sal_list)
 clf = LocalOutlierFactor(n_neighbors=20)
@@ -74,7 +69,7 @@ Min_Sal_outliers = clf.fit_predict(Min_Sal_arr.reshape(-1,1))
 for outlier_finder in range(0, len(Min_ID_list)):
 	if ((Min_Sal_outliers[outlier_finder]==-1) and (Min_ID_list[outlier_finder]==Queried_ID)): 
 		effective_pop = mnml_Ctx.shape[0]
-Min_Score = np.exp(Epsilon*(effective_pop))
+Min_Score = math.exp(Epsilon*(effective_pop))
 Queue	= [[0, Min_Score, effective_pop, mnml_Vec]]
 Data_to_write = [effective_pop/max_ctx]
 
@@ -100,8 +95,8 @@ while len(Queue)<100:
 	ID_list      = []
 	if (BFS_Ctx.shape[0] >= 20):
 		for row in range(BFS_Ctx.shape[0]):
-                    Sal_list.append(BFS_Ctx.iloc[row]['Salary Paid'])
-		    ID_list.append(BFS_Ctx.iloc[row]['Unnamed: 0'])
+                    Sal_list.append(BFS_Ctx.iloc[row, 7])
+		    ID_list.append(BFS_Ctx.iloc[row, 0])
 			
                 Sal_arr= np.array(Sal_list)
                 clf = LocalOutlierFactor(n_neighbors=20)
@@ -109,7 +104,7 @@ while len(Queue)<100:
 		for outlier_finder in range(0, len(ID_list)):
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
 			effective_pop = BFS_Ctx.shape[0]
-	        Score = np.exp(Epsilon*(effective_pop))
+	        Score = math.exp(Epsilon*(effective_pop))
 		Queue.append([len(Queue), Score, effective_pop, np.zeros(len(mnml_Vec))])
 		for i in  range (len(Queue[len(Queue)-1][3])):      
 			Queue[len(Queue)-1][3][i] = BFS_Flp[i]
@@ -117,8 +112,9 @@ while len(Queue)<100:
 
 	###################################       Sampling form the Queue ###############################
 	elements = [elem[0] for elem in Queue]	
-	probabilities = [prob[1] for prob in Queue]/(sum ([prob[1] for prob in Queue]))
-	ExpRes = np.random.choice(elements, 1, p = probabilities)
+	probabilities = []
+	for prob in Queue:
+		probabilities.append(prob[1]/(sum ([prob[1] for prob in Queue]))) 
 	ExpRes = np.random.choice(elements, 1, p = probabilities)
     	for child in range(0, len(Queue)):
         	if Queue[child][0] == ExpRes[0]:
