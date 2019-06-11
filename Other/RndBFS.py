@@ -13,6 +13,7 @@ import fcntl
 import random
 import csv
 import math
+import hashlib
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
