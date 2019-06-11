@@ -112,9 +112,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			if np.array_equal(FirAtt_Sprset[x],FirAtt_Flp):
 				print FirAtt_Sprset[x]
 				break
-		else:
-			continue
-		break
+
 		#iii = FirAtt_Sprset.index(FirAtt_Flp)
 		jjj = SecAtt_Sprset.index(SecAtt_Flp)
 		zzz = ThrAtt_Sprset.index(ThrAtt_Flp)
