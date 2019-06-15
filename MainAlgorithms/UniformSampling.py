@@ -1,4 +1,5 @@
 from __future__ import division
+from mpmath import mp
 import matplotlib
 matplotlib.use('Agg')
 import sys
@@ -47,7 +48,7 @@ Flp_p         = 0.5
 Flp_lst       = []
 Data_to_write = []
 ###################################        Flip the context, 100 times            ###############################
-Epsilon       = 0.05
+Epsilon       = 0.1
 
 t0 = time.time()
 while len(Flp_lst)<100:
@@ -67,7 +68,7 @@ while len(Flp_lst)<100:
 		for row in range(Flp_Ctx.shape[0]):
                     Sal_list.append(Flp_Ctx.iloc[row,7])
 		    ID_list.append(Flp_Ctx.iloc[row,0])
-                Score = math.exp(Epsilon *(Flp_Ctx.shape[0]))
+                Score = mp.exp(Epsilon *(Flp_Ctx.shape[0]))
                 Sal_arr= np.array(Sal_list)
                 clf = LocalOutlierFactor(n_neighbors=20)
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
