@@ -127,14 +127,13 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 				   df2['Calendar Year'].isin(ThrAtt_Sprset[zzz])]
     		ID_list  = []
     		if (BFS_Ctx.shape[0] >= 20):
-			for row in range(BFS_Ctx.shape[0]):
-                        	if hash_calc(iii, jjj, zzz, Queried_ID):
-					Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
-                			Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
-					Addtosamples = True
-					Terminator   = 0
-                			for i in  range (len(Queue[len(Queue)-1][3])):      
-                    				Queue[len(Queue)-1][3][i]  = BFS_Flp[i]
+                       	if hash_calc(iii, jjj, zzz, Queried_ID):
+				Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
+               			Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+				Addtosamples = True
+				Terminator   = 0
+               			for i in  range (len(Queue[len(Queue)-1][3])):      
+                 			Queue[len(Queue)-1][3][i]  = BFS_Flp[i]
 
    		# Sampling form the Queue
     		elements = [elem[0] for elem in Queue]
