@@ -96,7 +96,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	BFS_Flp    = np.zeros(len(Org_Vec)) 
 	Q_indx     = 0
 	index      = 0
-	termination_threshold = 50000
+	termination_threshold = 5000
 	Terminator  = 0
 	while len(Queue)<100:
     		Terminator += 1
