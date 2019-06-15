@@ -16,6 +16,7 @@ import math
 import hashlib
 
 Query_num = int(sys.argv[1])
+random.seed(50*Query_num)
 # This file is filtered, no extra filtering required
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/dataset/RndQueries.csv'
@@ -146,7 +147,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
             			Q_indx = child
     		if (Addtosamples):
 			Data_to_write.append((Queue[Q_indx][2])/max_ctx) 
-			print 'Out RndBFS_Alg, Data_to_write is: ', Data_to_write
+			print 'In-loop RndBFS_Alg, Data_to_write is: ', Data_to_write
+			print 'len(Queue) is: ', Queue
 	return;
 
 BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
