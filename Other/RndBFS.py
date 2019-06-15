@@ -147,7 +147,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
             			Q_indx = child
     		if (Addtosamples):
 			Data_to_write.append((Queue[Q_indx][2])/max_ctx) 
-			print 'Out RndBFS_Alg, Data_to_write is: ', Data_to_write
+			print 'In-loop RndBFS_Alg, Data_to_write is: ', Data_to_write
+			print 'len(Queue) is: ', Queue
 	return;
 
 BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
