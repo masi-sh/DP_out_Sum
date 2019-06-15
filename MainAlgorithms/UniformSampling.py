@@ -48,7 +48,7 @@ Flp_p         = 0.5
 Flp_lst       = []
 Data_to_write = []
 ###################################        Flip the context, 100 times            ###############################
-Epsilon       = 0.05
+Epsilon       = 0.1
 
 t0 = time.time()
 while len(Flp_lst)<100:
