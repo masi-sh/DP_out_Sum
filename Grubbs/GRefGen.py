@@ -11,10 +11,10 @@ import random
 import csv
 import math
 import hashlib
+from outliers import smirnov_grubbs as grubbs
 
-df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
+df2 = pd.read_csv("~/DP_out_Sum/Grubbs/ToyData.csv")
 OutFile  = 'GrubbsRef.txt'
-#OutFile  = 'Outputs/output'+sys.argv[1]+'.txt'
 
 def writefinal(OutFile, outliers):
         ff = open(OutFile,'a+')
@@ -25,13 +25,6 @@ def writefinal(OutFile, outliers):
         fcntl.flock(ff, fcntl.LOCK_UN)
         ff.close()
         return;
-
-def hash_calc(i, j, z, ID):
-        hash_value = hashlib.md5(str(i+1000*j+1000000*z)+str(ID))
-        hash_hex = hash_value.hexdigest()
-        #:as_int = int(hash_hex[30:32],16)
-        #return (as_int%128==0);
-        return (hash_hex[30:32] == '80' or hash_hex[30:32] == '00');
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
@@ -58,10 +51,12 @@ for j in range (0, len(SecAtt_Sprset)):
                                df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
                 outliers.append([i, j, z, Ctx.shape[0]])
                 if (Ctx.shape[0]>20):
-                        for row in range(Ctx.shape[0]):
-                                ID = Ctx.iloc[row, 0]
-                                if hash_calc(i, j, z, ID):
-                                        outliers[len(outliers)-1].append(ID)
+                        outliers = []
+                        Salary = Ctx['Salary Paid']
+                        IDs    = Ctx['Unnamed: 0.1']
+                        grubbs_result = grubbs.max_test_indices(Sal_Data, alpha=0.05)
+                        for GOutlier in grubbs_result:
+                                outliers[len(outliers)-1].append(IDs.values[GOutlier])
 
 writefinal(OutFile, outliers)
 t1 = time.time()
