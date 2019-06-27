@@ -51,7 +51,6 @@ for j in range (0, len(SecAtt_Sprset)):
                                df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
                 outliers.append([i, j, z, Ctx.shape[0]])
                 if (Ctx.shape[0]>20):
-                        outliers = []
                         Salary = Ctx['Salary Paid']
                         IDs    = Ctx['Unnamed: 0.1']
                         grubbs_result = grubbs.max_test_indices(Sal_Data, alpha=0.05)
