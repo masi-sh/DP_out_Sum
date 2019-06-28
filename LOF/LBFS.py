@@ -22,30 +22,6 @@ Query_file = '/home/sm2shafi/DP_out_Sum/LOF/TLQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
 Store_file = 'LBFS.dat'
 
-# Finds the maximal context for the Queried_ID      
-def maxctx(Ref_file, Queried_ID):
-	print '\nChecking for the maximal context ... \n'
-	max = 0
-	out_size = 0
-	#line_num = 0
-	size = 0
-	#Ctx_line = 0
-	with open(Ref_file,'rt') as f:
-        	for num, line in enumerate(f, 1):
-                	if line.split(' ')[0].strip()=="Matching":
-				#Ctx_line = num
-                        	size = int((line.split(' '))[5].strip(':\n'))
-			elif line.strip().startswith("ID"):
-				if line.split(' ')[3].strip('#')==str(Queried_ID):
-					out_size = size
-					#Valid_line = Ctx_line
-                	if (max < out_size):
-				max = out_size
-				#line_num = Valid_line 
-				print "\nmax so far is :", max, "   at time: ", time.time()
-	f.close()
-	return max;
-
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID):	
 	ff = open(Store_file,'a+')
@@ -68,19 +44,31 @@ print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 max_ctx = Queries.iloc[Query_num]['Max']
 print '\nmaximal context has the population :\n', max_ctx
 
-# Making Queue of samples and initiating it, with Org_Vec   
-Org_Vec       = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
+FirAtt_lst = df2['Job Title'].unique()
+SecAtt_lst = df2['Employer'].unique()
+ThrAtt_lst = df2['Calendar Year'].unique()
+# Supersets for each attribute
+FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[0:], r)), range(1, len(FirAtt_lst[0:])+1)), [])
+SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1, len(SecAtt_lst[0:])+1)), [])
+ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])	
+# Reading and polishing Ctx in Query_file
+context  = int(Queries.iloc[Query_num]['Ctx'])
+iii = context%1000
+jjj = (context//1000)%1000
+zzz = context//1000000
+Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[iii]) & df2['Employer'].isin(SecAtt_Sprset[jjj]) &\
+		    df2['Calendar Year'].isin(ThrAtt_Sprset[zzz])]
 
-# polishing Ctx in Query_file and reading Org_Vec from it
-Queries['Ctx'] = Queries['Ctx'].replace({'\n': ''}, regex=True)
-Org_Str = Queries.iloc[Query_num]['Ctx'][1:-2].strip('[]').replace('.','').replace(' ', '')
-for i in range(len(Org_Vec)):
-	if (Org_Str[i] =='1'):
-		Org_Vec[i] = 1
-		
-Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
-		    df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
-                    df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+# Making Queue of samples and initiating it, with Org_Vec   
+Org_Vec  = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
+temp_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
+
+Org_Vec[np.where(np.isin(FirAtt_lst[0:len(FirAtt_lst)], FirAtt_Sprset[iii]))] = 1
+temp_Vec[np.where(np.isin(SecAtt_lst[0:len(SecAtt_lst)], SecAtt_Sprset[jjj]))] = 1
+Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] = temp_Vec[0:len(SecAtt_lst)]
+temp_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
+temp_Vec[np.where(np.isin(ThrAtt_lst[0:len(ThrAtt_lst)], ThrAtt_Sprset[zzz]))] = 1
+Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] = temp_Vec[0:len(ThrAtt_lst)]
 
 # Initiating queue with Org_ctx informaiton 
 Epsilon       = 0.001
