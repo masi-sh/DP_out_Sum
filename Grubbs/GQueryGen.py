@@ -15,7 +15,7 @@ from outliers import smirnov_grubbs as grubbs
 random.seed(50*int(sys.argv[1]))
 query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/Grubbs/ToyData.csv")
-Query_file = '~/DP_out_Sum/Grubbs/TGQueries.csv'
+Query_file = '/home/sm2shafi/DP_out_Sum/Grubbs/TGQueries.csv'
 Queries = pd.read_csv(Query_file)
 Ref_file = '/home/sm2shafi/DP_out_Sum/Grubbs/GrubbsRef.txt'
 
