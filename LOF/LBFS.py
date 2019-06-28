@@ -27,7 +27,7 @@ def writefinal(Data_to_write, randomness, runtime, ID):
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
 	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', \
-	BFS alg. takes' + runtime)
+	LBFS alg. takes' + runtime)
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
