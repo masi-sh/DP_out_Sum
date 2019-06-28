@@ -51,7 +51,7 @@ for j in range (0, len(SecAtt_Sprset)):
                 Sal_list     = []
                 ID_list = []
                 if (Ctx.shape[0] > 20):
-       		        for row in range(BFS_Ctx.shape[0]):
+       		        for row in range(Ctx.shape[0]):
             			Sal_list.append(Ctx.iloc[row,7])
             			ID_list.append(Ctx.iloc[row,0])
         		Sal_arr= np.array(Sal_list)
