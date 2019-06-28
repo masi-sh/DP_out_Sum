@@ -53,7 +53,7 @@ for j in range (0, len(SecAtt_Sprset)):
                 if (Ctx.shape[0]>20):
                         Salary = Ctx['Salary Paid']
                         IDs    = Ctx['Unnamed: 0.1']
-                        grubbs_result = grubbs.max_test_indices(Sal_Data, alpha=0.05)
+                        grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
                         for GOutlier in grubbs_result:
                                 outliers[len(outliers)-1].append(IDs.values[GOutlier])
 
