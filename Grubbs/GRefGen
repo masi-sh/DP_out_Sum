@@ -1,5 +1,5 @@
 #!/bin/bash
 for ((i=0; i<64; i++))
 do
-    python ~/DP_out_Sum/Other/RndRefGen.py "$i" &
+    python ~/DP_out_Sum/Grubbs/GRefGen.py "$i" &
 done
