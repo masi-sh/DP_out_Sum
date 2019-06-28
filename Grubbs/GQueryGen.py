@@ -56,7 +56,7 @@ while True:
         if (Ctx.shape[0]>20):
 		Salary = Ctx['Salary Paid']
                 IDs    = Ctx['Unnamed: 0.1']
-                grubbs_result = grubbs.max_test_indices(Sal_Data, alpha=0.05)
+                grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
                 if grubbs_result:
 			ID = IDs.values[grubbs_result[0]]
 			#outliers.append([i, j, z, Ctx.shape[0], ID])
