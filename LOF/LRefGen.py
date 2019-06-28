@@ -48,13 +48,18 @@ for j in range (0, len(SecAtt_Sprset)):
                 Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[i]) & df2['Employer'].isin(SecAtt_Sprset[j]) &\
                                df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
                 outliers.append([i, j, z, Ctx.shape[0]])
-                if (Ctx.shape[0]>20):
-                        Salary = Ctx['Salary Paid']
-                        IDs    = Ctx['Unnamed: 0.1']
-                        grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
-                        for GOutlier in grubbs_result:
-                                outliers[len(outliers)-1].append(IDs.values[GOutlier])
-
+                Sal_list     = []
+                ID_list = []
+                if (Ctx.shape[0] > 20):
+       		        for row in range(BFS_Ctx.shape[0]):
+            			Sal_list.append(Ctx.iloc[row,7])
+            			ID_list.append(Ctx.iloc[row,0])
+        		Sal_arr= np.array(Sal_list)
+        		clf = LocalOutlierFactor(n_neighbors=20)
+                        Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
+                        for outlier_finder in range(0, len(ID_list)):
+            			if ((Sal_outliers[outlier_finder]==-1)): 
+                                        outliers[len(outliers)-1].append(ID_list[outlier_finder])
 writefinal(OutFile, outliers)
 t1 = time.time()
 print '\n\nThe required time for running the program is:',  t1-t0
