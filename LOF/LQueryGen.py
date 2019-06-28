@@ -64,6 +64,6 @@ if (max_ctx !=0 and count>500):
 	with open(Query_file, 'ab') as csvfile:
        		writer = csv.writer(csvfile)
        		fcntl.flock(csvfile, fcntl.LOCK_EX)
-       		writer.writerow([query_num, ID, max_ctx, str(i+1000*j+1000000*z)])
+       		writer.writerow([query_num, Queried_ID, max_ctx, str(i+1000*j+1000000*z)])
        		fcntl.flock(csvfile, fcntl.LOCK_UN)
 	csvfile.close()
