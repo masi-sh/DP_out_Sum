@@ -14,44 +14,21 @@ import fcntl
 import random
 import csv
 import math
+from outliers import smirnov_grubbs as grubbs
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
-df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
+df2 = pd.read_csv("~/DP_out_Sum/Grubbs/ToyData.csv")
+Query_file = '/home/sm2shafi/DP_out_Sum/Grubbs/GQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'BFSDataPointsOutputmp.dat'
-
-# Finds the maximal context for the Queried_ID      
-def maxctx(Ref_file, Queried_ID):
-	print '\nChecking for the maximal context ... \n'
-	max = 0
-	out_size = 0
-	#line_num = 0
-	size = 0
-	#Ctx_line = 0
-	with open(Ref_file,'rt') as f:
-        	for num, line in enumerate(f, 1):
-                	if line.split(' ')[0].strip()=="Matching":
-				#Ctx_line = num
-                        	size = int((line.split(' '))[5].strip(':\n'))
-			elif line.strip().startswith("ID"):
-				if line.split(' ')[3].strip('#')==str(Queried_ID):
-					out_size = size
-					#Valid_line = Ctx_line
-                	if (max < out_size):
-				max = out_size
-				#line_num = Valid_line 
-				print "\nmax so far is :", max, "   at time: ", time.time()
-	f.close()
-	return max;
+Store_file = 'GBFS.dat'
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
 	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', \
-	BFS alg. takes' + runtime)
+	GBFS alg. takes' + runtime)
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
@@ -119,12 +96,9 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
         		for row in range(BFS_Ctx.shape[0]):
             			Sal_list.append(BFS_Ctx.iloc[row,7])
             			ID_list.append(BFS_Ctx.iloc[row,0])
-
-        		Sal_arr= np.array(Sal_list)
-        		clf = LocalOutlierFactor(n_neighbors=20)
-        		Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
-        		for outlier_finder in range(0, len(ID_list)):
-            			if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
+			grubbs_result = grubbs.max_test_indices(Sal_list, alpha=0.05)
+			for GOutlier in grubbs_result:
+				if (IDs.values[GOutlier]==Queried_ID):
                 			Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
                 			Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 					Addtosamples = True
