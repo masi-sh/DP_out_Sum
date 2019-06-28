@@ -44,6 +44,7 @@ SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1
 ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])
 
 outliers = []
+Sal_outliers = np.array([1])
 while (Sal_outliers[Sal_outliers.argmin()]==1):
 	i = np.random.randint(len(FirAtt_Sprset)-1)
 	j = np.random.randint(len(SecAtt_Sprset)-1)
