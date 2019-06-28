@@ -17,7 +17,7 @@ import math
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
-df2 = pd.read_csv("home/sm2shafi/DP_out_Sum/Grubbs/ToyData.csv")
+df2 = pd.read_csv("~/DP_out_Sum/Grubbs/ToyData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/LOF/TLQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
 Store_file = 'LBFS.dat'
