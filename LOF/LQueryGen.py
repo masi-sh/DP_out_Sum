@@ -54,7 +54,7 @@ while (Sal_outliers[Sal_outliers.argmin()]==1):
 	#outliers.append([i, j, z, Ctx.shape[0]])
         if (Ctx.shape[0]>20):
 		clf = LocalOutlierFactor(n_neighbors=20)
-		Sal_outliers = clf.fit_predict(Orgn_Ctx['Salary Paid'].values.reshape(-1,1))
+		Sal_outliers = clf.fit_predict(Ctx['Salary Paid'].values.reshape(-1,1))
 		
 Queried_ID =Orgn_Ctx.iloc[Sal_outliers.argmin()][1]
 max_ctx, count = maxctx(Ref_file, Queried_ID)
