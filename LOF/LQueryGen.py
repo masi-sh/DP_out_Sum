@@ -26,7 +26,7 @@ def maxctx(Ref_file, Queried_ID):
 			ctx = line[1:-2].split(',')
                 	size = int(ctx[3])
 			for outliers in range(len(ctx)):
-				if int(ctx[outliers])==ID:
+				if int(ctx[outliers])==Queried_ID:
    	        			outlier_ctr += 1
 					if (max < size):
 						max = size
