@@ -13,7 +13,7 @@ import csv
 import math
 
 df2 = pd.read_csv("~/DP_out_Sum/Grubbs/ToyData.csv")
-OutFile  = 'LOFRef.txt'
+OutFile  = 'LOFRef2.txt'
 
 def writefinal(OutFile, outliers):
         ff = open(OutFile,'a+')
