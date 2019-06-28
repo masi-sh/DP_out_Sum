@@ -105,8 +105,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
     		ID_list      = []
     		if (BFS_Ctx.shape[0] >= 20):
         		for row in range(BFS_Ctx.shape[0]):
-            			Sal_list.append(BFS_Ctx.iloc[row,7])
-            			ID_list.append(BFS_Ctx.iloc[row,0])
+            			Sal_list.append(BFS_Ctx.iloc[row,8])
+            			ID_list.append(BFS_Ctx.iloc[row,1])
 
         		Sal_arr= np.array(Sal_list)
         		clf = LocalOutlierFactor(n_neighbors=20)
