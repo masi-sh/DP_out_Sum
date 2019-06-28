@@ -96,13 +96,10 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
     		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
 				   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
 				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-    		Sal_list     = []
-    		ID_list      = []
     		if (BFS_Ctx.shape[0] >= 20):
-        		for row in range(BFS_Ctx.shape[0]):
-            			Sal_list.append(BFS_Ctx.iloc[row,7])
-            			ID_list.append(BFS_Ctx.iloc[row,0])
-			grubbs_result = grubbs.max_test_indices(Sal_list, alpha=0.05)
+			Salary = Ctx['Salary Paid']
+			IDs = Ctx['Unnamed: 0.1']
+			grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
 			for GOutlier in grubbs_result:
 				if (IDs.values[GOutlier]==Queried_ID):
                 			Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
