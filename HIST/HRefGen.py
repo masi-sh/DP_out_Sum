@@ -37,26 +37,31 @@ ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1
 
 t0 = time.time()
 ctx_count = 0
-outliers = []
+outliers  = []
 # Exploring Contexts and their outliers
 #for i in range (250, len(FirAtt_Sprset)):
 i = int(sys.argv[1])
 for j in range (0, len(SecAtt_Sprset)):
 #for j in range(int(sys.argv[1]), (int(sys.argv[1])+1)):
         for z in range(0, len(ThrAtt_Sprset)):
-                ctx_count+=1
+                ctx_count += 1
+                Sal_bin    = []
+                outliers.append([i, j, z, Ctx.shape[0]])
                 print 'count is:', ctx_count #, ' The percentage done: %', ctx_count//(2**25) 
 
                 Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[i]) & df2['Employer'].isin(SecAtt_Sprset[j]) &\
                                df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
-                outliers.append([i, j, z, Ctx.shape[0]])
                 if (Ctx.shape[0]>20):
                         Salary = Ctx['Salary Paid']
                         IDs    = Ctx['Unnamed: 0.1']
-                        grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
-                        for GOutlier in grubbs_result:
-                                outliers[len(outliers)-1].append(IDs.values[GOutlier])
-
+                        histi  = np.histogram(Salary.values, bins=int(np.sqrt(len(Salary.values))), density=False)
+                        bin_width = histi[1][1] - histi[1][0]
+                        for Sal_freq in range(len(histi[0])):
+                                if histi[0][Sal_freq] <= 0.0025*len(Ctx['Salary Paid']):
+                                        Sal_bin.append(histi[1][Sal_freq])
+                        for Sal_idx in range(len(Salary.values)):
+                                if (len(filter(lambda x : x <= Salary.values[Sal_idx] < x+bin_width , Sal_bin)) > 0):
+                                        outliers[len(outliers)-1].append(IDs.values[Sal_idx])
 writefinal(OutFile, outliers)
 t1 = time.time()
 print '\n\nThe required time for running the program is:',  t1-t0
