@@ -54,6 +54,8 @@ while True:
 		       df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
 	#outliers.append([i, j, z, Ctx.shape[0]])
         if (Ctx.shape[0]>20):
+		Salary = Ctx['Salary Paid']
+		IDs = Ctx['Unnamed: 0.1']
 		histi  = np.histogram(Salary.values, bins=int(np.sqrt(len(Salary.values))), density=False)
                 bin_width = histi[1][1] - histi[1][0]
                 for Sal_freq in range(len(histi[0])):
