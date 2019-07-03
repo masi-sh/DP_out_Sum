@@ -53,6 +53,7 @@ while True:
 	Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[i]) & df2['Employer'].isin(SecAtt_Sprset[j]) &\
 		       df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
 	#outliers.append([i, j, z, Ctx.shape[0]])
+	Sal_bin = []
         if (Ctx.shape[0]>20):
 		Salary = Ctx['Salary Paid']
 		IDs = Ctx['Unnamed: 0.1']
