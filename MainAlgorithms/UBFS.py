@@ -127,8 +127,9 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
         		for outlier_finder in range(0, len(ID_list)):
             			if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
 				        # Score is the size of the intersection with the original context
-					Score = mp.exp(Epsilon *(pd.merge(Orgn_Ctx, BFS_Ctx, how='inner').shape[0]))
-                			Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+					Score = mp.exp(Epsilon*(pd.merge(Orgn_Ctx, BFS_Ctx, how='inner').shape[0]))
+                			#Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+					Queue.append([len(Queue), Score, pd.merge(Orgn_Ctx, BFS_Ctx, how='inner').shape[0], np.zeros(len(Org_Vec))])
 					Addtosamples = True
 					Terminator   = 0
                 			for i in  range (len(Queue[len(Queue)-1][3])):      
