@@ -65,8 +65,8 @@ ThrAtt_lst = df2['Calendar Year'].unique()
 Queried_ID = Queries.iloc[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 # finding maximal context's size for queried_ID
-max_ctx = Queries.iloc[Query_num]['Max']
-print '\nmaximal context has the population :\n', max_ctx
+#max_ctx = Queries.iloc[Query_num]['Max']
+#print '\nmaximal context has the population :\n', max_ctx
 
 # Making Queue of samples and initiating it, with Org_Vec   
 Org_Vec       = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
@@ -81,7 +81,8 @@ for i in range(len(Org_Vec)):
 Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
 		    df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
                     df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-
+# Utility here is intersection with original context's size
+max_ctx = Orgn_Ctx.shape[0]
 # Initiating queue with Org_ctx informaiton 
 Epsilon       = 0.001
 Queue	      = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
@@ -125,7 +126,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
         		Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
         		for outlier_finder in range(0, len(ID_list)):
             			if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
-                			Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
+				        # Score is the size of the intersection with the original context
+					Score = mp.exp(Epsilon *(pd.merge(Orgn_Ctx, BFS_Ctx, how='inner').shape[0]))
                 			Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 					Addtosamples = True
 					Terminator   = 0
