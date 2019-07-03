@@ -1,0 +1,5 @@
+#!/bin/bash
+for ((i=0; i<32; i++))
+do
+    python ~/DP_out_Sum/HIST/HRefGen.py "$i" &
+done
