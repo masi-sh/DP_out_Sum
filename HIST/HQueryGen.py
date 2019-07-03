@@ -15,7 +15,7 @@ from outliers import smirnov_grubbs as grubbs
 random.seed(50*int(sys.argv[1]))
 query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/Grubbs/ToyData.csv")
-Query_file = '/home/sm2shafi/DP_out_Sum/HIST/HQueries.csv'
+Query_file = '/home/sm2shafi/DP_out_Sum/HIST/THQueries.csv'
 Queries = pd.read_csv(Query_file)
 Ref_file = '/home/sm2shafi/DP_out_Sum/HIST/HistRef.txt'
 
@@ -54,13 +54,18 @@ while True:
 		       df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
 	#outliers.append([i, j, z, Ctx.shape[0]])
         if (Ctx.shape[0]>20):
-		Salary = Ctx['Salary Paid']
-                IDs    = Ctx['Unnamed: 0.1']
-                grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
-                if grubbs_result:
-			ID = IDs.values[grubbs_result[0]]
-			#outliers.append([i, j, z, Ctx.shape[0], ID])
-			break
+		histi  = np.histogram(Salary.values, bins=int(np.sqrt(len(Salary.values))), density=False)
+                bin_width = histi[1][1] - histi[1][0]
+                for Sal_freq in range(len(histi[0])):
+			if histi[0][Sal_freq] <= 0.0025*len(Ctx['Salary Paid']):
+				Sal_bin.append(histi[1][Sal_freq])
+		for Sal_idx in range(len(Salary.values)):
+			if (len(filter(lambda x : x <= Salary.values[Sal_idx] < x+bin_width , Sal_bin)) > 0):
+				ID = IDs.values[Sal_idx]
+				break
+		else:
+			continue
+		break
 		
 max_ctx, count = maxctx(Ref_file, ID)
 if (max_ctx !=0 and count>500):
