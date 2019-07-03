@@ -109,14 +109,13 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
                         for Sal_idx in range(len(Salary.values)):
                                 if (len(filter(lambda x : x <= Salary.values[Sal_idx] < x+bin_width , Sal_bin)) > 0):
 					outliers.append(IDs.values[Sal_idx])	
-			for HOutlier in outliers:
-				if (IDs.values[HOutlier]==Queried_ID):
-                			Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
-                			Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
-					Addtosamples = True
-					Terminator   = 0
-                			for i in  range (len(Queue[len(Queue)-1][3])):      
-                    				Queue[len(Queue)-1][3][i]  = BFS_Flp[i]
+			if Queried_ID in outliers:
+               			Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
+               			Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+				Addtosamples = True
+				Terminator   = 0
+               			for i in  range (len(Queue[len(Queue)-1][3])):
+					Queue[len(Queue)-1][3][i]  = BFS_Flp[i]
 
    		# Sampling form the Queue
     		elements = [elem[0] for elem in Queue]
