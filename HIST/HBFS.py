@@ -97,11 +97,19 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 				   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
 				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
     		if (BFS_Ctx.shape[0] >= 20):
-			Salary = BFS_Ctx['Salary Paid']
-			IDs = BFS_Ctx['Unnamed: 0.1']
-			grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
-			for GOutlier in grubbs_result:
-				if (IDs.values[GOutlier]==Queried_ID):
+			outliers = []
+                        Salary = BFS_Ctx['Salary Paid']
+                        IDs    = BFS_Ctx['Unnamed: 0.1']
+                        histi  = np.histogram(Salary.values, bins=int(np.sqrt(len(Salary.values))), density=False)
+                        bin_width = histi[1][1] - histi[1][0]
+                        for Sal_freq in range(len(histi[0])):
+                                if histi[0][Sal_freq] <= 0.0025*len(Salary):
+                                        Sal_bin.append(histi[1][Sal_freq])
+                        for Sal_idx in range(len(Salary.values)):
+                                if (len(filter(lambda x : x <= Salary.values[Sal_idx] < x+bin_width , Sal_bin)) > 0):
+					outliers.append(IDs.values[Sal_idx])	
+			for HOutlier in outliers:
+				if (IDs.values[HOutlier]==Queried_ID):
                 			Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
                 			Queue.append([len(Queue), Score, BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 					Addtosamples = True
