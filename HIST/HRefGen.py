@@ -46,11 +46,10 @@ for j in range (0, len(SecAtt_Sprset)):
         for z in range(0, len(ThrAtt_Sprset)):
                 ctx_count += 1
                 Sal_bin    = []
-                outliers.append([i, j, z, Ctx.shape[0]])
                 print 'count is:', ctx_count #, ' The percentage done: %', ctx_count//(2**25) 
-
                 Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_Sprset[i]) & df2['Employer'].isin(SecAtt_Sprset[j]) &\
                                df2['Calendar Year'].isin(ThrAtt_Sprset[z])]
+                                outliers.append([i, j, z, Ctx.shape[0]])
                 if (Ctx.shape[0]>20):
                         Salary = Ctx['Salary Paid']
                         IDs    = Ctx['Unnamed: 0.1']
