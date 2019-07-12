@@ -136,6 +136,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		for i in range (len(Stack)):
 			if (Stack[i][3].tolist() == BFS_Vec.tolist()):
 				Stack.pop(i)
+				break
 		if (len(sub_q)>1):
 			for i in range (len(sub_q)):
 				Stack.append(sub_q[i])
