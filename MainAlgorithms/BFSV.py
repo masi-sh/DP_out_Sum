@@ -109,7 +109,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
     		if (Terminator>termination_threshold):
 			break
     		Addtosamples    = False
-		#sub_q    = []
+		sub_q    = []
 		for Flp_bit in range(0,(len(BFS_Vec))):
 			Sub_Sal_list = []
 			Sub_ID_list  = []
