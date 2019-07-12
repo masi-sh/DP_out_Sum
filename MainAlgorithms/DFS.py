@@ -62,7 +62,7 @@ Data_to_write = [(Queue[0][2])/max_ctx]
 # Make the queue by DFS traverse from ctx_org by exp through children, 100 times 
 t0       = time.time()
 def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
-	Stats = numpy.full(2**len(Org_Vec), True, dtype=bool)
+	Stats = np.full(2**len(Org_Vec), True, dtype=bool)
 	Stack = []
 	# BFS_Vec is the transferring vector 
 	BFS_Vec      = np.zeros(len(Org_Vec))
