@@ -106,7 +106,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
 		# Sampling from sub_queue(sampling in each layer) 
 		if sub_q:
-			Stack.appendnp.zeros(len(BFS_Vec))
+			Stack.append(np.zeros(len(BFS_Vec)))
 			for i in  range (len(BFS_Vec)):      
 				Stack[len(Stack)-1][i] = BFS_Vec[i]	       
 			Sub_elements = [elem[0] for elem in sub_q]
