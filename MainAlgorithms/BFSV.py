@@ -131,7 +131,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 						Sub_Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
           					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
-							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
+							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]	
+						Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] = False 
 		# Sampling from sub_queue(sampling in each layer) 
 		for i in range (len(Stack)):
 			if (Stack[i][3].tolist() == BFS_Vec.tolist()):
