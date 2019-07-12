@@ -123,7 +123,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			Terminator = 0
 			
 		else:
-			for i in  range (BFS_Vec): 
+			for i in  range (len(BFS_Vec)): 
 				BFS_Vec[i]  = Stack[len(Stack)-1][i]
 			Stack.pop(len(Stack)-1)
 			
