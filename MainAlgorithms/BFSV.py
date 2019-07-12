@@ -133,7 +133,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
 		# Sampling from sub_queue(sampling in each layer) 
-		for i in range (len(sub_q)):
+		for i in range (len(Stack)):
 			if (Stack[i][3] == BFS_Vec):
 				Stack.pop(i)
 		if (len(sub_q)>1):
