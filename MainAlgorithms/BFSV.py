@@ -20,7 +20,7 @@ Query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'BFSDataPointsOutputmp.dat'
+Store_file = 'BFSV.dat'
 
 # Finds the maximal context for the Queried_ID      
 def maxctx(Ref_file, Queried_ID):
@@ -91,17 +91,78 @@ Data_to_write = [(Queue[0][2])/max_ctx]
 # Running the BFS_Alg to form a queue of 100 elements
 t0 = time.time()
 def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
-	BFS_Flp       = np.zeros(len(Org_Vec)) 
-	Q_indx        = 0
-	index         = 0
+	Stats = np.full(2**len(Org_Vec)+1, True, dtype=bool)
+	BFS_Vec      = np.zeros(len(Org_Vec))
+	for i in range(len(Org_Vec)):
+		BFS_Vec[i]  = Org_Vec[i]
+	Stack = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+	BFS_Flp = np.zeros(len(Org_Vec))
+	#Q_indx        = 0
+	#index         = 0
 	termination_threshold = 500
 	Terminator    = 0
 	while len(Queue)<100:
+		New_Ctx = int(str(BFS_Vec).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)
+		Stats[New_Ctx] = False 
+		print 'len(Queue) is', len(Queue)
     		Terminator += 1
     		if (Terminator>termination_threshold):
 			break
     		Addtosamples    = False
-   		print '\nSampling & Queueing...  \n',
+		#sub_q    = []
+		for Flp_bit in range(0,(len(BFS_Vec))):
+			Sub_Sal_list = []
+			Sub_ID_list  = []
+			for i in  range (len(BFS_Vec)):
+				BFS_Flp[i] = BFS_Vec[i]
+			BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
+			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
+					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
+					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+			if (Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] == True and (BFS_Ctx.shape[0] > 20)):
+				for row in range(BFS_Ctx.shape[0]):
+					Sub_Sal_list.append(BFS_Ctx.iloc[row,7])
+					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
+				Sub_Sal_arr= np.array(Sub_Sal_list)
+				clf = LocalOutlierFactor(n_neighbors=20)
+				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
+				for outlier_finder in range(0, len(Sub_ID_list)):
+					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
+						Sub_Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
+          					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+						for i in  range (len(sub_q[len(sub_q)-1][3])):      
+							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
+		# Sampling from sub_queue(sampling in each layer) 
+		for i in range (len(sub_q)):
+			if (Stack[i][3] == BFS_Vec):
+				Stack.pop(i)
+		if (len(sub_q)>1):
+			for i in range (len(sub_q)):
+				Stack.append(sub_q[i])
+		Sub_elements = [elem for elem in range(len(Stack))]
+		Sub_probabilities =[]
+    		for prob in Stack:
+			Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in Stack])))
+		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
+		Queue.append([len(Queue), Stack[SubRes[0]][1], Stack[SubRes[0]][2], Stack[SubRes[0]][3][:]])
+		for i in range(len(Stack[SubRes[0]][3])):
+			BFS_Vec[i] = Stack[SubRes[0]][3][i]
+		Addtosamples = True
+		Terminator = 0
+		
+		print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
+		# Continuing form the Queue
+		print 'The candidate picked form the Q is ', Queue[len(Queue)-1][0], 'th, with context ', Queue[len(Queue)-1][3][:],\
+		' and has ', Queue[len(Queue)-1][2], 'population'
+		if (Addtosamples):
+			Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx) 
+return;
+
+
+		
+		
+		
+		
     		for i in  range (len(Queue[Q_indx][3])):      
         		BFS_Flp[i]        = Queue[Q_indx][3][i]
     		while any(np.array_equal(BFS_Flp[:],x[3][:]) for x in Queue):
