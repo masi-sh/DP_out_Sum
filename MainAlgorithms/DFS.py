@@ -73,9 +73,9 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	Terminator = 0
 	while len(Queue)<100:
 		
-		print 'The New False Stats Index',int(str(BFS_Vec).replace(',', '').replace(' ','').replace('.','').replace('\n',''),2) \
+		print 'The New False Stats Index',int(str(BFS_Vec).replace(',', '').replace(' ','').replace('.','').replace('\n',''),2)[1:-1] \
 		,'for BFS_Vec: ', str(BFS_Vec)
-		Stats[int(str(BFS_Vec).replace(',', '').replace(' ','').replace('.','').replace('\n',''),2)] = False 
+		Stats[int(str(BFS_Vec).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] = False 
 		print 'len(Queue) is', len(Queue)
 		Terminator += 1
    		if (Terminator>termination_threshold):
