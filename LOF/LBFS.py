@@ -103,7 +103,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 		Sal_list     = []
     		ID_list      = []
-		if (Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] == True and (BFS_Ctx.shape[0] > 20)):			Salary = BFS_Ctx['Salary Paid']
+		if (Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] == True and (BFS_Ctx.shape[0] > 20)):			
         		for row in range(BFS_Ctx.shape[0]):
             			Sal_list.append(BFS_Ctx.iloc[row,8])
             			ID_list.append(BFS_Ctx.iloc[row,1])
