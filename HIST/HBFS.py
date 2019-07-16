@@ -90,32 +90,34 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			break
     		Addtosamples    = False
 		sub_q = []
-    		for i in  range (len(BFS_Vec)):      
-        		BFS_Flp[i]        = BFS_Vec[i]
-        	BFS_Flp[Flp_bit]  = 1 - BFS_Flp[Flp_bit]
-    		BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
-				   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
-				   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-		Sal_bin = []
-		if (Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] == True and (BFS_Ctx.shape[0] > 20)):			
-			Salary = BFS_Ctx['Salary Paid']
-			outliers = []
-                        Salary = BFS_Ctx['Salary Paid']
-                        IDs    = BFS_Ctx['Unnamed: 0.1']
-                        histi  = np.histogram(Salary.values, bins=int(np.sqrt(len(Salary.values))), density=False)
-                        bin_width = histi[1][1] - histi[1][0]
-                        for Sal_freq in range(len(histi[0])):
-                                if histi[0][Sal_freq] <= 0.0025*len(Salary):
-                                        Sal_bin.append(histi[1][Sal_freq])
-                        for Sal_idx in range(len(Salary.values)):
-                                if (len(filter(lambda x : x <= Salary.values[Sal_idx] < x+bin_width , Sal_bin)) > 0):
-					outliers.append(IDs.values[Sal_idx])	
-			if Queried_ID in outliers:
-               			Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
-				sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
-				for i in  range (len(sub_q[len(sub_q)-1][3])):      
-					sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
-				Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] = False 
+		for Flp_bit in range(0,(len(BFS_Vec))):
+			Sub_Sal_list = []
+			Sub_ID_list  = []
+			for i in  range (len(BFS_Vec)):
+				BFS_Flp[i] = BFS_Vec[i]
+        		BFS_Flp[Flp_bit]  = 1 - BFS_Flp[Flp_bit]
+    			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
+					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
+					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+			Sal_bin = []
+			if (Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] == True and (BFS_Ctx.shape[0] > 20)):			
+				outliers = []
+                        	Salary = BFS_Ctx['Salary Paid']
+                        	IDs    = BFS_Ctx['Unnamed: 0.1']
+                        	histi  = np.histogram(Salary.values, bins=int(np.sqrt(len(Salary.values))), density=False)
+                        	bin_width = histi[1][1] - histi[1][0]
+                        	for Sal_freq in range(len(histi[0])):
+                                	if histi[0][Sal_freq] <= 0.0025*len(Salary):
+                                        	Sal_bin.append(histi[1][Sal_freq])
+                        	for Sal_idx in range(len(Salary.values)):
+                                	if (len(filter(lambda x : x <= Salary.values[Sal_idx] < x+bin_width , Sal_bin)) > 0):
+						outliers.append(IDs.values[Sal_idx])	
+				if Queried_ID in outliers:
+               				Sub_Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
+					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+					for i in  range (len(sub_q[len(sub_q)-1][3])):      
+						sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
+					Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] = False 
 		for i in range (len(Stack)):
 			if (Stack[i][3].tolist() == BFS_Vec.tolist()):
 				Stack.pop(i)
