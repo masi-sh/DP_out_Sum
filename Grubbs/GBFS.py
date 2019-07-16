@@ -103,7 +103,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 				grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
 				for GOutlier in grubbs_result:
 					if (IDs.values[GOutlier]==Queried_ID):
-                				Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
+                				Sub_Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
 						sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]	
