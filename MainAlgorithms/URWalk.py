@@ -63,7 +63,7 @@ Epsilon = 0.001
 Flp_lst	     = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 Data_to_write = []
 t0 = time.time()
-while len(Flp_lst)<100:
+while len(Flp_lst)<50:
 	print '\n len(Flp_lst) is = ', len(Flp_lst)
 	# context separator scans all elements in the attribute lists to find where to apply p or q 
     	Vec_Flp = np.zeros(len(Org_Vec), dtype=np.int)
