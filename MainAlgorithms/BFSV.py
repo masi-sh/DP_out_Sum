@@ -141,7 +141,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 		Queue.append([len(Queue), sub_q[SubRes[0]][1], sub_q[SubRes[0]][2], sub_q[SubRes[0]][3][:]])
 		Visited.append(sub_q[SubRes[0]][3][:])
-		Sub_q.remove(sub_q[SubRes[0]])
+		sub_q.remove(sub_q[SubRes[0]])
 		Terminator = 0
 		
 		print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
