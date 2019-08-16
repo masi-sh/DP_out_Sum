@@ -107,6 +107,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
     		Terminator += 1
     		if (Terminator>termination_threshold):
 			break
+		print 'Visited is:', Visited
+		print 'contexts is:', contexts
 		for Flp_bit in range(0,(len(BFS_Vec))):
 			Sub_Sal_list = []
 			Sub_ID_list  = []
@@ -116,8 +118,6 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
 					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-			print 'Visited is:', Visited
-			print 'contexts is:' , contexts
 			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in contexts)) and (BFS_Ctx.shape[0] > 20)):
 				print 'Found one!'
 				for row in range(BFS_Ctx.shape[0]):
@@ -133,8 +133,10 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
 						contexts.append(BFS_Flp)
+		print 'sub_q before: ', sub_q
 		for i in  range (len(sub_q)):   
 			sub_q[i][0] = i
+		print 'sub_q after:', sub_q
 		Sub_elements = [elem for elem in range(len(sub_q))]
 		Sub_probabilities =[]
     		for prob in sub_q:
