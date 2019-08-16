@@ -131,7 +131,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
           					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
-						contxts.append(BFS_Flp)
+						contxets.append(BFS_Flp)
 		for i in  range (len(sub_q)):   
 			sub_q[i][0] = i
 		Sub_elements = [elem for elem in range(len(sub_q))]
