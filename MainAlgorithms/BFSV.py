@@ -91,7 +91,7 @@ Data_to_write = [(Queue[0][2])/max_ctx]
 # Running the BFS_Alg to form a queue of 100 elements
 t0 = time.time()
 def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
-	Stats = np.full(2**len(Org_Vec)+1, True, dtype=bool)
+	Stats = []
 	BFS_Vec      = np.zeros(len(Org_Vec))
 	for i in range(len(Org_Vec)):
 		BFS_Vec[i]  = Org_Vec[i]
@@ -102,8 +102,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	termination_threshold = 500
 	Terminator    = 0
 	while len(Queue)<100:
-		New_Ctx = int(str(BFS_Vec).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)
-		Stats[New_Ctx] = False 
+		Stats.append(BFS_Vec) 
 		print 'len(Queue) is', len(Queue)
     		Terminator += 1
     		if (Terminator>termination_threshold):
@@ -119,7 +118,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
 					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-			if (Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] == True and (BFS_Ctx.shape[0] > 20)):
+			if ((BFS_Flp in Stats) and (BFS_Ctx.shape[0] > 20)):
 				for row in range(BFS_Ctx.shape[0]):
 					Sub_Sal_list.append(BFS_Ctx.iloc[row,7])
 					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
@@ -132,7 +131,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
           					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]	
-						Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] = False 
+						Stats.append(BFS_Flp)
 		# Sampling from sub_queue(sampling in each layer) 
 		for i in range (len(Stack)):
 			if (Stack[i][3].tolist() == BFS_Vec.tolist()):
