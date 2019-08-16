@@ -103,17 +103,28 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	sub_q    = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 	contexts = [Org_Vec]
 	while len(Visited)<100:
-		print 'len(Queue) is', len(Queue)
     		Terminator += 1
     		if (Terminator>termination_threshold):
 			break
+		print 'sub_q before: ', sub_q
+		for i in  range (len(sub_q)):   
+			sub_q[i][0] = i
+		Sub_elements = [elem for elem in range(len(sub_q))]
+		Sub_probabilities =[]
+    		for prob in sub_q:
+			Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in sub_q])))
+		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
+		for i in  range (len(BFS_Flp)):      
+			BFS_Flp[i] = sub_q[SubRes[0]][3][i]
+		Queue.append([len(Queue), sub_q[SubRes[0]][1], sub_q[SubRes[0]][2], sub_q[SubRes[0]][3][:]])
+		Visited.append(sub_q[SubRes[0]][3][:])
+		sub_q.remove(sub_q[SubRes[0]])
+		print 'sub_q after:' , sub_q
 		print 'Visited is:', Visited
 		print 'contexts is:', contexts
 		for Flp_bit in range(0,(len(BFS_Vec))):
 			Sub_Sal_list = []
 			Sub_ID_list  = []
-			for i in  range (len(BFS_Vec)):
-				BFS_Flp[i] = BFS_Vec[i]
 			BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
 			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
 					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
@@ -128,25 +139,12 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
 				for outlier_finder in range(0, len(Sub_ID_list)):
 					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
+						print 'Outlier!'				
 						Sub_Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
           					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
 						contexts.append(BFS_Flp)
-		print 'sub_q before: ', sub_q
-		for i in  range (len(sub_q)):   
-			sub_q[i][0] = i
-		print 'sub_q after:', sub_q
-		Sub_elements = [elem for elem in range(len(sub_q))]
-		Sub_probabilities =[]
-    		for prob in sub_q:
-			Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in sub_q])))
-		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
-		for i in  range (len(BFS_Flp)):      
-			BFS_Flp[i] = sub_q[SubRes[0]][3][i]
-		Queue.append([len(Queue), sub_q[SubRes[0]][1], sub_q[SubRes[0]][2], sub_q[SubRes[0]][3][:]])
-		Visited.append(sub_q[SubRes[0]][3][:])
-		sub_q.remove(sub_q[SubRes[0]])
 		Terminator = 0
 		
 		print '\n len(Queue) is = ',len(Queue), '\n Queue is: \n', Queue
