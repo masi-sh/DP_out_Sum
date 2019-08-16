@@ -91,24 +91,27 @@ Data_to_write = [(Queue[0][2])/max_ctx]
 # Running the BFS_Alg to form a queue of 100 elements
 t0 = time.time()
 def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
-	Stats = []
+	Visited = []
 	BFS_Vec      = np.zeros(len(Org_Vec))
 	for i in range(len(Org_Vec)):
 		BFS_Vec[i]  = Org_Vec[i]
-	Stack = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+	#Stack = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 	BFS_Flp = np.zeros(len(Org_Vec))
 	#Q_indx        = 0
 	#index         = 0
 	termination_threshold = 500
 	Terminator    = 0
-	while len(Queue)<100:
-		Stats.append(BFS_Vec) 
+	# We dont really need the Queue, I keep it for consistency with other codes. 
+	# and just use sub_q here, for each sample I add the children to this sub_q without resetting it first
+	sub_q    = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+	contexts = [Org_Vec]
+	while len(Visited)<100:
+		#Visited.append(BFS_Vec) 
 		print 'len(Queue) is', len(Queue)
     		Terminator += 1
     		if (Terminator>termination_threshold):
 			break
     		Addtosamples    = False
-		sub_q    = []
 		for Flp_bit in range(0,(len(BFS_Vec))):
 			Sub_Sal_list = []
 			Sub_ID_list  = []
@@ -118,7 +121,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
 					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-			if ((BFS_Flp in Stats) and (BFS_Ctx.shape[0] > 20)):
+			if ((BFS_Flp not in Visited) and (BFS_Flp not in contexts) and (BFS_Flp not in Sub_q[]) and (BFS_Ctx.shape[0] > 20)):
 				for row in range(BFS_Ctx.shape[0]):
 					Sub_Sal_list.append(BFS_Ctx.iloc[row,7])
 					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
@@ -130,24 +133,29 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 						Sub_Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
           					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
-							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]	
-						Stats.append(BFS_Flp)
+							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
+						contxts.append(BFS_Flp)
+						#Visited.append(BFS_Flp)
 		# Sampling from sub_queue(sampling in each layer) 
-		for i in range (len(Stack)):
-			if (Stack[i][3].tolist() == BFS_Vec.tolist()):
-				Stack.pop(i)
-				break
-		if (len(sub_q)>1):
-			for i in range (len(sub_q)):
-				Stack.append(sub_q[i])
-		Sub_elements = [elem for elem in range(len(Stack))]
+		#for i in range (len(Stack)):
+		#	if (Stack[i][3].tolist() == BFS_Vec.tolist()):
+		#		Stack.pop(i)
+		#		break
+		#if (len(sub_q)>1):
+		#	for i in range (len(sub_q)):
+		#		Stack.append(sub_q[i])
+		for i in  range (len(sub_q)):   
+			sub_q[i][0] = len(sub_q)-1
+		Sub_elements = [elem for elem in range(len(sub_q))]
 		Sub_probabilities =[]
-    		for prob in Stack:
-			Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in Stack])))
+    		for prob in sub_q:
+			Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in sub_q])))
 		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
-		Queue.append([len(Queue), Stack[SubRes[0]][1], Stack[SubRes[0]][2], Stack[SubRes[0]][3][:]])
-		for i in range(len(Stack[SubRes[0]][3])):
-			BFS_Vec[i] = Stack[SubRes[0]][3][i]
+		Queue.append([len(Queue), sub_q[SubRes[0]][1], sub_q[SubRes[0]][2], sub_q[SubRes[0]][3][:]])
+		Visited.append(sub_q[SubRes[0]][3][:])
+		Sub_q.remove(sub_q[SubRes[0]])
+		#for i in range(len(Stack[SubRes[0]][3])):
+		#	BFS_Vec[i] = sub_q[SubRes[0]][3][i]
 		Addtosamples = True
 		Terminator = 0
 		
@@ -156,7 +164,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		print 'The candidate picked form the Q is ', Queue[len(Queue)-1][0], 'th, with context ', Queue[len(Queue)-1][3][:],\
 		' and has ', Queue[len(Queue)-1][2], 'population'
 		if (Addtosamples):
-			Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx) 
+			Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx)
 	return;
 
 
