@@ -118,7 +118,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 			print 'Visited is:', Visited
 			print 'contexts is:' , contexts
-			if ((BFS_Flp not in Visited) and (BFS_Flp not in contexts) and (BFS_Ctx.shape[0] > 20)):
+			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in contexts)) and (BFS_Ctx.shape[0] > 20)):
 				for row in range(BFS_Ctx.shape[0]):
 					Sub_Sal_list.append(BFS_Ctx.iloc[row,7])
 					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
