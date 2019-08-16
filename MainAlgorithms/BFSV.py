@@ -95,23 +95,18 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	BFS_Vec      = np.zeros(len(Org_Vec))
 	for i in range(len(Org_Vec)):
 		BFS_Vec[i]  = Org_Vec[i]
-	#Stack = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 	BFS_Flp = np.zeros(len(Org_Vec))
-	#Q_indx        = 0
-	#index         = 0
 	termination_threshold = 500
 	Terminator    = 0
-	# We dont really need the Queue, I keep it for consistency with other codes. 
+	# I use the Queue it for visited nodes.
 	# and just use sub_q here, for each sample I add the children to this sub_q without resetting it first
 	sub_q    = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 	contexts = [Org_Vec]
 	while len(Visited)<100:
-		#Visited.append(BFS_Vec) 
 		print 'len(Queue) is', len(Queue)
     		Terminator += 1
     		if (Terminator>termination_threshold):
 			break
-    		Addtosamples    = False
 		for Flp_bit in range(0,(len(BFS_Vec))):
 			Sub_Sal_list = []
 			Sub_ID_list  = []
@@ -135,17 +130,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
 						contxts.append(BFS_Flp)
-						#Visited.append(BFS_Flp)
-		# Sampling from sub_queue(sampling in each layer) 
-		#for i in range (len(Stack)):
-		#	if (Stack[i][3].tolist() == BFS_Vec.tolist()):
-		#		Stack.pop(i)
-		#		break
-		#if (len(sub_q)>1):
-		#	for i in range (len(sub_q)):
-		#		Stack.append(sub_q[i])
 		for i in  range (len(sub_q)):   
-			sub_q[i][0] = len(sub_q)-1
+			sub_q[i][0] = i
 		Sub_elements = [elem for elem in range(len(sub_q))]
 		Sub_probabilities =[]
     		for prob in sub_q:
@@ -154,25 +140,30 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		Queue.append([len(Queue), sub_q[SubRes[0]][1], sub_q[SubRes[0]][2], sub_q[SubRes[0]][3][:]])
 		Visited.append(sub_q[SubRes[0]][3][:])
 		Sub_q.remove(sub_q[SubRes[0]])
-		#for i in range(len(Stack[SubRes[0]][3])):
-		#	BFS_Vec[i] = sub_q[SubRes[0]][3][i]
-		Addtosamples = True
 		Terminator = 0
 		
 		print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
-		# Continuing form the Queue
 		print 'The candidate picked form the Q is ', Queue[len(Queue)-1][0], 'th, with context ', Queue[len(Queue)-1][3][:],\
 		' and has ', Queue[len(Queue)-1][2], 'population'
-		if (Addtosamples):
-			Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx)
+		Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx)
 	return;
-
 
 BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
 print 'Out BFS_Alg, Data_to_write is: ', Data_to_write
 
 Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
+
+# Exp mechanism on the visited nodes
+for i in  range (len(Queue)):   
+	Queue[i][0] = i
+elements = [elem for elem in range(len(Queue))]
+probabilities =[]
+for prob in Queue:
+	probabilities.append(prob[1]/(sum ([prob[1] for prob in Queue])))
+Res = np.random.choice(elements, 1, p = probabilities)
+Data_to_write.append(Queue[Res[0]][2]/max_ctx)
+				
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
