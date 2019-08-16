@@ -147,9 +147,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		sub_q.remove(sub_q[SubRes[0]])
 		Terminator = 0
 		
-		print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
-		print 'The candidate picked form the Q is ', Queue[len(Queue)-1][0], 'th, with context ', Queue[len(Queue)-1][3][:],\
-		' and has ', Queue[len(Queue)-1][2], 'population'
+		print '\n len(Queue) is = ',len(Queue), '\n Queue is: \n', Queue
 		Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx)
 	return;
 
