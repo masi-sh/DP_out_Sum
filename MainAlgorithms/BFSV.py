@@ -142,14 +142,14 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
     		for prob in sub_q:
 			Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in sub_q])))
 		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
+		for i in  range (len(BFS_Flp)):      
+			BFS_Flp[i] = sub_q[SubRes[0]][3][i]
 		Queue.append([len(Queue), sub_q[SubRes[0]][1], sub_q[SubRes[0]][2], sub_q[SubRes[0]][3][:]])
 		Visited.append(sub_q[SubRes[0]][3][:])
 		sub_q.remove(sub_q[SubRes[0]])
 		Terminator = 0
 		
-		print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
-		print 'The candidate picked form the Q is ', Queue[len(Queue)-1][0], 'th, with context ', Queue[len(Queue)-1][3][:],\
-		' and has ', Queue[len(Queue)-1][2], 'population'
+		print '\n len(Queue) is = ',len(Queue), '\n Queue is: \n', Queue
 		Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx)
 	return;
 
