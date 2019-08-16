@@ -84,9 +84,9 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
 
 # Initiating queue with Org_ctx informaiton 
 Epsilon       = 0.001
-Queue	      = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Queue	      = []
 # Samples start with org_vec info
-Data_to_write = [(Queue[0][2])/max_ctx]
+Data_to_write = []
 
 # Running the BFS_Alg to form a queue of 100 elements
 t0 = time.time()
