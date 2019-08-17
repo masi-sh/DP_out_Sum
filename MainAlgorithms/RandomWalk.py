@@ -53,23 +53,19 @@ for i in range(len(Org_Vec)):
 Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
                     df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
                     df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-# Keeping attribute values in the original context, p =pr(1-->1) 
-Flp_p        = 0.7
-# Adding attribute values not in the original context, q =pr(0-->1)
-Flp_q        = 0.4
 # Flip the context, 100 times    
 Epsilon = 0.001
 Flp_lst	     = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Vec_Flp = np.zeros(len(Org_Vec), dtype=np.int)
 Data_to_write = []
 t0 = time.time()
 while len(Flp_lst)<100:
 	print '\n len(Flp_lst) is = ', len(Flp_lst)
-	# context separator scans all elements in the attribute lists to find where to apply p or q 
-    	Vec_Flp = np.zeros(len(Org_Vec), dtype=np.int)
-	for Ctx_sprt in range (0, len(Vec_Flp)):
-        	if ((Flp_lst[len(Flp_lst)-1][3][Ctx_sprt]==1 and np.random.binomial(size=1, n=1, p= Flp_p)==1) or \
-		    (Flp_lst[len(Flp_lst)-1][3][Ctx_sprt]==0 and np.random.binomial(size=1, n=1, p= Flp_q)==1)):
-                	Vec_Flp[Ctx_sprt]=1
+	for i in range(len(Org_Vec)):
+		Vec_Flp[i] = Org_Vec[i]
+	# context separator scans all elements in the attribute lists to find where to flip	
+	Ctx_sprt = random.randint(0, len(Org_Vec)-1)
+	Vec_Flp[Ctx_sprt] = 1 - Vec_Flp[Ctx_sprt]
    	print '\n Vec_Flp for', len(Flp_lst)-1 ,'is', Vec_Flp  
 	Flp_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Vec_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
 			   df2['Employer'].isin(SecAtt_lst[np.where(Vec_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
@@ -88,8 +84,9 @@ while len(Flp_lst)<100:
                     if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)):  
 			Flp_lst.append([len(Flp_lst), Score, Flp_Ctx.shape[0], np.zeros(len(Org_Vec))])
 			for i in  range (len(Flp_lst[len(Flp_lst)-1][3])):    
-				Flp_lst[len(Flp_lst)-1][3][i] = Vec_Flp[i]
-			
+				Flp_lst[len(Flp_lst)-1][3][i] = Vec_Flp[i]	
+			for i in range(len(Org_Vec)):
+				Org_Vec[i] = Vec_Flp[i]
        ###################################      Sampling form Exp Mech Result      #################################
 elements = [elem[0] for elem in Flp_lst]
 probabilities =[]
