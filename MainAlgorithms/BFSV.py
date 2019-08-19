@@ -122,7 +122,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		print 'contexts is:', contexts
 		for Flp_bit in range(0,(len(BFS_Vec))):
 			for i in  range (len(BFS_Flp)):      
-				BFS_Flp[i] = sub_q[SubRes[0]][3][i]
+				BFS_Flp[i] = Queue[len(Queue)-1][3][i]
 			Sub_Sal_list = []
 			Sub_ID_list  = []
 			BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
