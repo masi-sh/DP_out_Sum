@@ -37,6 +37,7 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 	with open(Ref_file,'rt') as f:
 		Exp_Can = []
 		for num, line in enumerate(f, 1):
+			print 'Searching in the Reffile...'
 			if line.split(' ')[0].strip()=="Matching":
 				size = int((line.split(' '))[5].strip(':\n'))
 			elif line.strip().startswith("ID"):
@@ -46,6 +47,7 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 					print 'Exp_Can is: ', Exp_Can
 
         f.close()
+	print 'Running Exp over candidates...'
 	elements = [elem for elem in range(len(Exp_Can))]
 	probabilities =[]
 	for prob in Exp_Can:
