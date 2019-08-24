@@ -46,6 +46,7 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 					print 'Exp_Can is: ', Exp_Can
 
         f.close()
+	print 'Running Exp over candidates...'
 	elements = [elem for elem in range(len(Exp_Can))]
 	probabilities =[]
 	for prob in Exp_Can:
