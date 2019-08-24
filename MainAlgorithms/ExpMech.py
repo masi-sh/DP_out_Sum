@@ -17,10 +17,9 @@ import csv
 import math
 
 Query_num = int(sys.argv[1])
-# This file is filtered, no extra filtering required
-df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
+Ref_file = '/home/sm2shafi/Reffile.txt'
 Store_file = 'Exp.dat'
 
 Queried_ID = Queries.iloc[Query_num]['Outlier']
