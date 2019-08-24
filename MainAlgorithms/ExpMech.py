@@ -44,7 +44,7 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 					out_size = size
 					Exp_Can.append(out_size)
 
-  f.close()
+        f.close()
 	elements = [elem for elem in range(len(Exp_Can))]
 	probabilities =[]
 	for prob in Exp_Can:
