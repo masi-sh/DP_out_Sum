@@ -117,7 +117,6 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		Queue.append([len(Queue), sub_q[SubRes[0]][1], sub_q[SubRes[0]][2], sub_q[SubRes[0]][3][:]])
 		Visited.append(sub_q[SubRes[0]][3][:])
 		sub_q.remove(sub_q[SubRes[0]])
-		print 'sub_q after:' , sub_q
 		print 'Visited is:', Visited
 		for Flp_bit in range(0,(len(BFS_Vec))):
 			for i in  range (len(BFS_Flp)):      
