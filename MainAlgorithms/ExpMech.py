@@ -43,7 +43,7 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 				if line.split(' ')[3].strip('#')==str(Queried_ID):
 					out_size = size
 					Exp_Can.append(out_size)
-					print 'Exp_Can is: ', Exp_Can
+					print 'len(Exp_Can) is: ', len(Exp_Can)
 
         f.close()
 	print 'Running Exp over candidates...'
