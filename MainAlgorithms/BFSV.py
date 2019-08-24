@@ -102,7 +102,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	# and just use sub_q here, for each sample I add the children to this sub_q without resetting it first
 	sub_q    = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 	contexts = [Org_Vec]
-	while len(Visited)<100:
+	while len(Visited)<50:
     		Terminator += 1
     		if (Terminator>termination_threshold):
 			break
@@ -119,7 +119,6 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		sub_q.remove(sub_q[SubRes[0]])
 		print 'sub_q after:' , sub_q
 		print 'Visited is:', Visited
-		print 'contexts is:', contexts
 		for Flp_bit in range(0,(len(BFS_Vec))):
 			for i in  range (len(BFS_Flp)):      
 				BFS_Flp[i] = Queue[len(Queue)-1][3][i]
@@ -130,7 +129,6 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in contexts)) and (BFS_Ctx.shape[0] > 20)):
-				print 'Found one!, for BFS_Flp: ', BFS_Flp
 				for row in range(BFS_Ctx.shape[0]):
 					Sub_Sal_list.append(BFS_Ctx.iloc[row,7])
 					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
@@ -139,7 +137,6 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
 				for outlier_finder in range(0, len(Sub_ID_list)):
 					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
-						print 'Outlier!'				
 						Sub_Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
           					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
