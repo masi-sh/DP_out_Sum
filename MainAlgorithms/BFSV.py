@@ -115,7 +115,9 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in sub_q])))
 		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 		Queue.append([len(Queue), sub_q[SubRes[0]][1], sub_q[SubRes[0]][2], sub_q[SubRes[0]][3][:]])
+		print 'Queue is:', Queue
 		Visited.append(sub_q[SubRes[0]][3][:])
+		print 'Visited is:', Visited
 		sub_q.remove(sub_q[SubRes[0]])
 		print 'Visited is:', Visited
 		for Flp_bit in range(0,(len(BFS_Vec))):
