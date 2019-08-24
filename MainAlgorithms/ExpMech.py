@@ -35,21 +35,22 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 	out_size    = 0
 	size        = 0
 	with open(Ref_file,'rt') as f:
-      Exp_Can = []
-      for num, line in enumerate(f, 1):
-          if line.split(' ')[0].strip()=="Matching":
-              size = int((line.split(' '))[5].strip(':\n'))
-          elif line.strip().startswith("ID"):
-				      if line.split(' ')[3].strip('#')==str(Queried_ID):
-					        out_size = size
+		Exp_Can = []
+		for num, line in enumerate(f, 1):
+			if line.split(' ')[0].strip()=="Matching":
+				size = int((line.split(' '))[5].strip(':\n'))
+			elif line.strip().startswith("ID"):
+				if line.split(' ')[3].strip('#')==str(Queried_ID):
+					out_size = size
+					Exp_Can.append(out_size)
+
   f.close()
-  Exp_Can.append(out_size)
 	elements = [elem for elem in range(len(Exp_Can))]
 	probabilities =[]
 	for prob in Exp_Can:
 	   probabilities.append(prob/(sum(Exp_Can)))
 	Res = np.random.choice(elements, 1, p = probabilities)
-	Exp = Exp_Can[Res[0]]/max_ctx
+	Exp = Res[0]/max_ctx
 	return Exp;
 
 t1 = time.time()
