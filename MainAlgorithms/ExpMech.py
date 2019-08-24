@@ -58,9 +58,9 @@ runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 	Data_to_write.append(Exp_Mech(Ref_file, Queried_ID, max_ctx))
 
-  ff = open(Store_file,'a+')
-	fcntl.flock(ff, fcntl.LOCK_EX)
-	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', \
-	Exp alg. takes' + runtime)
-	fcntl.flock(ff, fcntl.LOCK_UN)
-	ff.close()
+ff = open(Store_file,'a+')
+fcntl.flock(ff, fcntl.LOCK_EX)
+np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', \
+Exp alg. takes' + runtime)
+fcntl.flock(ff, fcntl.LOCK_UN)
+ff.close()
