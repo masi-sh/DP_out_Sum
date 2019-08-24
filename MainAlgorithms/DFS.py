@@ -57,24 +57,23 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
 Epsilon       = 0.001
 Queue	      = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
-Data_to_write = [(Queue[0][2])/max_ctx]
+Data_to_write = []
+Stack = []
+Stack.append(Org_Vec)
 
 # Make the queue by DFS traverse from ctx_org by exp through children, 100 times 
 t0       = time.time()
 def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
-	Stats = np.full(2**len(Org_Vec)+1, True, dtype=bool)
-	Stack = []
-	# BFS_Vec is the transferring vector 
-	BFS_Vec      = np.zeros(len(Org_Vec))
-	for i in range(len(Org_Vec)):
-		BFS_Vec[i]  = Org_Vec[i]
-	BFS_Flp  = np.zeros(len(Org_Vec)) 
 	termination_threshold =500
 	Terminator = 0
-	while len(Queue)<100:
-		New_Ctx = int(str(BFS_Vec).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)
-		print 'The New False Stats Index', New_Ctx ,'for BFS_Vec: ', str(BFS_Vec)
-		Stats[New_Ctx] = False 
+	while len(Visited)<50:
+		BFS_Vec      = np.zeros(len(Org_Vec))
+		for i in range(len(Org_Vec)):
+			BFS_Vec[i]  = Stack[len(Stack)-1][i]
+		Visited.append(np.zeros(len(Org_Vec)))
+		for i in range(len(Org_Vec)):
+			Visited[len(Visited)-1][i]  = Stack[len(Stack)-1][i]
+		BFS_Flp  = np.zeros(len(Org_Vec)) 
 		print 'len(Queue) is', len(Queue)
 		Terminator += 1
    		if (Terminator>termination_threshold):
@@ -91,7 +90,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 			if (Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] == True and (BFS_Ctx.shape[0] > 20)):
-				
+			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in contexts)) and (BFS_Ctx.shape[0] > 20)):	
 				for row in range(BFS_Ctx.shape[0]):
 					Sub_Sal_list.append(BFS_Ctx.iloc[row,7])
 					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
@@ -105,10 +104,9 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
 		# Sampling from sub_queue(sampling in each layer) 
-		if sub_q:
-			Stack.append(np.zeros(len(BFS_Vec)))
-			for i in  range (len(BFS_Vec)):      
-				Stack[len(Stack)-1][i] = BFS_Vec[i]	       
+		if not sub_q:
+			Stack.remove(Stack[len(Stack)-1])
+		else:       
 			Sub_elements = [elem[0] for elem in sub_q]
 			Sub_probabilities =[]
     			for prob in sub_q:
@@ -117,27 +115,24 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			for child in range(0, len(sub_q)):
 				if sub_q[child][0] == SubRes[0]:
 					Q_indx = child
+			Stack.append(np.zeros(len(BFS_Vec)))
+			for i in  range (len(BFS_Vec)):      
+				Stack[len(Stack)-1][i] = sub_q[Q_indx][3][i]
+				
 			Queue.append([len(Queue), sub_q[Q_indx][1], sub_q[Q_indx][2], sub_q[Q_indx][3][:]])
 			for i in  range (len(Queue[len(Queue)-1][3])): 
 				BFS_Vec[i]  = Queue[len(Queue)-1][3][i]
-			Addtosamples = True
 			Terminator = 0
-			
-		else:
-			for i in  range (len(BFS_Vec)): 
-				BFS_Vec[i]  = Stack[len(Stack)-1][i]
-			Stack.pop(len(Stack)-1)
 			
 		print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
 		# Continuing form the Queue
 		print 'The candidate picked form the Q is ', Queue[len(Queue)-1][0], 'th, with context ', Queue[len(Queue)-1][3][:],\
 		' and has ', Queue[len(Queue)-1][2], 'population'
-		if (Addtosamples):
-			Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx) 
+		Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx) 
 	return;
 DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
 # Writing final data 
-Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
+#Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 ' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'	    	   
