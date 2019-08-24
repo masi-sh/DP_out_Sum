@@ -143,30 +143,23 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
 						contexts.append(np.zeros(len(Org_Vec)))
 						for i in  range (len(Org_Vec)):      
-							contexts[len(contexts)-1][i] = BFS_Flp[i]
-								
-		Terminator = 0
-		
-		print '\n len(Queue) is = ',len(Queue), '\n Queue is: \n', Queue
-		Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx)
+							contexts[len(contexts)-1][i] = BFS_Flp[i]								
+	# Exp mechanism on the visited nodes
+	for i in  range (len(Queue)):   
+		Queue[i][0] = i
+	elements = [elem for elem in range(len(Queue))]
+	probabilities =[]
+	for prob in Queue:
+		probabilities.append(prob[1]/(sum ([prob[1] for prob in Queue])))
+	Res = np.random.choice(elements, 1, p = probabilities)
+	Data_to_write.append(Queue[Res[0]][2]/max_ctx)
 	return;
 
 BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
 print 'Out BFS_Alg, Data_to_write is: ', Data_to_write
 
-Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
+#Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
-
-# Exp mechanism on the visited nodes
-for i in  range (len(Queue)):   
-	Queue[i][0] = i
-elements = [elem for elem in range(len(Queue))]
-probabilities =[]
-for prob in Queue:
-	probabilities.append(prob[1]/(sum ([prob[1] for prob in Queue])))
-Res = np.random.choice(elements, 1, p = probabilities)
-Data_to_write.append(Queue[Res[0]][2]/max_ctx)
-				
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
