@@ -73,7 +73,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			BFS_Vec[i]  = Stack[len(Stack)-1][3][i]
 		Visited.append(np.zeros(len(Org_Vec)))
 		for i in range(len(Org_Vec)):
-			Visited[len(Visited)-1][i]  = Stack[len(Stack)-1][i]
+			Visited[len(Visited)-1][i]  = Stack[len(Stack)-1][3][i]
 		Queue.append(Visited[len(Visited)-1])
 		BFS_Flp  = np.zeros(len(Org_Vec)) 
 		print 'len(Queue) is', len(Queue)
