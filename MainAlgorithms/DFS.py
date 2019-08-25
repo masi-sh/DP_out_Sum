@@ -64,6 +64,7 @@ Stack.append([0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_
 # Make the queue by DFS traverse from ctx_org by exp through children, 100 times 
 t0       = time.time()
 def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
+	Visited = []
 	termination_threshold =500
 	Terminator = 0
 	while len(Visited)<50:
