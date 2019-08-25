@@ -43,7 +43,7 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 				if line.split(' ')[3].strip('#')==str(Queried_ID):
 					out_size = size
 					Exp_Can.append(out_size)
-					print 'Exp_Can is: ', Exp_Can
+					print 'len(Exp_Can) is: ', len(Exp_Can)
 
         f.close()
 	print 'Running Exp over candidates...'
@@ -62,7 +62,7 @@ runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60
 
 ff = open(Store_file,'a+')
 fcntl.flock(ff, fcntl.LOCK_EX)
-np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', \
+np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = Query_num+ ' Generates outlier , ' + Queried_ID + ', \
 Exp alg. takes' + runtime)
 fcntl.flock(ff, fcntl.LOCK_UN)
 ff.close()
