@@ -76,10 +76,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 		Visited.append(np.zeros(len(Org_Vec)))
 		for i in range(len(Org_Vec)):
 			Visited[len(Visited)-1][i]  = Stack[len(Stack)-1][3][i]	
-		print 'Stack is: ', Stack
-		print 'len(Queue) is', len(Queue)
 		Queue.append(Stack[len(Stack)-1])
-		print 'Queue is: ', Queue 
 		BFS_Flp  = np.zeros(len(Org_Vec)) 
 		sub_q    = []
 		for Flp_bit in range(0,(len(Org_Vec))):
@@ -105,7 +102,6 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
 		# Sampling from sub_queue(sampling in each layer) 
-		print 'sub_q is:', sub_q
 		if not sub_q:
 			Stack.remove(Stack[len(Stack)-1])
 		else:       
