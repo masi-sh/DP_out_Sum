@@ -43,7 +43,7 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 			elif line.strip().startswith("ID"):
 				if line.split(' ')[3].strip('#')==str(Queried_ID):
 					out_size = size
-					Exp_Can.append(mp.exp(Epsilon *(out_size)))
+					Exp_Can.append(out_size)
 					print 'len(Exp_Can) is: ', len(Exp_Can)
 
         f.close()
@@ -51,7 +51,7 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 	elements = [elem for elem in range(len(Exp_Can))]
 	probabilities =[]
 	for prob in Exp_Can:
-	   probabilities.append(prob/(sum(Exp_Can)))
+	   probabilities.append(mp.exp(Epsilon *(prob))/(sum(mp.exp(Epsilon *(prob)))))
 	Res = np.random.choice(elements, 1, p = probabilities)
 	Exp = Exp_Can[Res[0]]/max_ctx
 	return Exp;
