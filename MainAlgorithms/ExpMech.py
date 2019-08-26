@@ -30,9 +30,9 @@ print '\nmaximal context has the population :\n', max_ctx
 
 Data_to_write = []
 t0 = time.time()
-Epsilon = 0.05
 # Exp Mech on Queried_ID      
 def Exp_Mech(Ref_file, Queried_ID, max_ctx):
+	Epsilon = 0.05
 	out_size    = 0
 	size        = 0
 	with open(Ref_file,'rt') as f:
