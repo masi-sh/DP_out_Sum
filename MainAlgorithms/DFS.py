@@ -67,7 +67,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	contexts = [Org_Vec]
 	termination_threshold =500
 	Terminator = 0
-	while len(Visited)<50:
+	while len(Visited)<100:
 		Terminator += 1
    		if (Terminator>termination_threshold):
 			break
