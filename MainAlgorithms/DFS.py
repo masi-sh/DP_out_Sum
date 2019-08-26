@@ -12,6 +12,7 @@ import fcntl
 import random
 import csv
 import math
+from mpmath import mp
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
@@ -55,10 +56,10 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
 # Making Queue of samples and initiating it, with Org_Vec
 # Initiating queue with Org_ctx informaiton
 Epsilon       = 0.001
-Queue	      = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Queue	      = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
 Data_to_write = []
-Stack = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Stack = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Make the queue by DFS traverse from ctx_org by exp through children, 100 times 
 t0       = time.time()
 def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
@@ -97,7 +98,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
 				for outlier_finder in range(0, len(Sub_ID_list)):
 					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
-						Sub_Score = math.exp(Epsilon *(BFS_Ctx.shape[0]))
+						Sub_Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
           					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
