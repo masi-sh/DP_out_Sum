@@ -47,11 +47,15 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 					print 'len(Exp_Can) is: ', len(Exp_Can)
 
         f.close()
+	Exp_Score =[]
+	for candidate in Exp_Can:
+		Exp_Score.append(mp.exp(Epsilon *(candidate)))
+	Exp_Sum = sum(Exp_Can)
 	print 'Running Exp over candidates...'
 	elements = [elem for elem in range(len(Exp_Can))]
 	probabilities =[]
-	for prob in Exp_Can:
-	   probabilities.append(mp.exp(Epsilon *(prob))/(sum(mp.exp(Epsilon *(prob)))))
+	for prob in Exp_Score:
+	   probabilities.append(prob/(Exp_Sum))
 	Res = np.random.choice(elements, 1, p = probabilities)
 	Exp = Exp_Can[Res[0]]/max_ctx
 	return Exp;
