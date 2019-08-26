@@ -42,7 +42,7 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 			elif line.strip().startswith("ID"):
 				if line.split(' ')[3].strip('#')==str(Queried_ID):
 					out_size = size
-					Exp_Can.append(out_size)
+					Exp_Can.append(mp.exp(Epsilon *(out_size)))
 					print 'len(Exp_Can) is: ', len(Exp_Can)
 
         f.close()
@@ -52,13 +52,15 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 	for prob in Exp_Can:
 	   probabilities.append(prob/(sum(Exp_Can)))
 	Res = np.random.choice(elements, 1, p = probabilities)
-	Exp = Res[0]/max_ctx
+	Exp = Exp_Can[Res[0]]/max_ctx
 	return Exp;
 
 Data_to_write = Exp_Mech(Ref_file, Queried_ID, max_ctx)
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
+print 'runtime is: ' , runtime
+print 'Data_to_write is: ', Data_to_write
 
 ff = open(Store_file,'a+')
 fcntl.flock(ff, fcntl.LOCK_EX)
