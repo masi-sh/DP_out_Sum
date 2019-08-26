@@ -58,29 +58,29 @@ Epsilon       = 0.001
 Queue	      = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
 Data_to_write = []
-Stack = []
-Stack.append([0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec])
-
+Stack = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Make the queue by DFS traverse from ctx_org by exp through children, 100 times 
 t0       = time.time()
 def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	Visited = []
+	contexts = [Org_Vec]
 	termination_threshold =500
 	Terminator = 0
 	while len(Visited)<50:
+		Terminator += 1
+   		if (Terminator>termination_threshold):
+			break
 		BFS_Vec      = np.zeros(len(Org_Vec))
 		for i in range(len(Org_Vec)):
 			BFS_Vec[i]  = Stack[len(Stack)-1][3][i]
 		Visited.append(np.zeros(len(Org_Vec)))
 		for i in range(len(Org_Vec)):
-			Visited[len(Visited)-1][i]  = Stack[len(Stack)-1][3][i]
-		Queue.append(Visited[len(Visited)-1])
-		BFS_Flp  = np.zeros(len(Org_Vec)) 
+			Visited[len(Visited)-1][i]  = Stack[len(Stack)-1][3][i]	
+		print 'Stack is: ', Stack
 		print 'len(Queue) is', len(Queue)
-		Terminator += 1
-   		if (Terminator>termination_threshold):
-			break
-		Addtosamples = False
+		Queue.append(Visited[len(Visited)-1])
+		print 'Queue is: ', Queue 
+		BFS_Flp  = np.zeros(len(Org_Vec)) 
 		sub_q    = []
 		for Flp_bit in range(0,(len(Org_Vec))):
 			Sub_Sal_list = []
@@ -91,7 +91,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
 					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in Stack)) and (BFS_Ctx.shape[0] > 20)):	
+			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in contexts)) and (BFS_Ctx.shape[0] > 20)):	
 				for row in range(BFS_Ctx.shape[0]):
 					Sub_Sal_list.append(BFS_Ctx.iloc[row,7])
 					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
@@ -105,6 +105,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
 		# Sampling from sub_queue(sampling in each layer) 
+		print 'sub_q is:', sub_q
 		if not sub_q:
 			Stack.remove(Stack[len(Stack)-1])
 		else:       
@@ -119,6 +120,9 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			Stack.append([len(Stack), sub_q[Q_indx][1],sub_q[Q_indx][2] ,np.zeros(len(BFS_Vec))])
 			for i in  range (len(BFS_Vec)):      
 				Stack[len(Stack)-1][3][i] = sub_q[Q_indx][3][i]	
+			Contexts.append(np.zeros(len(Org_Vec)))
+			for i in range(len(Org_Vec)):
+				Contexts[len(Contexts)-1][i]  = sub_q[Q_indx][3][i]	
 				
 	# Exp mechanism on the visited nodes
 	for i in  range (len(Queue)):   
