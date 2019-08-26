@@ -78,7 +78,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			Visited[len(Visited)-1][i]  = Stack[len(Stack)-1][3][i]	
 		print 'Stack is: ', Stack
 		print 'len(Queue) is', len(Queue)
-		Queue.append(Visited[len(Visited)-1])
+		Queue.append(Stack[len(Stack)-1])
 		print 'Queue is: ', Queue 
 		BFS_Flp  = np.zeros(len(Org_Vec)) 
 		sub_q    = []
@@ -120,9 +120,9 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			Stack.append([len(Stack), sub_q[Q_indx][1],sub_q[Q_indx][2] ,np.zeros(len(BFS_Vec))])
 			for i in  range (len(BFS_Vec)):      
 				Stack[len(Stack)-1][3][i] = sub_q[Q_indx][3][i]	
-			Contexts.append(np.zeros(len(Org_Vec)))
+			contexts.append(np.zeros(len(Org_Vec)))
 			for i in range(len(Org_Vec)):
-				Contexts[len(Contexts)-1][i]  = sub_q[Q_indx][3][i]	
+				contexts[len(contexts)-1][i]  = sub_q[Q_indx][3][i]	
 				
 	# Exp mechanism on the visited nodes
 	for i in  range (len(Queue)):   
