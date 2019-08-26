@@ -13,6 +13,7 @@ import fcntl
 import random
 import csv
 import math
+from mpmath import mp
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
@@ -55,7 +56,7 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
                     df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 # Flip the context, 100 times    
 Epsilon = 0.05
-Flp_lst	     = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Flp_lst	     = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 Vec_Flp = np.zeros(len(Org_Vec), dtype=np.int)
 Data_to_write = []
 t0 = time.time()
@@ -76,7 +77,7 @@ while len(Flp_lst)<50:
 		for row in range(Flp_Ctx.shape[0]):
                     Sal_list.append(Flp_Ctx.iloc[row,7])
 		    ID_list.append(Flp_Ctx.iloc[row,0])
-                Score = math.exp(Epsilon *(Flp_Ctx.shape[0]))
+                Score = mp.exp(Epsilon *(Flp_Ctx.shape[0]))
                 Sal_arr= np.array(Sal_list)
                 clf = LocalOutlierFactor(n_neighbors=20)
                 Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
