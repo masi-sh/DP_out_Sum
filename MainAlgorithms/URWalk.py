@@ -39,9 +39,6 @@ ThrAtt_lst = df2['Calendar Year'].unique()
 # Reading a Queried_ID from the list in the Queries file
 Queried_ID = Queries.iloc[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
-# finding maximal context's size for queried_ID
-max_ctx = Queries.iloc[Query_num]['Max']
-print '\nmaximal context has the population :\n', max_ctx
 
 Org_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
 # polishing Ctx in Query_file and reading Org_Vec from it
@@ -54,6 +51,8 @@ for i in range(len(Org_Vec)):
 Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
                     df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
                     df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+max_ctx = Orgn_Ctx.shape[0]
+print '\nmaximal context has the population :\n', max_ctx
 # Flip the context, 100 times    
 Epsilon = 0.05
 Flp_lst	     = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
