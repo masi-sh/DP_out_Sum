@@ -65,7 +65,7 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
-
+Exp_Mech(Ref_file, Queried_ID, max_ctx)
 #Data_to_write = Exp_Mech(Ref_file, Queried_ID, max_ctx)
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
