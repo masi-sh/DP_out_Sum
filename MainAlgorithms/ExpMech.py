@@ -57,19 +57,21 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 	for prob in Exp_Score:
 	   probabilities.append(prob/(Exp_Sum))
 	Res = np.random.choice(elements, 1, p = probabilities)
-	Exp = Exp_Can[Res[0]]/max_ctx
+	Exp = [Exp_Can[Res[0]]/max_ctx]
 	return Exp;
 
-Data_to_write = Exp_Mech(Ref_file, Queried_ID, max_ctx)
+#Exp_Mech(Ref_file, Queried_ID, max_ctx)
+#Data_to_write = Exp_Mech(Ref_file, Queried_ID, max_ctx)
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 print 'runtime is: ' , runtime
-print 'Data_to_write is: ', Data_to_write
-
 ff = open(Store_file,'a+')
 fcntl.flock(ff, fcntl.LOCK_EX)
-np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = Query_num+ ' Generates outlier , ' + Queried_ID + ', \
-Exp alg. takes' + runtime)
+np.savetxt(ff, np.column_stack(Exp_Mech(Ref_file, Queried_ID, max_ctx)), fmt=('%7.5f'), header = str(Query_num) + ' Generates outlier ,' \
+	   + str(Queried_ID) + ', Exp alg. takes' + runtime)
 fcntl.flock(ff, fcntl.LOCK_UN)
 ff.close()
+#print 'Data_to_write is: ', Data_to_write
+
+

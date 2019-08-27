@@ -12,6 +12,7 @@ import fcntl
 import random
 import csv
 import math
+from mpmath import mp
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
@@ -38,8 +39,8 @@ ThrAtt_lst = df2['Calendar Year'].unique()
 Queried_ID = Queries.iloc[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
 # finding maximal context's size for queried_ID
-#max_ctx = Queries.iloc[Query_num]['Max']
-#print '\nmaximal context has the population :\n', max_ctx
+max_ctx = Queries.iloc[Query_num]['Max']
+print '\nmaximal context has the population :\n', max_ctx
 
 # Making Queue of samples and initiating it, with Org_Vec  
 Org_Vec = np.zeros(len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst))
@@ -52,35 +53,32 @@ for i in range(len(Org_Vec)):
 Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
                     df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
                     df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-max_ctx = Orgn_Ctx.shape[0]
 # Making Queue of samples and initiating it, with Org_Vec
 # Initiating queue with Org_ctx informaiton
 Epsilon       = 0.001
-Queue	      = [[0, math.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Queue	      = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
-Data_to_write = [(Queue[0][2])/max_ctx]
-
+Data_to_write = []
+Stack = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Make the queue by DFS traverse from ctx_org by exp through children, 100 times 
 t0       = time.time()
 def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
-	Stats = np.full(2**len(Org_Vec)+1, True, dtype=bool)
-	Stack = []
-	# BFS_Vec is the transferring vector 
-	BFS_Vec      = np.zeros(len(Org_Vec))
-	for i in range(len(Org_Vec)):
-		BFS_Vec[i]  = Org_Vec[i]
-	BFS_Flp  = np.zeros(len(Org_Vec)) 
+	Visited = []
+	contexts = [Org_Vec]
 	termination_threshold =500
 	Terminator = 0
-	while len(Queue)<50:
-		New_Ctx = int(str(BFS_Vec).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)
-		print 'The New False Stats Index', New_Ctx ,'for BFS_Vec: ', str(BFS_Vec)
-		Stats[New_Ctx] = False 
-		print 'len(Queue) is', len(Queue)
+	while len(Visited)<200:
 		Terminator += 1
    		if (Terminator>termination_threshold):
 			break
-		Addtosamples = False
+		BFS_Vec      = np.zeros(len(Org_Vec))
+		for i in range(len(Org_Vec)):
+			BFS_Vec[i]  = Stack[len(Stack)-1][3][i]
+		Visited.append(np.zeros(len(Org_Vec)))
+		for i in range(len(Org_Vec)):
+			Visited[len(Visited)-1][i]  = Stack[len(Stack)-1][3][i]	
+		Queue.append(Stack[len(Stack)-1])
+		BFS_Flp  = np.zeros(len(Org_Vec)) 
 		sub_q    = []
 		for Flp_bit in range(0,(len(Org_Vec))):
 			Sub_Sal_list = []
@@ -91,8 +89,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
 					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-			if (Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] == True and (BFS_Ctx.shape[0] > 20)):
-				
+			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in contexts)) and (BFS_Ctx.shape[0] > 20)):	
 				for row in range(BFS_Ctx.shape[0]):
 					Sub_Sal_list.append(BFS_Ctx.iloc[row,7])
 					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
@@ -106,10 +103,9 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
 							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]				
 		# Sampling from sub_queue(sampling in each layer) 
-		if sub_q:
-			Stack.append(np.zeros(len(BFS_Vec)))
-			for i in  range (len(BFS_Vec)):      
-				Stack[len(Stack)-1][i] = BFS_Vec[i]	       
+		if not sub_q:
+			Stack.remove(Stack[len(Stack)-1])
+		else:       
 			Sub_elements = [elem[0] for elem in sub_q]
 			Sub_probabilities =[]
     			for prob in sub_q:
@@ -117,29 +113,29 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
 			for child in range(0, len(sub_q)):
 				if sub_q[child][0] == SubRes[0]:
-					Q_indx = child
-			Queue.append([len(Queue), sub_q[Q_indx][1], sub_q[Q_indx][2], sub_q[Q_indx][3][:]])
-			for i in  range (len(Queue[len(Queue)-1][3])): 
-				BFS_Vec[i]  = Queue[len(Queue)-1][3][i]
-			Addtosamples = True
-			Terminator = 0	
-		else:
-			for i in  range (len(BFS_Vec)): 
-				BFS_Vec[i]  = Stack[len(Stack)-1][i]
-			Stack.pop(len(Stack)-1)
-			
-		print '\n len(Queue) is = ',len(Queue), '\n The private context candidates are: \n', Queue
-		# Continuing form the Queue
-		print 'The candidate picked form the Q is ', Queue[len(Queue)-1][0], 'th, with context ', Queue[len(Queue)-1][3][:],\
-		' and has ', Queue[len(Queue)-1][2], 'population'
-		if (Addtosamples):
-			Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx) 
+					Q_indx = child	
+			Stack.append([len(Stack), sub_q[Q_indx][1],sub_q[Q_indx][2] ,np.zeros(len(BFS_Vec))])
+			for i in  range (len(BFS_Vec)):      
+				Stack[len(Stack)-1][3][i] = sub_q[Q_indx][3][i]	
+			contexts.append(np.zeros(len(Org_Vec)))
+			for i in range(len(Org_Vec)):
+				contexts[len(contexts)-1][i]  = sub_q[Q_indx][3][i]	
+				
+	# Exp mechanism on the visited nodes
+	for i in  range (len(Queue)):   
+		Queue[i][0] = i
+	elements = [elem for elem in range(len(Queue))]
+	probabilities =[]
+	for prob in Queue:
+		probabilities.append(prob[1]/(sum ([prob[1] for prob in Queue])))
+	Res = np.random.choice(elements, 1, p = probabilities)
+	Data_to_write.append(Queue[Res[0]][2]/max_ctx)			
 	return;
-	
+
 DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
-# Writing final data 
-Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 ' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'	    	   
 writefinal(Data_to_write, str(Query_num), runtime, str(Queried_ID), max_ctx)	
+				
+						
