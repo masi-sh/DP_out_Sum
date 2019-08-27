@@ -60,8 +60,8 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 	Exp = [Exp_Can[Res[0]]/max_ctx]
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
-	np.savetxt(ff, np.column_stack(Exp), fmt=('%7.5f'), header = Query_num+ ' Generates outlier , \
-	' + Queried_ID + ', Exp alg. takes' + runtime)
+	np.savetxt(ff, np.column_stack(Exp), fmt=('%7.5f'), header = str(Query_num) + ' Generates outlier ,' \
+		   + str(Queried_ID) + ', Exp alg. takes' + runtime)
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
