@@ -64,8 +64,7 @@ ThrAtt_lst = df2['Calendar Year'].unique()
 	
 Queried_ID = Queries.iloc[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
-# finding maximal context's size for queried_ID
-max_ctx = Queries.iloc[Query_num]['Max']
+
 print '\nmaximal context has the population :\n', max_ctx
 
 # Making Queue of samples and initiating it, with Org_Vec   
@@ -82,6 +81,7 @@ Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirA
 		    df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
                     df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 
+max_ctx = Orgn_Ctx.shape[0]
 # Initiating queue with Org_ctx informaiton 
 Epsilon       = 0.001
 Queue	      = []
