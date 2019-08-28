@@ -72,76 +72,82 @@ Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrA
 
 # Initiating queue with Org_ctx informaiton 
 Epsilon       = 0.001
-Queue	      = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+Queue	      = []
 # Samples start with org_vec info
-Data_to_write = [(Queue[0][2])/max_ctx]
+Data_to_write = []
 
 # Running the BFS_Alg to form a queue of 100 elements
 t0 = time.time()
 def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
-	Stats = np.full(2**len(Org_Vec)+1, True, dtype=bool)
+	Visited = []
 	BFS_Vec      = np.zeros(len(Org_Vec))
 	for i in range(len(Org_Vec)):
 		BFS_Vec[i]  = Org_Vec[i]
-	Stack = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
-	BFS_Flp       = np.zeros(len(Org_Vec)) 	
+	BFS_Flp = np.zeros(len(Org_Vec))
 	termination_threshold = 500
 	Terminator    = 0
-	while len(Queue)<100:
-		New_Ctx = int(str(BFS_Vec).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)
-		Stats[New_Ctx] = False 
+	# I use the Queue it for visited nodes.
+	# and just use sub_q here, for each sample I add the children to this sub_q without resetting it first
+	sub_q    = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+	contexts = [Org_Vec]
+	while len(Visited)<50:
     		Terminator += 1
     		if (Terminator>termination_threshold):
 			break
-    		Addtosamples    = False
-		sub_q = []
+		#print 'sub_q before: ', sub_q
+		for i in  range (len(sub_q)):   
+			sub_q[i][0] = i
+		Sub_elements = [elem for elem in range(len(sub_q))]
+		Sub_probabilities =[]
+    		for prob in sub_q:
+			Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in sub_q])))
+		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
+		Queue.append([len(Queue), sub_q[SubRes[0]][1], sub_q[SubRes[0]][2], sub_q[SubRes[0]][3][:]])
+		#print 'Queue is:', Queue
+		Visited.append(sub_q[SubRes[0]][3][:])
+		#print 'Visited is:', Visited
+		sub_q.remove(sub_q[SubRes[0]])
+		#print 'Visited is:', Visited
 		for Flp_bit in range(0,(len(BFS_Vec))):
-			for i in  range (len(BFS_Vec)):
-				BFS_Flp[i] = BFS_Vec[i]			    
-        		BFS_Flp[Flp_bit]  = 1 - BFS_Flp[Flp_bit]
-    			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
+			for i in  range (len(BFS_Flp)):      
+				BFS_Flp[i] = Queue[len(Queue)-1][3][i]
+			Sub_Sal_list = []
+			Sub_ID_list  = []
+			BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
+			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
 					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
-			Sal_list     = []
-    			ID_list      = []
-			if (Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] == True and (BFS_Ctx.shape[0] > 20)):			
-        			for row in range(BFS_Ctx.shape[0]):
-            				Sal_list.append(BFS_Ctx.iloc[row,8])
-            				ID_list.append(BFS_Ctx.iloc[row,1])
-        			Sal_arr= np.array(Sal_list)
-        			clf = LocalOutlierFactor(n_neighbors=20)
-        			Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
-        			for outlier_finder in range(0, len(ID_list)):
-            				if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder]==Queried_ID)): 
-                				Sub_Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
-						sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in contexts)) and (BFS_Ctx.shape[0] > 20)):
+				for row in range(BFS_Ctx.shape[0]):
+					Sub_Sal_list.append(BFS_Ctx.iloc[row,7])
+					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
+				Sub_Sal_arr= np.array(Sub_Sal_list)
+				clf = LocalOutlierFactor(n_neighbors=20)
+				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
+				for outlier_finder in range(0, len(Sub_ID_list)):
+					if ((Sub_Sal_outliers[outlier_finder]==-1) and (Sub_ID_list[outlier_finder]==Queried_ID)):
+						Sub_Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
+          					sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
 						for i in  range (len(sub_q[len(sub_q)-1][3])):      
-							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]	
-						Stats[int(str(BFS_Flp).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)] = False 
-		for i in range (len(Stack)):
-			if (Stack[i][3].tolist() == BFS_Vec.tolist()):
-				Stack.pop(i)
-				break
-		if (len(sub_q)>1):
-			for i in range (len(sub_q)):
-				Stack.append(sub_q[i])
-		Sub_elements = [elem for elem in range(len(Stack))]
-		Sub_probabilities =[]
-    		for prob in Stack:
-			Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in Stack])))
-		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
-		Queue.append([len(Queue), Stack[SubRes[0]][1], Stack[SubRes[0]][2], Stack[SubRes[0]][3][:]])
-		for i in range(len(Stack[SubRes[0]][3])):
-			BFS_Vec[i] = Stack[SubRes[0]][3][i]
-		Addtosamples = True
-		Terminator   = 0
-		if (Addtosamples):
-			Data_to_write.append(Queue[len(Queue)-1][2]/max_ctx) 
+							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
+						contexts.append(np.zeros(len(Org_Vec)))
+						for i in  range (len(Org_Vec)):      
+							contexts[len(contexts)-1][i] = BFS_Flp[i]								
+	# Exp mechanism on the visited nodes
+	for i in  range (len(Queue)):   
+		Queue[i][0] = i
+	elements = [elem for elem in range(len(Queue))]
+	probabilities =[]
+	for prob in Queue:
+		probabilities.append(prob[1]/(sum ([prob[1] for prob in Queue])))
+	Res = np.random.choice(elements, 1, p = probabilities)
+	Data_to_write.append(Queue[Res[0]][2]/max_ctx)
 	return;
+
 BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
 print 'Out BFS_Alg, Data_to_write is: ', Data_to_write
 
-Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
+#Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
 #print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
