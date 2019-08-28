@@ -60,7 +60,7 @@ Flp_lst	     = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org
 Vec_Flp = np.zeros(len(Org_Vec), dtype=np.int)
 Data_to_write = []
 t0 = time.time()
-while len(Flp_lst)<50:
+while len(Flp_lst)<100:
 	print '\n len(Flp_lst) is = ', len(Flp_lst)
 	for i in range(len(Org_Vec)):
 		Vec_Flp[i] = Org_Vec[i]
