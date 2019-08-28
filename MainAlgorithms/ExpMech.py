@@ -50,7 +50,7 @@ def Exp_Mech(Ref_file, Queried_ID, max_ctx):
 	Exp_Score =[]
 	for candidate in Exp_Can:
 		Exp_Score.append(mp.exp(Epsilon *(candidate)))
-	Exp_Sum = sum(Exp_Can)
+	Exp_Sum = sum(Exp_Score)
 	print 'Running Exp over candidates...'
 	elements = [elem for elem in range(len(Exp_Can))]
 	probabilities =[]
