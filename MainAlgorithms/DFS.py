@@ -19,7 +19,7 @@ Query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'DFS.dat'
+Store_file = 'ORG_MAx_Rto.dat'
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID, max_ctx):	
@@ -132,7 +132,9 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	Data_to_write.append(Queue[Res[0]][2]/max_ctx)			
 	return;
 
-DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
+#DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
+#line above replaced by line below
+Data_to_write.append(Queue[0][2]/max_ctx)
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
 ' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'	    	   
