@@ -31,12 +31,6 @@ def writefinal(Data_to_write, randomness, runtime, ID):
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
-
-### Data is filtered, no more polishing required
-
-FirAtt_lst = df2['Job Title'].unique()
-SecAtt_lst = df2['Employer'].unique()
-ThrAtt_lst = df2['Calendar Year'].unique()
 	
 Queried_ID = Queries.iloc[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
@@ -84,17 +78,9 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	for i in range(len(Org_Vec)):
 		BFS_Vec[i]  = Org_Vec[i]
 	BFS_Flp = np.zeros(len(Org_Vec))
-	termination_threshold = 500
-	Terminator    = 0
-	# I use the Queue it for visited nodes.
-	# and just use sub_q here, for each sample I add the children to this sub_q without resetting it first
 	sub_q    = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 	contexts = [Org_Vec]
 	while len(Visited)<50:
-    		Terminator += 1
-    		if (Terminator>termination_threshold):
-			break
-		#print 'sub_q before: ', sub_q
 		for i in  range (len(sub_q)):   
 			sub_q[i][0] = i
 		Sub_elements = [elem for elem in range(len(sub_q))]
@@ -119,10 +105,10 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in contexts)) and (BFS_Ctx.shape[0] > 20)):
 				for row in range(BFS_Ctx.shape[0]):
+					Sub_Sal_list.append(BFS_Ctx.iloc[row,8])
+					Sub_ID_list.append(BFS_Ctx.iloc[row,1])	
 					#Sub_Sal_list = BFS_Ctx['Salary Paid']
 					#Sub_ID_list = BFS_Ctx['Unnamed: 0.1']
-					Sub_Sal_list.append(BFS_Ctx.iloc[row,8])
-					Sub_ID_list.append(BFS_Ctx.iloc[row,1])		
 				Sub_Sal_arr= np.array(Sub_Sal_list)
 				clf = LocalOutlierFactor(n_neighbors=20)
 				Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
