@@ -67,6 +67,93 @@ Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrA
 
 # Initiating queue with Org_ctx informaiton 
 Epsilon       = 0.001
+Queue	      = []
+# Samples start with org_vec info
+Data_to_write = []
+
+# Running the BFS_Alg to form a queue of 100 elements
+t0 = time.time()
+def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
+	Visited = []
+	BFS_Vec      = np.zeros(len(Org_Vec))
+	for i in range(len(Org_Vec)):
+		BFS_Vec[i]  = Org_Vec[i]
+	BFS_Flp = np.zeros(len(Org_Vec))
+	termination_threshold = 500
+	Terminator    = 0
+	# I use the Queue it for visited nodes.
+	# and just use sub_q here, for each sample I add the children to this sub_q without resetting it first
+	sub_q    = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
+	contexts = [Org_Vec]
+	while len(Visited)<50:
+    		Terminator += 1
+    		if (Terminator>termination_threshold):
+			break
+		#print 'sub_q before: ', sub_q
+		for i in  range (len(sub_q)):   
+			sub_q[i][0] = i
+		Sub_elements = [elem for elem in range(len(sub_q))]
+		Sub_probabilities =[]
+    		for prob in sub_q:
+			Sub_probabilities.append(prob[1]/(sum ([prob[1] for prob in sub_q])))
+		SubRes = np.random.choice(Sub_elements, 1, p = Sub_probabilities)
+		Queue.append([len(Queue), sub_q[SubRes[0]][1], sub_q[SubRes[0]][2], sub_q[SubRes[0]][3][:]])
+		#print 'Queue is:', Queue
+		Visited.append(sub_q[SubRes[0]][3][:])
+		#print 'Visited is:', Visited
+		sub_q.remove(sub_q[SubRes[0]])
+		#print 'Visited is:', Visited
+		for Flp_bit in range(0,(len(BFS_Vec))):
+			for i in  range (len(BFS_Flp)):      
+				BFS_Flp[i] = Queue[len(Queue)-1][3][i]
+			Sub_Sal_list = []
+			Sub_ID_list  = []
+			BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
+			BFS_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
+					   df2['Employer'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
+					   df2['Calendar Year'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in contexts)) and (BFS_Ctx.shape[0] > 20)):												
+				Salary = BFS_Ctx['Salary Paid']
+				IDs = BFS_Ctx['Unnamed: 0.1']
+				grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
+				for GOutlier in grubbs_result:
+					if (IDs.values[GOutlier]==Queried_ID):
+                				Sub_Score = mp.exp(Epsilon *(BFS_Ctx.shape[0]))
+						sub_q.append([Flp_bit ,Sub_Score , BFS_Ctx.shape[0], np.zeros(len(Org_Vec))])
+						for i in  range (len(sub_q[len(sub_q)-1][3])):      
+							sub_q[len(sub_q)-1][3][i] = BFS_Flp[i]
+						contexts.append(np.zeros(len(Org_Vec)))
+						for i in  range (len(Org_Vec)):      
+							contexts[len(contexts)-1][i] = BFS_Flp[i]								
+	# Exp mechanism on the visited nodes
+	for i in  range (len(Queue)):   
+		Queue[i][0] = i
+	elements = [elem for elem in range(len(Queue))]
+	probabilities =[]
+	for prob in Queue:
+		probabilities.append(prob[1]/(sum ([prob[1] for prob in Queue])))
+	Res = np.random.choice(elements, 1, p = probabilities)
+	Data_to_write.append(Queue[Res[0]][2]/max_ctx)
+	return;
+
+BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx)
+print 'Out BFS_Alg, Data_to_write is: ', Data_to_write
+
+#Data_to_write = np.append(Data_to_write , np.zeros(100 - len(Data_to_write)))
+#print 'The candidate picked form the Q is ', ExpRes[0], 'th, with context ', Queue[ExpRes[0]][3][:],' and has ', Queue[ExpRes[0]][2], 'population'
+t1 = time.time()
+runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) + \
+	' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
+	    	   
+writefinal(Data_to_write, str(Query_num), runtime, str(Queried_ID))	
+#print '\n The final Queue is \n', Queue   
+#print '\n The final Queue is \n', Queue     
+print '\n The BFS runtime, starting from org_ctx and choosing randomly one among childern in each layer is \n', runtime
+
+
+
+# Initiating queue with Org_ctx informaiton 
+Epsilon       = 0.001
 Queue	      = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
 Data_to_write = [(Queue[0][2])/max_ctx]

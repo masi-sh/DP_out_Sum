@@ -22,30 +22,6 @@ Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
 Store_file = 'BFSV.dat'
 
-# Finds the maximal context for the Queried_ID      
-def maxctx(Ref_file, Queried_ID):
-	print '\nChecking for the maximal context ... \n'
-	max = 0
-	out_size = 0
-	#line_num = 0
-	size = 0
-	#Ctx_line = 0
-	with open(Ref_file,'rt') as f:
-        	for num, line in enumerate(f, 1):
-                	if line.split(' ')[0].strip()=="Matching":
-				#Ctx_line = num
-                        	size = int((line.split(' '))[5].strip(':\n'))
-			elif line.strip().startswith("ID"):
-				if line.split(' ')[3].strip('#')==str(Queried_ID):
-					out_size = size
-					#Valid_line = Ctx_line
-                	if (max < out_size):
-				max = out_size
-				#line_num = Valid_line 
-				print "\nmax so far is :", max, "   at time: ", time.time()
-	f.close()
-	return max;
-
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID):	
 	ff = open(Store_file,'a+')
@@ -55,8 +31,6 @@ def writefinal(Data_to_write, randomness, runtime, ID):
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
-
-### Data is filtered, no more polishing required
 
 FirAtt_lst = df2['Job Title'].unique()
 SecAtt_lst = df2['Employer'].unique()
