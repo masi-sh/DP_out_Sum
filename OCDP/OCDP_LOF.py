@@ -70,16 +70,6 @@ def neighbors_compare(o_ctx , n_ctx, match_num):
   if (np.array_equal(o_ctx,n_ctx)):
     match_num+=1
   return match_num;   
-
-
-FirAtt_lst = df['Job Title'].unique()
-SecAtt_lst = df['Employer'].unique()
-ThrAtt_lst = df['Calendar Year'].unique()
-
-# Supersets for each attribute
-FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[0:], r)), range(1, len(FirAtt_lst[0:])+1)), [])
-SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1, len(SecAtt_lst[0:])+1)), [])
-ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), []) 
   
 t0 = time.time()  
 o_ctx = org_ctx(Ref_file, Queried_ID)
