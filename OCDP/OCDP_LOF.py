@@ -21,6 +21,7 @@ Queries = pd.read_csv(Query_file)
 # Check if the next line works
 Queried_ID = int(Queries.iloc[query_num,0])
 OutFile = 'OCDPMatch.txt'
+NumofNeighbors = 50
 
 def org_ctx(Ref_file, Queried_ID):
 	with open(Ref_file,'rt') as f:
@@ -83,7 +84,7 @@ def writefinal(OutFile, match_num):
 t0 = time.time()  
 o_ctx = org_ctx(Ref_file, Queried_ID)
 match_num = 0
-for neighbor in range (0, 2):
+for neighbor in range (0, NumofNeighbors):
   	ndf = pd.DataFrame()
   	neighbor_rnd = np.random.randint(len(df)-1)
   	ndf = df.drop(neighbor_rnd)
@@ -92,5 +93,5 @@ for neighbor in range (0, 2):
 	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor	
 writefinal(OutFile, match_num)
 t1 = time.time()
-print '\n\nThe required time for running the program is:',  t1-t0
-     
+runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) +' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
+print '\n OCDPMatch runtime,for LOF and ' , NumofNeighbors, ' neighbors is: \n', runtime
