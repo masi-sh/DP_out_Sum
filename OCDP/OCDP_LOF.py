@@ -23,14 +23,14 @@ Queried_ID = int(Queries.iloc[query_num,0])
 
 def org_ctx(Ref_file, Queried_ID):
 	with open(Ref_file,'rt') as f:
-    o_ctx = []
-    for num, line in enumerate(f, 1):
-      ctx = line[1:-2].split(',')
+		o_ctx = []
+    		for num, line in enumerate(f, 1):
+      			ctx = line[1:-2].split(',')
 			# Double check, chnaged for outliers in range(len(ctx)) to for outliers in range(4, len(ctx))
-      for outliers in range(4, len(ctx)):
+      			for outliers in range(4, len(ctx)):
 				if int(ctx[outliers])==Queried_ID:
-          # Double check if this holds: [ctx[0],ctx[1],ctx[2]] = [i, j, z]
-          o_ctx.append(ctx[0]+ 1000*ctx[1] + 1000000*ctx[2])		
+          				# Double check if this holds: [ctx[0],ctx[1],ctx[2]] = [i, j, z]
+          				o_ctx.append(ctx[0]+ 1000*ctx[1] + 1000000*ctx[2])		
 	f.close()
   return o_ctx;
         
