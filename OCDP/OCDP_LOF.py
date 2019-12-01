@@ -80,6 +80,7 @@ for neighbor in range (0, 10):
   	ndf = df.drop(neighbor_rnd)
   	n_ctx = neighbor_ctx(df, ndf, Queried_ID)
   	match_num = neighbors_compare(o_ctx , n_ctx, match_num)  
+	print 'match_num is: ', match_num
 t1 = time.time()
 print '\n\nThe required time for running the program is:',  t1-t0
      
