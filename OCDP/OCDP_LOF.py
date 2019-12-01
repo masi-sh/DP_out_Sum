@@ -20,6 +20,7 @@ Query_file = '/home/sm2shafi/DP_out_Sum/LOF/TLQueries.csv'
 Queries = pd.read_csv(Query_file)
 # Check if the next line works
 Queried_ID = int(Queries.iloc[query_num,0])
+OutFile = 'OCDPMatch.txt'
 
 def org_ctx(Ref_file, Queried_ID):
 	with open(Ref_file,'rt') as f:
@@ -70,7 +71,15 @@ def neighbors_compare(o_ctx , n_ctx, match_num):
   	if (np.array_equal(o_ctx,n_ctx)):
     		match_num+=1
   	return match_num;   
-  
+
+def writefinal(OutFile, match_num):
+        ff = open(OutFile,'a+')
+        fcntl.flock(ff, fcntl.LOCK_EX)
+        ff.write(str(match_num)+'\n')
+        fcntl.flock(ff, fcntl.LOCK_UN)
+        ff.close()
+        return;
+
 t0 = time.time()  
 o_ctx = org_ctx(Ref_file, Queried_ID)
 match_num = 0
@@ -80,7 +89,8 @@ for neighbor in range (0, 10):
   	ndf = df.drop(neighbor_rnd)
   	n_ctx = neighbor_ctx(df, ndf, Queried_ID)
   	match_num = neighbors_compare(o_ctx , n_ctx, match_num)  
-	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor
+	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor	
+writefinal(OutFile, match_num)
 t1 = time.time()
 print '\n\nThe required time for running the program is:',  t1-t0
      
