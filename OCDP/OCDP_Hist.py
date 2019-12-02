@@ -16,8 +16,8 @@ import math
 
 query_num = int(sys.argv[1])
 df = pd.read_csv("~/DP_out_Sum/Grubbs/ToyData.csv")
-Ref_file = '/home/sm2shafi/DP_out_Sum/Grubbs/HistRef.txt'
-Query_file = '/home/sm2shafi/DP_out_Sum/Grubbs/THQueries.csv'
+Ref_file = '/home/sm2shafi/DP_out_Sum/HIST/HistRef.txt'
+Query_file = '/home/sm2shafi/DP_out_Sum/HIST/THQueries.csv'
 Queries = pd.read_csv(Query_file)
 # Check if the next line works
 Queried_ID = int(Queries.iloc[query_num,0])
@@ -55,24 +55,16 @@ def neighbor_ctx(df, ndf, Queried_ID):
                 		Ctx  = ndf.loc[ndf['Job Title'].isin(FirAtt_Sprset[i]) & ndf['Employer'].isin(SecAtt_Sprset[j]) &\
 					       ndf['Calendar Year'].isin(ThrAtt_Sprset[z])]
 				if (Ctx.shape[0] > 20):
-                   Salary = Ctx['Salary Paid']
-                        IDs    = Ctx['Unnamed: 0.1']
-                        histi  = np.histogram(Salary.values, bins=int(np.sqrt(len(Salary.values))), density=False)
-                        bin_width = histi[1][1] - histi[1][0]
-                        for Sal_freq in range(len(histi[0])):
-                                if histi[0][Sal_freq] <= 0.0025*len(Ctx['Salary Paid']):
-                                        Sal_bin.append(histi[1][Sal_freq])
-                        for Sal_idx in range(len(Salary.values)):
-                                if (len(filter(lambda x : x <= Salary.values[Sal_idx] < x+bin_width , Sal_bin)) > 0):
-                                        outliers[len(outliers)-1].append(IDs.values[Sal_idx])
-          
-          Salary = Ctx['Salary Paid']
-        	        		IDs    = Ctx['Unnamed: 0.1']
-                			grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
-                			if grubbs_result:
-						for GOutlier in grubbs_result:
-                                			if (IDs.values[GOutlier]==Queried_ID):
-								n_ctx.append(i+ 1000*j + 1000000*z)
+                   			Salary = Ctx['Salary Paid']
+                        		IDs    = Ctx['Unnamed: 0.1']
+                        		histi  = np.histogram(Salary.values, bins=int(np.sqrt(len(Salary.values))), density=False)
+                        		bin_width = histi[1][1] - histi[1][0]
+                        		for Sal_freq in range(len(histi[0])):
+                                		if histi[0][Sal_freq] <= 0.0025*len(Ctx['Salary Paid']):
+                                        		Sal_bin.append(histi[1][Sal_freq])
+                        		for Sal_idx in range(len(Salary.values)):
+                                		if ((len(filter(lambda x : x <= Salary.values[Sal_idx] < x+bin_width , Sal_bin)) > 0) and (IDs.values[Sal_idx]==Queried_ID)):
+							n_ctx.append(i+ 1000*j + 1000000*z)
   	return n_ctx;   
         
 def neighbors_compare(o_ctx , n_ctx, match_num):
