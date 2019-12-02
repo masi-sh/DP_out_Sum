@@ -54,18 +54,14 @@ def neighbor_ctx(df, ndf, Queried_ID):
                 		print 'count is:', ctx_count #, ' The percentage done: %', ctx_count//(2**14) 
                 		Ctx  = ndf.loc[ndf['Job Title'].isin(FirAtt_Sprset[i]) & ndf['Employer'].isin(SecAtt_Sprset[j]) &\
 					       ndf['Calendar Year'].isin(ThrAtt_Sprset[z])]
-                		Sal_list = []
-                		ID_list  = []
-                		if (Ctx.shape[0] > 20):
-       		        		for row in range(Ctx.shape[0]):
-                    				Sal_list.append(Ctx.iloc[row,8])
-                    				ID_list.append(Ctx.iloc[row,1])
-        		    		Sal_arr= np.array(Sal_list)
-        		    		clf = LocalOutlierFactor(n_neighbors=20)
-                			Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
-                			for outlier_finder in range(0, len(ID_list)):
-                  				if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder] == Queried_ID)): 
-                    					n_ctx.append(i+ 1000*j + 1000000*z)
+				if (Ctx.shape[0] > 20):
+					Salary = Ctx['Salary Paid']
+        	        		IDs    = Ctx['Unnamed: 0.1']
+                			grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
+                			if grubbs_result:
+						for GOutlier in grubbs_result:
+                                			if (IDs.values[GOutlier]==Queried_ID):
+								n_ctx.append(i+ 1000*j + 1000000*z)
   	return n_ctx;   
         
 def neighbors_compare(o_ctx , n_ctx, match_num):
