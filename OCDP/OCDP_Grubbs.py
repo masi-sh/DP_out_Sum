@@ -13,6 +13,8 @@ import fcntl
 import random
 import csv
 import math
+import hashlib
+from outliers import smirnov_grubbs as grubbs
 
 query_num = int(sys.argv[1])
 df = pd.read_csv("~/DP_out_Sum/Grubbs/ToyData.csv")
