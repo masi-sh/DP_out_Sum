@@ -1,5 +1,5 @@
 #!/bin/bash
 for ((i=0; i<100; i++))
 do
-    python ~/DP_out_Sum/OCDP/OCDP_HIST.py "$i" &
+    python ~/DP_out_Sum/OCDP/OCDP_Hist.py "$i" &
 done
