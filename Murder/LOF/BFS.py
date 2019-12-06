@@ -77,7 +77,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	# and just use sub_q here, for each sample I add the children to this sub_q without resetting it first
 	sub_q    = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 	contexts = [Org_Vec]
-	while len(Visited)<200:
+	while len(Visited)<100:
     		Terminator += 1
     		if (Terminator>termination_threshold):
 			break
