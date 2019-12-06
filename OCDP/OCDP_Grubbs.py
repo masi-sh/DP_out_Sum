@@ -1,5 +1,5 @@
 # This code investigates whether removing a datapoint affects the list of valid contexts for a particular outlier or not. 
-# Grubbs is used as the outlier detection algorithm.
+# Grubbs is used as the outlier detection algorithm, on the Salary dataset
 from __future__ import division
 import sys
 #import gzip
