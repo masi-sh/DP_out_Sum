@@ -15,10 +15,10 @@ import csv
 
 random.seed(50*int(sys.argv[1]))
 query_num = int(sys.argv[1])
-Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries500.csv'
+Query_file = '/home/sm2shafi/DP_out_Sum/Murder/LOF/MLQueries.csv'
 Queries = pd.read_csv(Query_file)
-df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-Ref_file = '/home/sm2shafi/Reffile.txt'
+df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
+Ref_file = '/home/sm2shafi/Murder.txt'
 
 def maxctx(Ref_file, Queried_ID):
 	max         = 0
@@ -54,9 +54,9 @@ def maxctx(Ref_file, Queried_ID):
 	#ff.close()
   	return max, outlier_ctr, Ctx_Max;
 
-FirAtt_lst = df2['Job Title'].unique()
-SecAtt_lst = df2['Employer'].unique()
-ThrAtt_lst = df2['Calendar Year'].unique()
+FirAtt_lst = df2['Weapon'].unique()
+SecAtt_lst = df2['State'].unique()
+ThrAtt_lst = df2['AgencyType'].unique()
 FirAtt_Vec   = np.zeros(len(FirAtt_lst), dtype=np.int)
 SecAtt_Vec   = np.zeros(len(SecAtt_lst), dtype=np.int)
 ThrAtt_Vec   = np.zeros(len(ThrAtt_lst), dtype=np.int)
@@ -67,9 +67,9 @@ while(Sal_outliers[Sal_outliers.argmin()]==1):
 	SecAtt_Vec[0:len(SecAtt_Vec)] = np.random.randint(2, size=len(SecAtt_Vec))
 	ThrAtt_Vec[0:len(ThrAtt_Vec)] = np.random.randint(2, size=len(ThrAtt_Vec))
 
-	Orgn_Ctx = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
-			   df2['Employer'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
-			   df2['Calendar Year'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
+	Orgn_Ctx = df2.loc[df2['Weapon'].isin(FirAtt_lst[np.where(FirAtt_Vec== 1)].tolist()) & \
+			   df2['State'].isin(SecAtt_lst[np.where(SecAtt_Vec== 1)].tolist()) & \
+			   df2['AgencyType'].isin(ThrAtt_lst[np.where(ThrAtt_Vec== 1)].tolist())]
 #######################     Finding an outlier in the selected context      #######################
 	if (Orgn_Ctx.shape[0] > 20):
 		clf = LocalOutlierFactor(n_neighbors=20)
