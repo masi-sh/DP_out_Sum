@@ -19,24 +19,24 @@ import math
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
-df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
+df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
+Query_file = '/home/sm2shafi/DP_out_Sum/Murder/LOF/MLQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'BFSV.dat'
+Store_file = 'MLBFS.dat'
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
 	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', \
-	BFS alg. takes' + runtime)
+	BFS alg. on Murder dataset takes' + runtime)
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
 
-FirAtt_lst = df2['Job Title'].unique()
-SecAtt_lst = df2['Employer'].unique()
-ThrAtt_lst = df2['Calendar Year'].unique()
+FirAtt_lst = df2['Weapon'].unique()
+SecAtt_lst = df2['State'].unique()
+ThrAtt_lst = df2['AgencyType'].unique()
 	
 Queried_ID = Queries.iloc[Query_num]['Outlier']
 print '\n\n Outlier\'s ID in the original context is: ', Queried_ID
@@ -54,9 +54,9 @@ for i in range(len(Org_Vec)):
 	if (Org_Str[i] =='1'):
 		Org_Vec[i] = 1
 		
-Orgn_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
-		    df2['Employer'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
-                    df2['Calendar Year'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+Orgn_Ctx  = df2.loc[df2['Weapon'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
+		    df2['State'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
+                    df2['AgencyType'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 
 # Initiating queue with Org_ctx informaiton 
 Epsilon       = 0.001
