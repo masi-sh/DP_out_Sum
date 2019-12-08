@@ -2,7 +2,7 @@
 from __future__ import division
 import matplotlib
 from mpmath import mp
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import sys
 #import gzip
 import pandas as pd
