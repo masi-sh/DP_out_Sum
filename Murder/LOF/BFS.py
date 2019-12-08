@@ -106,8 +106,8 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 					   df2['AgencyType'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in contexts)) and (BFS_Ctx.shape[0] > 20)):
 				for row in range(BFS_Ctx.shape[0]):
-					#VictimAge is column 5
-					Sub_Sal_list.append(BFS_Ctx.iloc[row,5])
+					#VictimAge is column 4 and the ID is on column 0
+					Sub_Sal_list.append(BFS_Ctx.iloc[row,4])
 					Sub_ID_list.append(BFS_Ctx.iloc[row,0])		
 				Sub_Sal_arr= np.array(Sub_Sal_list)
 				clf = LocalOutlierFactor(n_neighbors=20)
