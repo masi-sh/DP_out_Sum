@@ -58,7 +58,7 @@ Orgn_Ctx  = df2.loc[df2['Weapon'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_
                     df2['AgencyType'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 
 # Initiating queue with Org_ctx informaiton 
-Epsilon       = 0.001
+Epsilon       = 0.002
 Queue	      = []
 # Samples start with org_vec info
 Data_to_write = []
