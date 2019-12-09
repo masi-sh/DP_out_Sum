@@ -14,7 +14,7 @@ from mpmath import mp
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
-df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderdData.csv")
+df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/Murder/LOF/MLQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
 Store_file = 'MLDFS.dat'
@@ -24,14 +24,14 @@ def writefinal(Data_to_write, randomness, runtime, ID, max_ctx):
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
 	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = 'DFS for query number: '+ randomness +\
-	'for outlier' + ID + 'with Ctx_max '+ str(max_ctx) + 'takes ' + runtime)	
+	'for outlier' + ID + 'with Ctx_max '+ str(max_ctx) + 'on Murder dataset takes ' + runtime)	
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
 
 FirAtt_lst = df2['Weapon'].unique()
 SecAtt_lst = df2['State'].unique()
-ThrAtt_lst = df2['VictimAge'].unique()
+ThrAtt_lst = df2['AgencyType'].unique()
 	
 # Reading a Queried_ID from the list in the Queries file
 Queried_ID = Queries.iloc[Query_num]['Outlier']
@@ -50,7 +50,7 @@ for i in range(len(Org_Vec)):
 		Org_Vec[i] = 1		
 Orgn_Ctx  = df2.loc[df2['Weapon'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_lst)] == 1)].tolist()) &\
                     df2['State'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
-                    df2['VictimAge'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+                    df2['AgencyType'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 # Making Queue of samples and initiating it, with Org_Vec
 # Initiating queue with Org_ctx informaiton
 Epsilon       = 0.001
@@ -86,7 +86,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 			BFS_Flp[Flp_bit] = 1 - BFS_Flp[Flp_bit]
 			BFS_Ctx  = df2.loc[df2['Weapon'].isin(FirAtt_lst[np.where(BFS_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
 					   df2['State'].isin(SecAtt_lst[np.where(BFS_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
-					   df2['VictimAge'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+					   df2['AgencyType'].isin(ThrAtt_lst[np.where(BFS_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 			if ((not any(np.array_equal(BFS_Flp[:],x[:]) for x in Visited)) and (not any(np.array_equal(BFS_Flp[:],x[:]) for x in contexts)) and (BFS_Ctx.shape[0] > 20)):	
 				for row in range(BFS_Ctx.shape[0]):
 					Sub_Sal_list.append(BFS_Ctx.iloc[row,4])
