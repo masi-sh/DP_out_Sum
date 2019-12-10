@@ -1,0 +1,5 @@
+#!/bin/bash
+for ((i=1; i<=150; i++))
+do
+    python ~/DP_out_Sum/Murder/LOF/RWalk.py "$i" &
+done
