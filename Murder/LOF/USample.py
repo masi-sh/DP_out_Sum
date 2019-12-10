@@ -1,10 +1,7 @@
 # NOT ADJUSTED FOR MURDER DS YET
 from __future__ import division
 from mpmath import mp
-import matplotlib
-matplotlib.use('Agg')
 import sys
-#import gzip
 import pandas as pd
 import numpy as np
 from itertools import combinations
@@ -18,8 +15,8 @@ import math
 
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
-df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
-Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
+df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
+Query_file = '/home/sm2shafi/DP_out_Sum/Murder/LOF/MLQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
 Store_file = 'USample-e4.dat'
 
@@ -27,15 +24,15 @@ Store_file = 'USample-e4.dat'
 def writefinal(Data_to_write, randomness, runtime, ID, max_ctx):	
 	ff = open(Store_file,'a+')
 	fcntl.flock(ff, fcntl.LOCK_EX)
-	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = 'UniSampling for query number: '+ randomness +\
+	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = 'UniSampling on Murder dataset for query number: '+ randomness +\
 	'for outlier' + ID + 'with Ctx_max '+ str(max_ctx) + 'takes ' + runtime)	
 	fcntl.flock(ff, fcntl.LOCK_UN)
 	ff.close()
 	return;
 
-FirAtt_lst = df2['Job Title'].unique()
-SecAtt_lst = df2['Employer'].unique()
-ThrAtt_lst = df2['Calendar Year'].unique()
+FirAtt_lst = df2['Weapon'].unique()
+SecAtt_lst = df2['State'].unique()
+ThrAtt_lst = df2['VictimAge'].unique()
 	
 # Reading a Queried_ID from the list in the Queries file
 Queried_ID = Queries.iloc[Query_num]['Outlier']
@@ -49,7 +46,7 @@ Flp_p         = 0.5
 Flp_lst       = []
 Data_to_write = []
 ###################################        Flip the context, 100 times            ###############################
-Epsilon       = 0.1
+Epsilon       = 0.4
 
 t0 = time.time()
 while len(Flp_lst)<100:
@@ -59,15 +56,15 @@ while len(Flp_lst)<100:
         	if (np.random.binomial(size=1, n=1, p= Flp_p)==1):
                 	Vec_Flp[Ctx_sprt]=1
 			
-	Flp_Ctx  = df2.loc[df2['Job Title'].isin(FirAtt_lst[np.where(Vec_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
-		       df2['Employer'].isin(SecAtt_lst[np.where(Vec_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
-		       df2['Calendar Year'].isin(ThrAtt_lst[np.where(Vec_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
+	Flp_Ctx  = df2.loc[df2['Weapon'].isin(FirAtt_lst[np.where(Vec_Flp[0:len(FirAtt_lst)] == 1)].tolist()) &\
+		       df2['State'].isin(SecAtt_lst[np.where(Vec_Flp[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
+		       df2['VictimAge'].isin(ThrAtt_lst[np.where(Vec_Flp[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 	
 	Sal_list     = []
 	ID_list      = []
 	if (Flp_Ctx.shape[0] >= 20):
 		for row in range(Flp_Ctx.shape[0]):
-                    Sal_list.append(Flp_Ctx.iloc[row,7])
+                    Sal_list.append(Flp_Ctx.iloc[row,4])
 		    ID_list.append(Flp_Ctx.iloc[row,0])
                 Score = mp.exp(Epsilon *(Flp_Ctx.shape[0]))
                 Sal_arr= np.array(Sal_list)
