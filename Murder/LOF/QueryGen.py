@@ -1,8 +1,6 @@
 import sys
 import pandas as pd
 import numpy as np
-import cufflinks as cf
-cf.go_offline()
 from itertools import combinations
 from sklearn.neighbors import LocalOutlierFactor
 from collections import Counter
