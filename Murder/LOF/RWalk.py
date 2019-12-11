@@ -19,7 +19,7 @@ Query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/Murder/LOF/MLQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'MLRWalk-s200.dat'
+Store_file = 'MLRWalk-e2.dat'
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID, max_ctx):	
@@ -54,12 +54,12 @@ Orgn_Ctx  = df2.loc[df2['Weapon'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_
                     df2['State'].isin(SecAtt_lst[np.where(Org_Vec[len(FirAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)] == 1)].tolist())  &\
                     df2['AgencyType'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 # Flip the context, 100 times    
-Epsilon = 0.1
+Epsilon = 0.2
 Flp_lst	     = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 Vec_Flp = np.zeros(len(Org_Vec), dtype=np.int)
 Data_to_write = []
 t0 = time.time()
-while len(Flp_lst)<200:
+while len(Flp_lst)<100:
 	print '\n len(Flp_lst) is = ', len(Flp_lst)
 	for i in range(len(Org_Vec)):
 		Vec_Flp[i] = Org_Vec[i]
