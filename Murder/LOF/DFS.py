@@ -53,7 +53,7 @@ Orgn_Ctx  = df2.loc[df2['Weapon'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_
                     df2['AgencyType'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 # Making Queue of samples and initiating it, with Org_Vec
 # Initiating queue with Org_ctx informaiton
-Epsilon       = 0.002
+Epsilon       = 0.001
 Queue	      = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
 Data_to_write = []
@@ -65,7 +65,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	contexts = [Org_Vec]
 	termination_threshold =500
 	Terminator = 0
-	while len(Visited)<100:
+	while len(Visited)<200:
 		Terminator += 1
    		if (Terminator>termination_threshold):
 			break
