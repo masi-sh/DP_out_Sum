@@ -21,7 +21,7 @@ Query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/Murder/LOF/MLQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'MLBFS-e2-200.dat'
+Store_file = 'MLBFS-s200.dat'
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID):	
