@@ -17,7 +17,7 @@ Query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/Murder/LOF/MLQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'MLDFS-s200.dat'
+Store_file = 'MLDFS-e2.dat'
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID, max_ctx):	
@@ -53,7 +53,7 @@ Orgn_Ctx  = df2.loc[df2['Weapon'].isin(FirAtt_lst[np.where(Org_Vec[0:len(FirAtt_
                     df2['AgencyType'].isin(ThrAtt_lst[np.where(Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] == 1)].tolist())]
 # Making Queue of samples and initiating it, with Org_Vec
 # Initiating queue with Org_ctx informaiton
-Epsilon       = 0.001
+Epsilon       = 0.002
 Queue	      = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 # Samples start with org_vec info
 Data_to_write = []
@@ -65,7 +65,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	contexts = [Org_Vec]
 	termination_threshold =500
 	Terminator = 0
-	while len(Visited)<200:
+	while len(Visited)<100:
 		Terminator += 1
    		if (Terminator>termination_threshold):
 			break
