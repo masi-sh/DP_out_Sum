@@ -1,0 +1,6 @@
+
+#!/bin/bash
+for ((i=0; i<100; i++))
+do
+    python ~/DP_out_Sum/OCDP/Murder/OCDP_LOF.py "$i" &
+done
