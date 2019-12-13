@@ -55,7 +55,7 @@ for j in range (0, len(SecAtt_Sprset)):
                         histi  = np.histogram(Salary.values, bins=int(np.sqrt(len(Salary.values))), density=False)
                         bin_width = histi[1][1] - histi[1][0]
                         for Sal_freq in range(len(histi[0])):
-                                if histi[0][Sal_freq] <= 0.0025*len(Ctx['Salary Paid']):
+                                if histi[0][Sal_freq] <= 0.0025*len(Ctx['VictimAge']):
                                         Sal_bin.append(histi[1][Sal_freq])
                         for Sal_idx in range(len(Salary.values)):
                                 if (len(filter(lambda x : x <= Salary.values[Sal_idx] < x+bin_width , Sal_bin)) > 0):
