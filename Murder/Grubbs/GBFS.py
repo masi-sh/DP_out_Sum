@@ -18,7 +18,7 @@ Query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
 Query_file = '~/DP_out_Sum/Murder/Grubbs/MGQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'MGBFS.dat'
+Store_file = 'MGBFS-e2.dat'
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID):	
