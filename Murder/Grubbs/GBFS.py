@@ -63,7 +63,7 @@ temp_Vec[np.where(np.isin(ThrAtt_lst[0:len(ThrAtt_lst)], ThrAtt_Sprset[zzz]))] =
 Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] = temp_Vec[0:len(ThrAtt_lst)]
 
 # Initiating queue with Org_ctx informaiton 
-Epsilon       = 0.001
+Epsilon       = 0.002
 Queue	      = []
 # Samples start with org_vec info
 Data_to_write = []
@@ -82,7 +82,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	# and just use sub_q here, for each sample I add the children to this sub_q without resetting it first
 	sub_q    = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 	contexts = [Org_Vec]
-	while len(Visited)<50:
+	while len(Visited)<100:
     		Terminator += 1
     		if (Terminator>termination_threshold):
 			break
