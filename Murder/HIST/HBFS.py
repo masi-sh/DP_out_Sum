@@ -16,7 +16,7 @@ from outliers import smirnov_grubbs as grubbs
 Query_num = int(sys.argv[1])
 # This file is filtered, no extra filtering required
 df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
-Query_file = '/home/sm2shafi/DP_out_Sum/Murder/HIST/MQueries.csv'
+Query_file = '/home/sm2shafi/DP_out_Sum/Murder/HIST/MHQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
 Store_file = 'MHBFS-e2.dat'
 
