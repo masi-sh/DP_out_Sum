@@ -18,7 +18,7 @@ Query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/Murder/HIST/MQueries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'MHBFS.dat'
+Store_file = 'MHBFS-e2.dat'
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID):	
@@ -63,7 +63,7 @@ temp_Vec[np.where(np.isin(ThrAtt_lst[0:len(ThrAtt_lst)], ThrAtt_Sprset[zzz]))] =
 Org_Vec[len(FirAtt_lst)+len(SecAtt_lst):len(FirAtt_lst)+len(SecAtt_lst)+len(ThrAtt_lst)] = temp_Vec[0:len(ThrAtt_lst)]
 
 # Initiating queue with Org_ctx informaiton 
-Epsilon       = 0.001
+Epsilon       = 0.002
 Queue	      = []
 # Samples start with org_vec info
 Data_to_write = []
@@ -78,7 +78,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	BFS_Flp = np.zeros(len(Org_Vec))
 	sub_q    = [[0, mp.exp(Epsilon *(Orgn_Ctx.shape[0])), Orgn_Ctx.shape[0], Org_Vec]]
 	contexts = [Org_Vec]
-	while len(Visited)<50:
+	while len(Visited)<100:
 		for i in  range (len(sub_q)):   
 			sub_q[i][0] = i
 		Sub_elements = [elem for elem in range(len(sub_q))]
