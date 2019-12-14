@@ -15,7 +15,7 @@ import math
 
 query_num = int(sys.argv[1])
 df = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
-Ref_file = '/home/sm2shafi/DP_out_Sum/Murder.txt'
+Ref_file = '/home/sm2shafi/Murder.txt'
 Query_file = '/home/sm2shafi/DP_out_Sum/Murder/LOF/MLQueries.csv'
 Queries = pd.read_csv(Query_file)
 # Check if the next line works
