@@ -12,8 +12,8 @@ import math
 import hashlib
 from outliers import smirnov_grubbs as grubbs
 
-df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
-OutFile  = 'MHistRef.txt'
+df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData_28.csv")
+OutFile  = 'MHistRef_28.txt'
 
 def writefinal(OutFile, outliers):
         ff = open(OutFile,'a+')
