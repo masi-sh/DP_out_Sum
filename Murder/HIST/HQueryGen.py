@@ -71,8 +71,8 @@ while True:
 		break
 		
 max_ctx, count = maxctx(Ref_file, ID)
-if (max_ctx !=0 and count>120):
-	print 'count>120! ', count
+if (max_ctx !=0 and count>130):
+	print 'count>130! ', count
 	with open(Query_file, 'ab') as csvfile:
        		writer = csv.writer(csvfile)
        		fcntl.flock(csvfile, fcntl.LOCK_EX)
