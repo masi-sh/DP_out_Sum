@@ -14,10 +14,10 @@ from outliers import smirnov_grubbs as grubbs
 
 random.seed(50*int(sys.argv[1]))
 query_num = int(sys.argv[1])
-df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
-Query_file = '/home/sm2shafi/DP_out_Sum/Murder/HIST/MHQueries.csv'
+df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData_28.csv")
+Query_file = '/home/sm2shafi/DP_out_Sum/Murder/HIST/MHQueries_28.csv'
 Queries = pd.read_csv(Query_file)
-Ref_file = '/home/sm2shafi/DP_out_Sum/Murder/HIST/MHistRef.txt'
+Ref_file = '/home/sm2shafi/DP_out_Sum/Murder/HIST/MHistRef_28.txt'
 
 def maxctx(Ref_file, Queried_ID):
 	max  = 0
