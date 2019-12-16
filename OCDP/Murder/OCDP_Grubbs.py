@@ -16,9 +16,9 @@ import hashlib
 from outliers import smirnov_grubbs as grubbs
 
 query_num = int(sys.argv[1])
-df = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
-Ref_file = '/home/sm2shafi/DP_out_Sum/Murder/Grubbs/MGrubbsRef.txt'
-Query_file = '/home/sm2shafi/DP_out_Sum/Murder/Grubbs/MGQueries.csv'
+df = pd.read_csv("~/DP_out_Sum/dataset/MurderData_28.csv")
+Ref_file = '/home/sm2shafi/DP_out_Sum/Murder/Grubbs/MGrubbsRef_28.txt'
+Query_file = '/home/sm2shafi/DP_out_Sum/Murder/Grubbs/MGQueries_28.csv'
 Queries = pd.read_csv(Query_file)
 # Check if the next line works
 Queried_ID = int(Queries.iloc[query_num,0])

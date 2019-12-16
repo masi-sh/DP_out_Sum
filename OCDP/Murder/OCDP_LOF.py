@@ -14,9 +14,9 @@ import csv
 import math
 
 query_num = int(sys.argv[1])
-df = pd.read_csv("~/DP_out_Sum/dataset/MurderData.csv")
-Ref_file = '/home/sm2shafi/Murder.txt'
-Query_file = '/home/sm2shafi/DP_out_Sum/Murder/LOF/MLQueries.csv'
+df = pd.read_csv("~/DP_out_Sum/dataset/MurderData_28.csv")
+Ref_file = '/home/sm2shafi/Murder_28.txt'
+Query_file = '/home/sm2shafi/DP_out_Sum/Murder/LOF/MLQueries_28.csv'
 Queries = pd.read_csv(Query_file)
 # Check if the next line works
 Queried_ID = int(Queries.iloc[query_num,0])
