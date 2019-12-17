@@ -20,7 +20,7 @@ Query_file = '/home/sm2shafi/DP_out_Sum/Murder/LOF/MLQueries_28.csv'
 Queries = pd.read_csv(Query_file)
 # Check if the next line works
 Queried_ID = int(Queries.iloc[query_num,0])
-OutFile = 'M_OCDPMatch.txt'
+OutFile = 'M_OCDPMatch_L.txt'
 NumofNeighbors = 50
 
 def org_ctx(Ref_file, Queried_ID):
