@@ -102,7 +102,7 @@ def BFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	#index         = 0
 	termination_threshold = 500
 	Terminator    = 0
-	while len(Queue)<50:
+	while len(Queue)<100:
 		New_Ctx = int(str(BFS_Vec).replace(',', '').replace(' ','').replace('.','').replace('\n','')[1:-1],2)
 		Stats[New_Ctx] = False 
 		print 'len(Queue) is', len(Queue)
