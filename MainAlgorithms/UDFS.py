@@ -19,7 +19,7 @@ Query_num = int(sys.argv[1])
 df2 = pd.read_csv("~/DP_out_Sum/dataset/FilteredData.csv")
 Query_file = '/home/sm2shafi/DP_out_Sum/MainAlgorithms/Queries.csv'
 Queries = pd.read_csv(Query_file, 'rt', delimiter=',' , engine = 'python')
-Store_file = 'UDFS.dat'
+Store_file = 'UDFS-e1.dat'
 
 # Writing final data 
 def writefinal(Data_to_write, randomness, runtime, ID, max_ctx):	
@@ -66,7 +66,7 @@ def DFS_Alg(Org_Vec, Queue, Data_to_write, Epsilon, max_ctx):
 	contexts = [Org_Vec]
 	termination_threshold =500
 	Terminator = 0
-	while len(Visited)<50:
+	while len(Visited)<100:
 		Terminator += 1
    		if (Terminator>termination_threshold):
 			break
