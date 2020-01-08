@@ -86,7 +86,7 @@ o_ctx = org_ctx(Ref_file, Queried_ID)
 match_num = 0
 for neighbor in range (0, NumofNeighbors):
   	ndf = pd.DataFrame()
-	for drop in range (0, DropThr):
+	for DropRec in range (0, DropThr):
 		neighbor_rnd = np.random.randint(len(df)-1)
   		ndf = df.drop(neighbor_rnd)
   	n_ctx = neighbor_ctx(df, ndf, Queried_ID)
