@@ -25,6 +25,7 @@ Queries = pd.read_csv(Query_file)
 Queried_ID = int(Queries.iloc[query_num,0])
 OutFile = 'OCDPMatch_G.txt'
 NumofNeighbors = 50
+DropThr = 50
 
 def org_ctx(Ref_file, Queried_ID):
 	with open(Ref_file,'rt') as f:
@@ -85,8 +86,9 @@ o_ctx = org_ctx(Ref_file, Queried_ID)
 match_num = 0
 for neighbor in range (0, NumofNeighbors):
   	ndf = pd.DataFrame()
-  	neighbor_rnd = np.random.randint(len(df)-1)
-  	ndf = df.drop(neighbor_rnd)
+	for drop in range (0, DropThr):
+		neighbor_rnd = np.random.randint(len(df)-1)
+  		ndf = df.drop(neighbor_rnd)
   	n_ctx = neighbor_ctx(df, ndf, Queried_ID)
   	match_num = neighbors_compare(o_ctx , n_ctx, match_num)  
 	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor	
