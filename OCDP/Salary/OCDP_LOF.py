@@ -22,7 +22,7 @@ Queries = pd.read_csv(Query_file)
 Queried_ID = int(Queries.iloc[query_num,0])
 OutFile = 'OCDPMatch.txt'
 NumofNeighbors = 50
-DropThr = 20
+DropThr = 50
 
 def org_ctx(Ref_file, Queried_ID):
 	with open(Ref_file,'rt') as f:
