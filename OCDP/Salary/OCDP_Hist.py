@@ -89,7 +89,7 @@ for neighbor in range (0, NumofNeighbors):
   	ndf = pd.DataFrame()
 	ndf = df
 	for DropRec in range (0, DropThr):
-		neighbor_rnd = np.random.randint(len(df)-1)
+		neighbor_rnd = np.random.randint(len(ndf)-1)
 		# print 'neighbor_rnd is:', neighbor_rnd, 'for DropRec', DropRec
   		ndf = ndf.drop(neighbor_rnd)	
   	n_ctx = neighbor_ctx(df, ndf, Queried_ID)
