@@ -86,11 +86,12 @@ o_ctx = org_ctx(Ref_file, Queried_ID)
 match_num = 0
 for neighbor in range (0, NumofNeighbors):
   	ndf = pd.DataFrame()
+	ndf = df
 	for DropRec in range (0, DropThr):
 		neighbor_rnd = np.random.randint(len(df)-1)
-		print 'neighbor_rnd is:', neighbor_rnd, 'for DropRec', DropRec
-  		ndf = df.drop(neighbor_rnd)
-	print 'The database size for the ', neighbor ,'th neighboring db has changed from ', df.shape , 'to: ', ndf.shape
+		#print 'neighbor_rnd is:', neighbor_rnd, 'for DropRec', DropRec
+  		ndf = ndf.drop(neighbor_rnd)
+	#print 'The database size for the ', neighbor ,'th neighboring db has changed from ', df.shape , 'to: ', ndf.shape
   	n_ctx = neighbor_ctx(df, ndf, Queried_ID)
   	match_num = neighbors_compare(o_ctx , n_ctx, match_num)  
 	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor	
