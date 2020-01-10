@@ -21,11 +21,11 @@ df = pd.read_csv("~/DP_out_Sum/Grubbs/ToyData.csv")
 Ref_file = '/home/sm2shafi/DP_out_Sum/Grubbs/GrubbsRef.txt'
 Query_file = '/home/sm2shafi/DP_out_Sum/Grubbs/TGQueries.csv'
 Queries = pd.read_csv(Query_file)
-# Check if the next line works
+#Better to use this instead of the following line: Queried_ID = int(Queries.iloc[Query_num]['Outlier'])
 Queried_ID = int(Queries.iloc[query_num,1])
 OutFile = 'OCDPMatch_G.txt'
 NumofNeighbors = 50
-DropThr = 5000
+DropThr = 1
 
 def org_ctx(Ref_file, Queried_ID):
 	with open(Ref_file,'rt') as f:
