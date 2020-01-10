@@ -91,7 +91,7 @@ for neighbor in range (0, NumofNeighbors):
 	print 'ndf.shape is: ', ndf.shape
 	
 	randomlist = random.sample(range(0, len(ndf)), DropThr)
-	ndf = ndf.drop(neighbor_rnd)
+	ndf = ndf.drop(randomlist)
 
 	#for DropRec in range (0, DropThr):
 	#	neighbor_rnd = np.random.randint(len(ndf)-1)
