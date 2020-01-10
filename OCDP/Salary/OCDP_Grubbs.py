@@ -38,6 +38,7 @@ def org_ctx(Ref_file, Queried_ID):
           				# Double check if this holds: [ctx[0],ctx[1],ctx[2]] = [i, j, z]
           				o_ctx.append(ctx[0]+ 1000*ctx[1] + 1000000*ctx[2])		
 	f.close()
+	print 'o_ctx is:\n', o_ctx
 	return o_ctx;
         
 def neighbor_ctx(df, ndf, Queried_ID):
@@ -65,7 +66,8 @@ def neighbor_ctx(df, ndf, Queried_ID):
 						for GOutlier in grubbs_result:
                                 			if (IDs.values[GOutlier]==Queried_ID):
 								n_ctx.append(i+ 1000*j + 1000000*z)
-  	return n_ctx;   
+  	print 'n_ctx is:\n', n_ctx
+	return n_ctx;   
         
 def neighbors_compare(o_ctx , n_ctx, match_num):
   	# Caution: the following considers the permutation as inequality, double check if n_ctx has the same order as o_ctx or sort first
