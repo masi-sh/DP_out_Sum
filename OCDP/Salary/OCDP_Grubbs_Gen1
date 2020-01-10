@@ -1,5 +1,5 @@
 #!/bin/bash
-for ((i=0; i<50; i++))
+for ((i=0; i<10; i++))
 do
     python ~/DP_out_Sum/OCDP/Salary/OCDP_Grubbs.py "$i" &
 done
