@@ -51,7 +51,6 @@ def neighbor_ctx(df, ndf, Queried_ID):
     		for j in range (0, len(SecAtt_Sprset)):
       			for z in range(0, len(ThrAtt_Sprset)):
                 		ctx_count+=1
-                		print 'count is:', ctx_count #, ' The percentage done: %', ctx_count//(2**14) 
 				Sal_bin    = []
                 		Ctx  = ndf.loc[ndf['Job Title'].isin(FirAtt_Sprset[i]) & ndf['Employer'].isin(SecAtt_Sprset[j]) &\
 					       ndf['Calendar Year'].isin(ThrAtt_Sprset[z])]
