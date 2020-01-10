@@ -91,8 +91,9 @@ for neighbor in range (0, NumofNeighbors):
 	print 'ndf.shape is: ', ndf.shape
 	for DropRec in range (0, DropThr):
 		neighbor_rnd = np.random.randint(len(ndf)-1)
-		#print 'neighbor_rnd is:', neighbor_rnd, 'for DropRec', DropRec
+		print 'neighbor_rnd is:', neighbor_rnd, 'for DropRec', DropRec
   		ndf.drop(neighbor_rnd)
+		print 'In loop ndf shpe is: ', ndf.shape
 	print 'The database size for the ', neighbor ,'th neighboring db has changed from ', df.shape , 'to: ', ndf.shape
   	n_ctx = neighbor_ctx(df, ndf, Queried_ID)
   	match_num = neighbors_compare(o_ctx , n_ctx, match_num)  
