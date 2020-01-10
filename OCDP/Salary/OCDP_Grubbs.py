@@ -87,6 +87,7 @@ match_num = 0
 for neighbor in range (0, NumofNeighbors):
   	ndf = pd.DataFrame()
 	ndf = df
+	pring 'ndf.shape is: ', ndf.shape
 	for DropRec in range (0, DropThr):
 		neighbor_rnd = np.random.randint(len(ndf)-1)
 		#print 'neighbor_rnd is:', neighbor_rnd, 'for DropRec', DropRec
