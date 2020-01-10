@@ -20,10 +20,10 @@ Ref_file = '/home/sm2shafi/DP_out_Sum/HIST/HistRef.txt'
 Query_file = '/home/sm2shafi/DP_out_Sum/HIST/THQueries.csv'
 Queries = pd.read_csv(Query_file)
 # Check if the next line works
-Queried_ID = int(Queries.iloc[query_num,0])
+Queried_ID = int(Queries.iloc[query_num,1])
 OutFile = 'OCDPMatch_H.txt'
 NumofNeighbors = 50
-DropThr = 1000
+DropThr = 50
 def org_ctx(Ref_file, Queried_ID):
 	with open(Ref_file,'rt') as f:
 		o_ctx = []
