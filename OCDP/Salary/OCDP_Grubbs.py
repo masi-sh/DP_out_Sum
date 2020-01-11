@@ -25,48 +25,55 @@ Queries = pd.read_csv(Query_file)
 Queried_ID = int(Queries.iloc[query_num,1])
 OutFile = 'OCDPMatch_G.txt'
 NumofNeighbors = 50
-DropThr = 50
+DropThr = 1
 
 def org_ctx(Ref_file, Queried_ID):
-	with open(Ref_file,'rt') as f:
-		o_ctx = []
-    		for num, line in enumerate(f, 1):
-      			ctx = line[1:-2].split(',')
-			# Double check, chnaged for outliers in range(len(ctx)) to for outliers in range(4, len(ctx))
-      			for outliers in range(4, len(ctx)):
-				if int(ctx[outliers])==Queried_ID:
-          				# Double check if this holds: [ctx[0],ctx[1],ctx[2]] = [i, j, z]
-          				o_ctx.append(ctx[0]+ 1000*ctx[1] + 1000000*ctx[2])		
-	f.close()
-	print 'o_ctx for QueriedID', Queried_ID, 'is:\n', o_ctx
-	return o_ctx;
-        
+        with open(Ref_file,'rt') as f:
+                o_ctx = []
+                for num, line in enumerate(f, 1):
+                        ctx = line[1:-2].split(',')
+                        # Double check, chnaged for outliers in range(len(ctx)) to for outliers in range(4, len(ctx))
+                        for outliers in range(4, len(ctx)):
+                                if int(ctx[outliers])==Queried_ID:
+                                        # Double check if this holds: [ctx[0],ctx[1],ctx[2]] = [i, j, z]
+                                        #o_ctx.append(ctx[0]+ 1000*ctx[1] + 1000000*ctx[2])
+                                        o_ctx.append([int(ctx[0]), int(ctx[1]), int(ctx[2])])
+        f.close()
+        #o_ctx = list(dict.fromkeys(o_ctx)) 
+        o_ctx = sorted(o_ctx)
+        for duplic in range(int(len(o_ctx)/2)):
+             del(o_ctx[duplic])
+        print 'size of o_ctx is:', len(o_ctx)
+        return o_ctx;
+
 def neighbor_ctx(df, ndf, Queried_ID):
-	FirAtt_lst = df['Job Title'].unique()
-  	SecAtt_lst = df['Employer'].unique()
-  	ThrAtt_lst = df['Calendar Year'].unique()
-  	# Supersets for each attribute
-  	FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[0:], r)), range(1, len(FirAtt_lst[0:])+1)), [])
-  	SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1, len(SecAtt_lst[0:])+1)), [])
-  	ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])
-  	ctx_count = 0
-  	n_ctx = []
-  	for i in range (0, len(FirAtt_Sprset)):
-    		for j in range (0, len(SecAtt_Sprset)):
-      			for z in range(0, len(ThrAtt_Sprset)):
-                		ctx_count+=1
-                		#print 'count is:', ctx_count #, ' The percentage done: %', ctx_count//(2**14) 
-                		Ctx  = ndf.loc[ndf['Job Title'].isin(FirAtt_Sprset[i]) & ndf['Employer'].isin(SecAtt_Sprset[j]) &\
-					       ndf['Calendar Year'].isin(ThrAtt_Sprset[z])]
-				if (Ctx.shape[0] > 20):
-					Salary = Ctx['Salary Paid']
-        	        		IDs    = Ctx['Unnamed: 0.1']
-                			grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
-                			if grubbs_result:
-						for GOutlier in grubbs_result:
-                                			if (IDs.values[GOutlier]==Queried_ID):
-								n_ctx.append(i+ 1000*j + 1000000*z)
-  	print 'n_ctx for QueriedID', Queried_ID, 'is:\n', n_ctx
+        FirAtt_lst = df['Job Title'].unique()
+        SecAtt_lst = df['Employer'].unique()
+        ThrAtt_lst = df['Calendar Year'].unique()
+        # Supersets for each attribute
+        FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[0:], r)), range(1, len(FirAtt_lst[0:])+1)), [])
+        SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1, len(SecAtt_lst[0:])+1)), [])
+        ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])
+        ctx_count = 0
+        n_ctx = []
+        for i in range (0, len(FirAtt_Sprset)):
+                for j in range (0, len(SecAtt_Sprset)):
+                        for z in range(0, len(ThrAtt_Sprset)):
+                                ctx_count+=1
+                                #print 'count is:', ctx_count #, ' The percentage done: %', ctx_count//(2**14) 
+                                Ctx  = ndf.loc[ndf['Job Title'].isin(FirAtt_Sprset[i]) & ndf['Employer'].isin(SecAtt_Sprset[j]) &\
+                                               ndf['Calendar Year'].isin(ThrAtt_Sprset[z])]
+                                if (Ctx.shape[0] > 20):
+                                        Salary = Ctx['Salary Paid']
+                                        IDs    = Ctx['Unnamed: 0.1']
+                                        grubbs_result = grubbs.max_test_indices(Salary, alpha=0.05)
+                                        if grubbs_result:
+                                                for GOutlier in grubbs_result:
+                                                        if (IDs.values[GOutlier]==Queried_ID):
+                                                                #n_ctx.append(int(i)+ 1000*int(j) + 1000000*int(z))
+                                                                n_ctx.append([i,j,z])
+        n_ctx = sorted(n_ctx)
+        print 'size of o_ctx is:', len(o_ctx)
 	return n_ctx;   
         
 def neighbors_compare(o_ctx , n_ctx, match_num):
