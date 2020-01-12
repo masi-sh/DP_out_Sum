@@ -21,7 +21,7 @@ Ref_file = '/home/sm2shafi/DP_out_Sum/Murder/Grubbs/MGrubbsRef_28.txt'
 Query_file = '/home/sm2shafi/DP_out_Sum/Murder/Grubbs/MGQueries_28.csv'
 Queries = pd.read_csv(Query_file)
 # Check if the next line works
-Queried_ID = int(Queries.iloc[query_num,0])
+Queried_ID = int(Queries.iloc[query_num,1])
 OutFile = 'M_OCDPMatch_G.txt'
 NumofNeighbors = 50
 DropThr = 1
