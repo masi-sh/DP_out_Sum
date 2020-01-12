@@ -1,0 +1,5 @@
+#!/bin/bash
+for ((i=0; i<64; i++))
+do
+    python ~/DP_out_Sum/Murder/LOF/LRefGen.py "$i" &
+done
