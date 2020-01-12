@@ -70,7 +70,7 @@ def neighbor_ctx(df, ndf, Queried_ID):
                   				if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder] == Queried_ID)): 
                     					n_ctx.append([i,j,z])                                                     
   	n_ctx = sorted(n_ctx)
-        print 'size of o_ctx is:', len(o_ctx)
+        print 'size of n_ctx is:', len(n_ctx)
 	return n_ctx;   
         
 def neighbors_compare(o_ctx , n_ctx, match_num):
