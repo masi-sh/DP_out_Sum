@@ -43,30 +43,20 @@ i = int(sys.argv[1])
 for j in range (0, len(SecAtt_Sprset)):
 #for j in range(int(sys.argv[1]), (int(sys.argv[1])+1)):
         for z in range(0, len(ThrAtt_Sprset)):
-        
-          
-        
-        
-                ctx_count += 1
-                Sal_bin    = []
-                print 'count is:', ctx_count #, ' The percentage done: %', ctx_count//(2**25) 
                 Ctx  = df2.loc[df2['Weapon'].isin(FirAtt_Sprset[i]) & df2['State'].isin(SecAtt_Sprset[j]) &\
                                df2['AgencyType'].isin(ThrAtt_Sprset[z])]
                 outliers.append([i, j, z, Ctx.shape[0]])
                 if (Ctx.shape[0]>20):
-                        Salary = Ctx['VictimAge']
-                        IDs    = Ctx['Record ID']
-                        histi  = np.histogram(Salary.values, bins=int(np.sqrt(len(Salary.values))), density=False)
-                        bin_width = histi[1][1] - histi[1][0]
-                        for Sal_freq in range(len(histi[0])):
-                                if histi[0][Sal_freq] <= 0.0025*len(Ctx['VictimAge']):
-                                        Sal_bin.append(histi[1][Sal_freq])
-                        for Sal_idx in range(len(Salary.values)):
-                                if (len(filter(lambda x : x <= Salary.values[Sal_idx] < x+bin_width , Sal_bin)) > 0):
-                                        outliers[len(outliers)-1].append(IDs.values[Sal_idx])
-                                        
-                                        
-                                        
+                        for row in range(Ctx.shape[0]):
+				#VictimAge is column 4 and the ID is on column 0
+				Sub_Sal_list.append(Ctx.iloc[row,4])
+				Sub_ID_list.append(Ctx.iloc[row,0])		
+			Sub_Sal_arr= np.array(Sub_Sal_list)
+			clf = LocalOutlierFactor(n_neighbors=20)
+			Sub_Sal_outliers = clf.fit_predict(Sub_Sal_arr.reshape(-1,1))
+			for outlier_finder in range(0, len(Sub_ID_list)):
+				if ((Sub_Sal_outliers[outlier_finder]==-1)):
+                                        outliers[len(outliers)-1].append(Sub_ID_list[outlier_finder])                    
 writefinal(OutFile, outliers)
 t1 = time.time()
-print '\n\nThe required time for running the program is:',  t1-t0
+print '\n\nThe required time for generating LOFRef.txt is:',  t1-t0
