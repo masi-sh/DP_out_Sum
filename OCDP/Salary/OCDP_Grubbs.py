@@ -41,6 +41,7 @@ def org_ctx(Ref_file, Queried_ID):
         f.close()
         #o_ctx = list(dict.fromkeys(o_ctx)) 
         o_ctx = sorted(o_ctx)
+	# Next line added because of duplicates in the GrubbsRef.txt file, once removed, the next two should be removed too
         for duplic in range(int(len(o_ctx)/2)):
              del(o_ctx[duplic])
         print 'size of o_ctx is:', len(o_ctx)
