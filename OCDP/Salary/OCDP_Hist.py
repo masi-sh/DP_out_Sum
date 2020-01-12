@@ -20,10 +20,10 @@ Ref_file = '/home/sm2shafi/DP_out_Sum/HIST/HistRef.txt'
 Query_file = '/home/sm2shafi/DP_out_Sum/HIST/THQueries.csv'
 Queries = pd.read_csv(Query_file)
 # Check if the next line works
-Queried_ID = int(Queries.iloc[query_num,0])
+Queried_ID = int(Queries.iloc[query_num,1])
 OutFile = 'OCDPMatch_H.txt'
 NumofNeighbors = 50
-DropThr = 1000
+DropThr = 1
 def org_ctx(Ref_file, Queried_ID):
 	with open(Ref_file,'rt') as f:
 		o_ctx = []
@@ -33,8 +33,11 @@ def org_ctx(Ref_file, Queried_ID):
       			for outliers in range(4, len(ctx)):
 				if int(ctx[outliers])==Queried_ID:
           				# Double check if this holds: [ctx[0],ctx[1],ctx[2]] = [i, j, z]
-          				o_ctx.append(ctx[0]+ 1000*ctx[1] + 1000000*ctx[2])		
+          				#o_ctx.append(ctx[0]+ 1000*ctx[1] + 1000000*ctx[2])		
+					o_ctx.append([int(ctx[0]), int(ctx[1]), int(ctx[2])])
 	f.close()
+	o_ctx = sorted(o_ctx)
+	print 'size of o_ctx is:', len(o_ctx)
 	return o_ctx;
         
 def neighbor_ctx(df, ndf, Queried_ID):
@@ -64,8 +67,11 @@ def neighbor_ctx(df, ndf, Queried_ID):
                                         		Sal_bin.append(histi[1][Sal_freq])
                         		for Sal_idx in range(len(Salary.values)):
                                 		if ((len(filter(lambda x : x <= Salary.values[Sal_idx] < x+bin_width , Sal_bin)) > 0) and (IDs.values[Sal_idx]==Queried_ID)):
-							n_ctx.append(i+ 1000*j + 1000000*z)
-  	return n_ctx;   
+							#n_ctx.append(i+ 1000*j + 1000000*z)
+  							n_ctx.append([i,j,z])
+	n_ctx = sorted(n_ctx)
+        print 'size of n_ctx is:', len(n_ctx)
+	return n_ctx;   
         
 def neighbors_compare(o_ctx , n_ctx, match_num):
   	# Caution: the following considers the permutation as inequality, double check if n_ctx has the same order as o_ctx or sort first

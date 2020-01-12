@@ -21,9 +21,10 @@ Ref_file = '/home/sm2shafi/DP_out_Sum/Murder/Grubbs/MGrubbsRef_28.txt'
 Query_file = '/home/sm2shafi/DP_out_Sum/Murder/Grubbs/MGQueries_28.csv'
 Queries = pd.read_csv(Query_file)
 # Check if the next line works
-Queried_ID = int(Queries.iloc[query_num,0])
+Queried_ID = int(Queries.iloc[query_num,1])
 OutFile = 'M_OCDPMatch_G.txt'
 NumofNeighbors = 50
+DropThr = 1
 
 def org_ctx(Ref_file, Queried_ID):
 	with open(Ref_file,'rt') as f:
@@ -34,8 +35,9 @@ def org_ctx(Ref_file, Queried_ID):
       			for outliers in range(4, len(ctx)):
 				if int(ctx[outliers])==Queried_ID:
           				# Double check if this holds: [ctx[0],ctx[1],ctx[2]] = [i, j, z]
-          				o_ctx.append(ctx[0]+ 1000*ctx[1] + 1000000*ctx[2])		
+          				o_ctx.append([int(ctx[0]), int(ctx[1]), int(ctx[2])])	
 	f.close()
+	o_ctx = sorted(o_ctx)
 	return o_ctx;
         
 def neighbor_ctx(df, ndf, Queried_ID):
@@ -62,8 +64,10 @@ def neighbor_ctx(df, ndf, Queried_ID):
                 			if grubbs_result:
 						for GOutlier in grubbs_result:
                                 			if (IDs.values[GOutlier]==Queried_ID):
-								n_ctx.append(i+ 1000*j + 1000000*z)
-  	return n_ctx;   
+								n_ctx.append([i,j,z])
+  	n_ctx = sorted(n_ctx)
+        print 'size of n_ctx is:', len(n_ctx)
+	return n_ctx;   
         
 def neighbors_compare(o_ctx , n_ctx, match_num):
   	# Caution: the following considers the permutation as inequality, double check if n_ctx has the same order as o_ctx or sort first
@@ -84,11 +88,12 @@ o_ctx = org_ctx(Ref_file, Queried_ID)
 match_num = 0
 for neighbor in range (0, NumofNeighbors):
   	ndf = pd.DataFrame()
-  	neighbor_rnd = np.random.randint(len(df)-1)
-  	ndf = df.drop(neighbor_rnd)
+	ndf = df
+	randomlist = random.sample(range(0, len(ndf)), DropThr)
+	ndf = ndf.drop(randomlist)
   	n_ctx = neighbor_ctx(df, ndf, Queried_ID)
   	match_num = neighbors_compare(o_ctx , n_ctx, match_num)  
-	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor	
+	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor
 writefinal(OutFile, match_num)
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) +' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
