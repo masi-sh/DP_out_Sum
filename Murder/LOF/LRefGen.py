@@ -43,8 +43,10 @@ i = int(sys.argv[1])
 for j in range (0, len(SecAtt_Sprset)):
 #for j in range(int(sys.argv[1]), (int(sys.argv[1])+1)):
         for z in range(0, len(ThrAtt_Sprset)):
+		Sub_Sal_list = []
+		Sub_ID_list  = []
                 Ctx  = df2.loc[df2['Weapon'].isin(FirAtt_Sprset[i]) & df2['State'].isin(SecAtt_Sprset[j]) &\
-                               df2['AgencyType'].isin(ThrAtt_Sprset[z])]
+			       df2['AgencyType'].isin(ThrAtt_Sprset[z])]
                 outliers.append([i, j, z, Ctx.shape[0]])
                 if (Ctx.shape[0]>20):
                         for row in range(Ctx.shape[0]):
