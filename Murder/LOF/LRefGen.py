@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from itertools import combinations
 from collections import Counter
+from sklearn.neighbors import LocalOutlierFactor
 import time
 import fcntl
 import random
@@ -41,7 +42,6 @@ outliers  = []
 #for i in range (250, len(FirAtt_Sprset)):
 i = int(sys.argv[1])
 for j in range (0, len(SecAtt_Sprset)):
-#for j in range(int(sys.argv[1]), (int(sys.argv[1])+1)):
         for z in range(0, len(ThrAtt_Sprset)):
 		Sub_Sal_list = []
 		Sub_ID_list  = []
