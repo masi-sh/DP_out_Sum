@@ -16,7 +16,7 @@ Queries = pd.read_csv(Query_file)
 df2 = pd.read_csv("~/DP_out_Sum/dataset/MurderData_28.csv")
 Ref_file = '~/DP_out_Sum/Murder/LOF/MLOFRef_28.txt'
 
-def maxctx(Ref_file, Queried_ID):
+def maxctx(Ref_file, ID):
 	max  = 0
 	size = 0
 	outlier_ctr = 0
