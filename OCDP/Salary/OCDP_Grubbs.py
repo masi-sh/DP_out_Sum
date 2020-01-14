@@ -51,10 +51,6 @@ def org_ctx(Ref_file, Queried_ID):
 							   df['Employer'].isin(SecAtt_Sprset[int(ctx[1])]) & df['Calendar Year'].isin(ThrAtt_Sprset[int(ctx[2])])]
 					o_ctx_shape.append(o_ctx_db.shape[0])				
         f.close()
-        #o_ctx = sorted(o_ctx)
-	# Next line added because of duplicates in the GrubbsRef.txt file, once removed, the next two should be removed too
-        for duplic in range(int(len(o_ctx)/2)):
-             del(o_ctx[duplic])
         print 'size of o_ctx is:', len(o_ctx)
         return o_ctx, o_ctx_shape;
 
