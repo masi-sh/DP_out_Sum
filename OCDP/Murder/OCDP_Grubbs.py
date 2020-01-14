@@ -23,8 +23,8 @@ Queries = pd.read_csv(Query_file)
 # Check if the next line works
 Queried_ID = int(Queries.iloc[query_num,1])
 OutFile  = 'M_OCDPMatch_G.txt'
-MatchFile = 'Sal_Match_G.txt'
-NMatchFile = 'Sal_NMatch_G.txt'
+MatchFile = 'Mur_Match_G.txt'
+NMatchFile = 'Mur_NMatch_G.txt'
 NumofNeighbors = 50
 DropThr = 1
 
