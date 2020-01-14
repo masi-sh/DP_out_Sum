@@ -98,7 +98,7 @@ def neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape, Querie
 		writefinal(MatchFile, n_ctx[:])
 		writefinal(MatchFile, n_ctx_shape[:])
 	else:	
-		writefinal(NMatchFile,'#' + 'Queried_ID is: ' + str(Queried_ID) + ', removed records are: ' + str(randomlist) +'\n')
+		writefinal(NMatchFile,'#' + 'Queried_ID is: ' + str(Queried_ID) + ', removed records are: ' + str(randomlist))
 		writefinal(NMatchFile, o_ctx[:])
 		writefinal(NMatchFile, o_ctx_shape[:])
 		writefinal(NMatchFile, n_ctx[:])
@@ -122,7 +122,7 @@ for neighbor in range (0, NumofNeighbors):
 	randomlist = random.sample(range(0, len(ndf)), DropThr)
 	ndf = ndf.drop(randomlist)
   	n_ctx, n_ctx_shape = neighbor_ctx(df, ndf, Queried_ID)
-  	match_num = neighbors_compare(o_ctx , n_ctx, match_num,, o_ctx_shape, n_ctx_shape, Queried_ID, randomlist)  
+  	match_num = neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape, Queried_ID, randomlist)  
 	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor	
 writefinal(OutFile, match_num)
 t1 = time.time()
