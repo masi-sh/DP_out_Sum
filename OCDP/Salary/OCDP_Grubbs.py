@@ -92,12 +92,12 @@ def neighbor_ctx(df, ndf, Queried_ID):
 def neighbors_compare(o_ctx , n_ctx, match_num):
   	if (np.array_equal(sorted(o_ctx),sorted(n_ctx))):
     		match_num+=1
-		writefinal(MatchFile, O_ctx[:])
+		writefinal(MatchFile, o_ctx[:])
 		writefinal(MatchFile, o_ctx_shape[:])
 		writefinal(MatchFile, n_ctx[:])
 		writefinal(MatchFile, n_ctx_shape[:])
 	else:	
-		writefinal(NMatchFile, O_ctx[:])
+		writefinal(NMatchFile, o_ctx[:])
 		writefinal(NMatchFile, o_ctx_shape[:])
 		writefinal(NMatchFile, n_ctx[:])
 		writefinal(NMatchFile, n_ctx_shape[:])
