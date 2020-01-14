@@ -50,7 +50,7 @@ def org_ctx(df, Ref_file, Queried_ID):
 	f.close()
 	#o_ctx = sorted(o_ctx)
 	print 'size of o_ctx is:', len(o_ctx)
-	return o_ctx;
+	return o_ctx, o_ctx_shape;
         
 def neighbor_ctx(df, ndf, Queried_ID):
 	FirAtt_lst = df['Weapon'].unique()
@@ -80,9 +80,9 @@ def neighbor_ctx(df, ndf, Queried_ID):
 								n_ctx_shape.append(Ctx.shape[0])
   	#n_ctx = sorted(n_ctx)
         print 'size of n_ctx is:', len(n_ctx)
-	return n_ctx;   
+	return n_ctx, n_ctx_shape;   
         
-def neighbors_compare(o_ctx , n_ctx, match_num):
+def neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape):
   	if (np.array_equal(sorted(o_ctx),sorted(n_ctx))):
     		match_num+=1
 		writefinal(MatchFile, o_ctx[:])
@@ -105,15 +105,15 @@ def writefinal(OutFile, match_num):
         return;
 
 t0 = time.time()  
-o_ctx = org_ctx(df, Ref_file, Queried_ID)
+o_ctx, o_ctx_shape = org_ctx(df, Ref_file, Queried_ID)
 match_num = 0
 for neighbor in range (0, NumofNeighbors):
   	ndf = pd.DataFrame()
 	ndf = df
 	randomlist = random.sample(range(0, len(ndf)), DropThr)
 	ndf = ndf.drop(randomlist)
-  	n_ctx = neighbor_ctx(df, ndf, Queried_ID)
-  	match_num = neighbors_compare(o_ctx , n_ctx, match_num)  
+  	n_ctx, n_ctx_shape = neighbor_ctx(df, ndf, Queried_ID)
+  	match_num = neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape)  
 	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor
 writefinal(OutFile, match_num)
 t1 = time.time()
