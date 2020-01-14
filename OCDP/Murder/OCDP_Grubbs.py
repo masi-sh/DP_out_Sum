@@ -91,6 +91,7 @@ def neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape):
 		writefinal(MatchFile, n_ctx[:])
 		writefinal(MatchFile, n_ctx_shape[:])
 	else:	
+		writefinal(NMatchFile,'#' + 'Queried_ID is: ' + Queried_ID + ', removed records are: ' + randomlist +'\n')
 		writefinal(NMatchFile, o_ctx[:])
 		writefinal(NMatchFile, o_ctx_shape[:])
 		writefinal(NMatchFile, n_ctx[:])
