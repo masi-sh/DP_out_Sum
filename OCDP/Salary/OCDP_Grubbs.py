@@ -31,9 +31,9 @@ NumofNeighbors = 50
 DropThr = 1
 
 def org_ctx(Ref_file, Queried_ID):
-	FirAtt_lst = df['Weapon'].unique()
-  	SecAtt_lst = df['State'].unique()
-  	ThrAtt_lst = df['AgencyType'].unique()
+        FirAtt_lst = df['Job Title'].unique()
+        SecAtt_lst = df['Employer'].unique()
+        ThrAtt_lst = df['Calendar Year'].unique()
   	# Supersets for each attribute
   	FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[0:], r)), range(1, len(FirAtt_lst[0:])+1)), [])
   	SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1, len(SecAtt_lst[0:])+1)), [])
