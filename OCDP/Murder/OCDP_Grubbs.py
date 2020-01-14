@@ -45,7 +45,7 @@ def org_ctx(df, Ref_file, Queried_ID):
 				if int(ctx[outliers])==Queried_ID:
           				o_ctx.append([int(ctx[0]), int(ctx[1]), int(ctx[2])])
 					o_ctx_db  = ndf.loc[ndf['Weapon'].isin(FirAtt_Sprset[int(ctx[0])] &\
-									       ndf['State'].isin(SecAtt_Sprset[int(ctx[1]]) & ndf['AgencyType'].isin(ThrAtt_Sprset[int(ctx[2]])]
+									       ndf['State'].isin(SecAtt_Sprset[int(ctx[1])] & ndf['AgencyType'].isin(ThrAtt_Sprset[int(ctx[2])]]
 					o_ctx_shape.append(o_ctx_db.shape[0])				
 	f.close()
 	#o_ctx = sorted(o_ctx)
