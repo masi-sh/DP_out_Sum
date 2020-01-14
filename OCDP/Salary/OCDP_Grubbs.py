@@ -104,10 +104,10 @@ def neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape):
 		writefinal(NMatchFile, n_ctx_shape[:])
   	return match_num;   
 
-def writefinal(OutFile, match_num):
-        ff = open(OutFile,'a+')
+def writefinal(OutputFile, DataToWrite):
+        ff = open(OutputFile,'a+')
         fcntl.flock(ff, fcntl.LOCK_EX)
-        ff.write(str(match_num)+'\n')
+        ff.write(str(DataToWrite)+'\n')
         fcntl.flock(ff, fcntl.LOCK_UN)
         ff.close()
         return;
