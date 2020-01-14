@@ -24,23 +24,33 @@ Queries = pd.read_csv(Query_file)
 #Better to use this instead of the following line: Queried_ID = int(Queries.iloc[Query_num]['Outlier'])
 Queried_ID = int(Queries.iloc[query_num,1])
 OutFile = 'OCDPMatch_G.txt'
+MatchFile = 'Sal_Match_G.txt'
+NMatchFile = 'Sal_NMatch_G.txt'
 NumofNeighbors = 50
 DropThr = 1
 
 def org_ctx(Ref_file, Queried_ID):
+	FirAtt_lst = df['Weapon'].unique()
+  	SecAtt_lst = df['State'].unique()
+  	ThrAtt_lst = df['AgencyType'].unique()
+  	# Supersets for each attribute
+  	FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[0:], r)), range(1, len(FirAtt_lst[0:])+1)), [])
+  	SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1, len(SecAtt_lst[0:])+1)), [])
+  	ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])
         with open(Ref_file,'rt') as f:
                 o_ctx = []
+		o_ctx_shape = []
                 for num, line in enumerate(f, 1):
                         ctx = line[1:-2].split(',')
                         # Double check, chnaged for outliers in range(len(ctx)) to for outliers in range(4, len(ctx))
                         for outliers in range(4, len(ctx)):
                                 if int(ctx[outliers])==Queried_ID:
-                                        # Double check if this holds: [ctx[0],ctx[1],ctx[2]] = [i, j, z]
-                                        #o_ctx.append(ctx[0]+ 1000*ctx[1] + 1000000*ctx[2])
                                         o_ctx.append([int(ctx[0]), int(ctx[1]), int(ctx[2])])
+					o_ctx_db  = ndf.loc[ndf['Weapon'].isin(FirAtt_Sprset[int(ctx[0]]) &\
+											     ndf['State'].isin(SecAtt_Sprset[int(ctx[1]]) & ndf['AgencyType'].isin(ThrAtt_Sprset[int(ctx[2]])]
+					o_ctx_shape.append(o_ctx_db.shape[0])				
         f.close()
-        #o_ctx = list(dict.fromkeys(o_ctx)) 
-        o_ctx = sorted(o_ctx)
+        #o_ctx = sorted(o_ctx)
 	# Next line added because of duplicates in the GrubbsRef.txt file, once removed, the next two should be removed too
         for duplic in range(int(len(o_ctx)/2)):
              del(o_ctx[duplic])
@@ -57,6 +67,7 @@ def neighbor_ctx(df, ndf, Queried_ID):
         ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])
         ctx_count = 0
         n_ctx = []
+	n_ctx_shape =[]
         for i in range (0, len(FirAtt_Sprset)):
                 for j in range (0, len(SecAtt_Sprset)):
                         for z in range(0, len(ThrAtt_Sprset)):
@@ -73,14 +84,23 @@ def neighbor_ctx(df, ndf, Queried_ID):
                                                         if (IDs.values[GOutlier]==Queried_ID):
                                                                 #n_ctx.append(int(i)+ 1000*int(j) + 1000000*int(z))
                                                                 n_ctx.append([i,j,z])
-        n_ctx = sorted(n_ctx)
+								n_ctx_shape.append(Ctx.shape[0])
+        #n_ctx = sorted(n_ctx)
         print 'size of n_ctx is:', len(n_ctx)
 	return n_ctx;   
         
 def neighbors_compare(o_ctx , n_ctx, match_num):
-  	# Caution: the following considers the permutation as inequality, double check if n_ctx has the same order as o_ctx or sort first
-  	if (np.array_equal(o_ctx,n_ctx)):
+  	if (np.array_equal(sorted(o_ctx),sorted(n_ctx))):
     		match_num+=1
+		writefinal(MatchFile, O_ctx[:])
+		writefinal(MatchFile, o_ctx_shape[:])
+		writefinal(MatchFile, n_ctx[:])
+		writefinal(MatchFile, n_ctx_shape[:])
+	else:	
+		writefinal(NMatchFile, O_ctx[:])
+		writefinal(NMatchFile, o_ctx_shape[:])
+		writefinal(NMatchFile, n_ctx[:])
+		writefinal(NMatchFile, n_ctx_shape[:])
   	return match_num;   
 
 def writefinal(OutFile, match_num):
