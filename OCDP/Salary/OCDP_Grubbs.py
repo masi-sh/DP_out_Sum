@@ -47,8 +47,8 @@ def org_ctx(Ref_file, Queried_ID):
                         for outliers in range(4, len(ctx)):
                                 if int(ctx[outliers])==Queried_ID:
                                         o_ctx.append([int(ctx[0]), int(ctx[1]), int(ctx[2])])
-					o_ctx_db  = df.loc[df['Weapon'].isin(FirAtt_Sprset[int(ctx[0])]) &\
-							   df['State'].isin(SecAtt_Sprset[int(ctx[1])]) & df['AgencyType'].isin(ThrAtt_Sprset[int(ctx[2])])]
+					o_ctx_db  = df.loc[df['Job Title'].isin(FirAtt_Sprset[int(ctx[0])]) &\
+							   df['Employer'].isin(SecAtt_Sprset[int(ctx[1])]) & df['Calendar Year'].isin(ThrAtt_Sprset[int(ctx[2])])]
 					o_ctx_shape.append(o_ctx_db.shape[0])				
         f.close()
         #o_ctx = sorted(o_ctx)
