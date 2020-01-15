@@ -13,6 +13,7 @@ import random
 import csv
 import math
 
+random.seed(int(sys.argv[1])) 
 query_num = int(sys.argv[1])
 df = pd.read_csv("~/DP_out_Sum/Grubbs/ToyData.csv")
 Ref_file = '/home/sm2shafi/DP_out_Sum/LOF/LOFRef.txt'
@@ -21,25 +22,35 @@ Queries = pd.read_csv(Query_file)
 # Check if the next line works
 Queried_ID = int(Queries.iloc[query_num,1])
 OutFile = 'OCDPMatch.txt'
-NumofNeighbors = 50
+MatchFile = 'Sal_Match_L.txt'
+NMatchFile = 'Sal_NMatch_L.txt'
+NumofNeighbors = 5
 DropThr = 1
 
 def org_ctx(Ref_file, Queried_ID):
+	FirAtt_lst = df['Job Title'].unique()
+        SecAtt_lst = df['Employer'].unique()
+        ThrAtt_lst = df['Calendar Year'].unique()
+  	# Supersets for each attribute
+  	FirAtt_Sprset = sum(map(lambda r: list(combinations(FirAtt_lst[0:], r)), range(1, len(FirAtt_lst[0:])+1)), [])
+  	SecAtt_Sprset = sum(map(lambda r: list(combinations(SecAtt_lst[0:], r)), range(1, len(SecAtt_lst[0:])+1)), [])
+  	ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])
 	with open(Ref_file,'rt') as f:
 		o_ctx = []
+		o_ctx_shape = []
     		for num, line in enumerate(f, 1):
       			ctx = line[1:-2].split(',')
-			# Double check, chnaged for outliers in range(len(ctx)) to for outliers in range(4, len(ctx))
       			for outliers in range(4, len(ctx)):
 				if int(ctx[outliers])==Queried_ID:
-          				# Double check if this holds: [ctx[0],ctx[1],ctx[2]] = [i, j, z]
-          				#o_ctx.append(ctx[0]+ 1000*ctx[1] + 1000000*ctx[2])
                                         o_ctx.append([int(ctx[0]), int(ctx[1]), int(ctx[2])])
+					o_ctx_db  = df.loc[df['Job Title'].isin(FirAtt_Sprset[int(ctx[0])]) &\
+							   df['Employer'].isin(SecAtt_Sprset[int(ctx[1])]) & df['Calendar Year'].isin(ThrAtt_Sprset[int(ctx[2])])]
+					o_ctx_shape.append(o_ctx_db.shape[0])	
 
 	f.close()
-        o_ctx = sorted(o_ctx)
+        #o_ctx = sorted(o_ctx)
 	print 'size of o_ctx is:', len(o_ctx)
-	return o_ctx;
+	return o_ctx, o_ctx_shape;
         
 def neighbor_ctx(df, ndf, Queried_ID):
 	FirAtt_lst = df['Job Title'].unique()
@@ -51,6 +62,7 @@ def neighbor_ctx(df, ndf, Queried_ID):
   	ThrAtt_Sprset = sum(map(lambda r: list(combinations(ThrAtt_lst[0:], r)), range(1, len(ThrAtt_lst[0:])+1)), [])
   	ctx_count = 0
   	n_ctx = []
+	n_ctx_shape =[]
   	for i in range (0, len(FirAtt_Sprset)):
     		for j in range (0, len(SecAtt_Sprset)):
       			for z in range(0, len(ThrAtt_Sprset)):
@@ -68,35 +80,45 @@ def neighbor_ctx(df, ndf, Queried_ID):
                 			Sal_outliers = clf.fit_predict(Sal_arr.reshape(-1,1))
                 			for outlier_finder in range(0, len(ID_list)):
                   				if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder] == Queried_ID)): 
-                    					n_ctx.append([i,j,z])                                                     
-  	n_ctx = sorted(n_ctx)
+                    					n_ctx.append([i,j,z])     
+							n_ctx_shape.append(Ctx.shape[0])
+  	#n_ctx = sorted(n_ctx)
         print 'size of n_ctx is:', len(n_ctx)
-	return n_ctx;   
+	return n_ctx, n_ctx_shape;   
         
-def neighbors_compare(o_ctx , n_ctx, match_num):
-  	# Caution: the following considers the permutation as inequality, double check if n_ctx has the same order as o_ctx or sort first
-  	if (np.array_equal(o_ctx,n_ctx)):
+def neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape, Queried_ID, randomlist):
+  	if (np.array_equal(sorted(o_ctx),sorted(n_ctx))):
     		match_num+=1
+		writefinal(MatchFile, o_ctx[:])
+		writefinal(MatchFile, o_ctx_shape[:])
+		writefinal(MatchFile, n_ctx[:])
+		writefinal(MatchFile, n_ctx_shape[:])
+	else:	
+		writefinal(NMatchFile,'#' + 'Queried_ID is: ' + str(Queried_ID) + ', removed records are: ' + str(randomlist))
+		writefinal(NMatchFile, o_ctx[:])
+		writefinal(NMatchFile, o_ctx_shape[:])
+		writefinal(NMatchFile, n_ctx[:])
+		writefinal(NMatchFile, n_ctx_shape[:])
   	return match_num;   
 
-def writefinal(OutFile, match_num):
-        ff = open(OutFile,'a+')
+def writefinal(OutputFile, DataToWrite):
+        ff = open(OutputFile,'a+')
         fcntl.flock(ff, fcntl.LOCK_EX)
-        ff.write(str(match_num)+'\n')
+        ff.write(str(DataToWrite)+'\n')
         fcntl.flock(ff, fcntl.LOCK_UN)
         ff.close()
         return;
 
 t0 = time.time()  
-o_ctx = org_ctx(Ref_file, Queried_ID)
+o_ctx , o_ctx_shape = org_ctx(Ref_file, Queried_ID)
 match_num = 0
 for neighbor in range (0, NumofNeighbors):
   	ndf = pd.DataFrame()
 	ndf = df
 	randomlist = random.sample(range(0, len(ndf)), DropThr)
 	ndf = ndf.drop(randomlist)
-  	n_ctx = neighbor_ctx(df, ndf, Queried_ID)
-  	match_num = neighbors_compare(o_ctx , n_ctx, match_num)  
+  	n_ctx, n_ctx_shape = neighbor_ctx(df, ndf, Queried_ID)
+  	match_num = neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape, Queried_ID, randomlist)   
 	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor	
 writefinal(OutFile, match_num)
 t1 = time.time()
