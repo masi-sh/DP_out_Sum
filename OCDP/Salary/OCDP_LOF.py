@@ -24,7 +24,7 @@ Queried_ID = int(Queries.iloc[query_num,1])
 OutFile = 'OCDPMatch.txt'
 MatchFile = 'Sal_Match_L.txt'
 NMatchFile = 'Sal_NMatch_L.txt'
-NumofNeighbors = 10
+NumofNeighbors = 20
 DropThr = 1
 
 def org_ctx(Ref_file, Queried_ID):
