@@ -27,7 +27,7 @@ OutFile  = 'M_OCDPMatch_G.txt'
 MatchFile = 'Mur_Match_G.txt'
 NMatchFile = 'Mur_NMatch_G.txt'
 NumofNeighbors = 50
-DropThr = 1
+DropThr = 10
 
 def org_ctx(df, Ref_file, Queried_ID):
 	FirAtt_lst = df['Weapon'].unique()
