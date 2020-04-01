@@ -101,10 +101,21 @@ def neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape):
 def writefinal(OutputFile, DataToWrite):
         ff = open(OutputFile,'a+')
         fcntl.flock(ff, fcntl.LOCK_EX)
-        ff.write(str(DataToWrite)+'\n')
+	np.savetxt(ff, np.column_stack(DataToWrite), fmt=('%7.5f'), header = \
+		   'Grubbs on Murder dataset: Num_of_COE_Match and len(COE_org), ')
         fcntl.flock(ff, fcntl.LOCK_UN)
         ff.close()
         return;
+
+def writefinal(Data_to_write, randomness, runtime, ID):	
+	ff = open(Store_file,'a+')
+	fcntl.flock(ff, fcntl.LOCK_EX)
+	np.savetxt(ff, np.column_stack(Data_to_write), fmt=('%7.5f'), header = randomness+ ' Generates outlier , ' + ID + ', \
+	GBFS alg. takes' + runtime)
+	fcntl.flock(ff, fcntl.LOCK_UN)
+	ff.close()
+	return;
+
 
 t0 = time.time()  
 o_ctx, o_ctx_shape = org_ctx(df, Ref_file, Queried_ID)
@@ -117,7 +128,8 @@ for neighbor in range (0, NumofNeighbors):
   	n_ctx, n_ctx_shape = neighbor_ctx(df, ndf, Queried_ID)
   	match_num = neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape)  
 	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor
-writefinal(OutFile, match_num)
+DataToWrite = [match_num, len(o_ctx)]
+writefinal(OutFile, DataToWrite)
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) +' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 print '\n OCDPMatch runtime,for Grubbs and ' , NumofNeighbors, ' neighbors is: \n', runtime
