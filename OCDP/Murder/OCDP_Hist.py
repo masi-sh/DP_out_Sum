@@ -76,12 +76,13 @@ def neighbors_compare(o_ctx , n_ctx, match_num):
   	# Caution: the following considers the permutation as inequality, double check if n_ctx has the same order as o_ctx or sort first
   	if (np.array_equal(o_ctx,n_ctx)):
     		match_num+=1
-  	return match_num;   
+  	return match_num;  
 
-def writefinal(OutFile, match_num):
-        ff = open(OutFile,'a+')
+def writefinal(OutputFile, DataToWrite):
+        ff = open(OutputFile,'a+')
         fcntl.flock(ff, fcntl.LOCK_EX)
-        ff.write(str(match_num)+'\n')
+	np.savetxt(ff, np.column_stack(DataToWrite), fmt=('%7.5f'), header = \
+		   'Hist on Murder dataset: Num_of_COE_Match and len(COE_org), ')
         fcntl.flock(ff, fcntl.LOCK_UN)
         ff.close()
         return;
@@ -97,6 +98,7 @@ for neighbor in range (0, NumofNeighbors):
   	n_ctx = neighbor_ctx(df, ndf, Queried_ID)
   	match_num = neighbors_compare(o_ctx , n_ctx, match_num)  
 	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor	
+DataToWrite = [match_num, len(o_ctx)]
 writefinal(OutFile, match_num)
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) +' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
