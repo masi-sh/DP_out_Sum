@@ -99,7 +99,7 @@ for neighbor in range (0, NumofNeighbors):
   	match_num = neighbors_compare(o_ctx , n_ctx, match_num)  
 	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor	
 DataToWrite = [match_num, len(o_ctx)]
-writefinal(OutFile, match_num)
+writefinal(OutFile, DataToWrite)
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) +' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 print '\n OCDPMatch runtime,for LOF and ' , NumofNeighbors, ' neighbors is: \n', runtime
