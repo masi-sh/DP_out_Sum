@@ -28,7 +28,7 @@ OutFile = 'OCDPMatch_G.txt'
 MatchFile = 'Sal_Match_G.txt'
 NMatchFile = 'Sal_NMatch_G.txt'
 NumofNeighbors = 50
-DropThr = 1
+DropThr = 10
 
 def org_ctx(Ref_file, Queried_ID):
         FirAtt_lst = df['Job Title'].unique()
@@ -101,10 +101,12 @@ def neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape, Querie
 		writefinal(NMatchFile, n_ctx_shape[:])
   	return match_num;   
 
+
 def writefinal(OutputFile, DataToWrite):
         ff = open(OutputFile,'a+')
         fcntl.flock(ff, fcntl.LOCK_EX)
-        ff.write(str(DataToWrite)+'\n')
+	np.savetxt(ff, np.column_stack(DataToWrite), fmt=('%7.5f'), header = \
+		   'Grubbs on Salary dataset: Num_of_COE_Match and len(COE_org), ')
         fcntl.flock(ff, fcntl.LOCK_UN)
         ff.close()
         return;
@@ -120,7 +122,8 @@ for neighbor in range (0, NumofNeighbors):
   	n_ctx, n_ctx_shape = neighbor_ctx(df, ndf, Queried_ID)
   	match_num = neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape, Queried_ID, randomlist)  
 	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor	
-writefinal(OutFile, match_num)
+DataToWrite = [match_num, len(o_ctx)]
+writefinal(OutFile, DataToWrite)
 t1 = time.time()
 runtime = str(int((t1-t0) / 3600)) + ' hours and ' + str(int(((t1-t0) % 3600)/60)) +' minutes and ' + str(((t1-t0) % 3600)%60) + ' seconds\n'
 print '\n OCDPMatch runtime,for LOF and ' , NumofNeighbors, ' neighbors is: \n', runtime
