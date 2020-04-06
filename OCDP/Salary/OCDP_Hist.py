@@ -25,8 +25,8 @@ Queried_ID = int(Queries.iloc[query_num,1])
 OutFile = 'OCDPMatch_H.txt'
 MatchFile = 'Sal_Match_H.txt'
 NMatchFile = 'Sal_NMatch_H.txt'
-NumofNeighbors = 5
-DropThr = 1
+NumofNeighbors = 50
+DropThr = 10
 def org_ctx(Ref_file, Queried_ID):
 	FirAtt_lst = df['Job Title'].unique()
         SecAtt_lst = df['Employer'].unique()
