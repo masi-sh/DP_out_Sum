@@ -21,7 +21,7 @@ Query_file = '/home/sm2shafi/DP_out_Sum/LOF/TLQueries.csv'
 Queries = pd.read_csv(Query_file)
 # Check if the next line works
 Queried_ID = int(Queries.iloc[query_num,1])
-OutFile = 'OCDPMatch.txt'
+OutFile = 'OCDPMatch_L_D10.txt'
 MatchFile = 'Sal_Match_L.txt'
 NMatchFile = 'Sal_NMatch_L.txt'
 NumofNeighbors = 50
@@ -48,7 +48,7 @@ def org_ctx(Ref_file, Queried_ID):
 					o_ctx_shape.append(o_ctx_db.shape[0])	
 
 	f.close()
-        #o_ctx = sorted(o_ctx)
+        o_ctx = sorted(o_ctx)
 	print 'size of o_ctx is:', len(o_ctx)
 	return o_ctx, o_ctx_shape;
         
@@ -82,23 +82,14 @@ def neighbor_ctx(df, ndf, Queried_ID):
                   				if ((Sal_outliers[outlier_finder]==-1) and (ID_list[outlier_finder] == Queried_ID)): 
                     					n_ctx.append([i,j,z])     
 							n_ctx_shape.append(Ctx.shape[0])
-  	#n_ctx = sorted(n_ctx)
+  	n_ctx = sorted(n_ctx)
         print 'size of n_ctx is:', len(n_ctx)
 	return n_ctx, n_ctx_shape;   
         
-def neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape, Queried_ID, randomlist):
-  	if (np.array_equal(sorted(o_ctx),sorted(n_ctx))):
+def neighbors_compare(o_ctx , n_ctx, match_num):
+  	# Caution: the following considers the permutation as inequality, double check if n_ctx has the same order as o_ctx or sort first
+  	if (np.array_equal(o_ctx,n_ctx)):
     		match_num+=1
-		writefinal(MatchFile, o_ctx[:])
-		writefinal(MatchFile, o_ctx_shape[:])
-		writefinal(MatchFile, n_ctx[:])
-		writefinal(MatchFile, n_ctx_shape[:])
-	else:	
-		writefinal(NMatchFile,'#' + 'Queried_ID is: ' + str(Queried_ID) + ', removed records are: ' + str(randomlist))
-		writefinal(NMatchFile, o_ctx[:])
-		writefinal(NMatchFile, o_ctx_shape[:])
-		writefinal(NMatchFile, n_ctx[:])
-		writefinal(NMatchFile, n_ctx_shape[:])
   	return match_num;   
 
 def writefinal(OutputFile, DataToWrite):
@@ -119,7 +110,7 @@ for neighbor in range (0, NumofNeighbors):
 	randomlist = random.sample(range(0, len(ndf)), DropThr)
 	ndf = ndf.drop(randomlist)
   	n_ctx, n_ctx_shape = neighbor_ctx(df, ndf, Queried_ID)
-  	match_num = neighbors_compare(o_ctx , n_ctx, match_num, o_ctx_shape, n_ctx_shape, Queried_ID, randomlist)   
+  	match_num = neighbors_compare(o_ctx , n_ctx, match_num)  
 	print 'match_num is: ', match_num, 'for the neighbor number ', neighbor	
 DataToWrite = [match_num, len(o_ctx)]
 writefinal(OutFile, DataToWrite)
